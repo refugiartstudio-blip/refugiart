@@ -1,8 +1,78 @@
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+  // ==========================================
+  // 1. SESSÃO DO SUPABASE E NAVEGAÇÃO
+  // ==========================================
+
+  const SUPABASE_URL = "https://nlqalpiksbqflzxzsgoa.supabase.co";
+  const SUPABASE_KEY =
+    "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP";
+
+  let supabase = null;
+  let usuarioAtual = null;
+
+  try {
+    const { createClient } = await import(
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+    );
+
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data, error } = await supabase.auth.getUser();
+
+    if (!error) {
+      usuarioAtual = data.user;
+    }
+  } catch (erro) {
+    console.error("Não foi possível verificar a sessão:", erro);
+  }
+
+  function atualizarEstadoLogin() {
+    const estaLogado = Boolean(usuarioAtual);
+
+    document.body.dataset.logado = String(estaLogado);
+
+    const itemPerfil = document.getElementById("itemPerfil");
+    const linkLogin = document.getElementById("linkLogin");
+
+    if (itemPerfil) {
+      itemPerfil.hidden = !estaLogado;
+      itemPerfil.style.display = estaLogado ? "" : "none";
+    }
+
+    if (linkLogin) {
+      linkLogin.textContent = estaLogado ? "Meu perfil" : "Login";
+      linkLogin.href = estaLogado ? "perfil.html" : "login.html";
+    }
+
+    document.querySelectorAll("[data-link-login]").forEach((link) => {
+      link.hidden = estaLogado;
+    });
+
+    document.querySelectorAll("[data-link-perfil]").forEach((link) => {
+      link.hidden = !estaLogado;
+    });
+
+    document.querySelectorAll("[data-link-atelie]").forEach((link) => {
+      link.hidden = !estaLogado;
+    });
+
+    document.querySelectorAll("[data-link-sair]").forEach((link) => {
+      link.hidden = !estaLogado;
+    });
+  }
+
+  atualizarEstadoLogin();
+
+  if (supabase) {
+    supabase.auth.onAuthStateChange((evento, sessao) => {
+      usuarioAtual = sessao?.user || null;
+      atualizarEstadoLogin();
+    });
+  }
 
   // ==========================================
-  // 1. MENU LATERAL — COMPARTILHADO
+  // 2. MENU LATERAL
   // ==========================================
 
   const abrirMenu = document.getElementById("abrirMenu");
@@ -25,11 +95,8 @@ document.addEventListener("DOMContentLoaded", function () {
     fundoMenu.classList.add("fundo-visivel");
     document.body.classList.add("menu-bloqueio");
 
-    if (abrirMenu) {
-      abrirMenu.setAttribute("aria-expanded", "true");
-    }
-
-    if (fecharMenu) fecharMenu.focus();
+    abrirMenu?.setAttribute("aria-expanded", "true");
+    fecharMenu?.focus();
   }
 
   function fecharPainel() {
@@ -42,11 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
     menuLateral.setAttribute("aria-hidden", "true");
     menuLateral.inert = true;
 
-    if (abrirMenu) {
-      abrirMenu.setAttribute("aria-expanded", "false");
-      abrirMenu.focus();
-    }
-
+    abrirMenu?.setAttribute("aria-expanded", "false");
     aguardandoAbertura = false;
 
     if (animacaoRolagem !== null) {
@@ -54,32 +117,22 @@ document.addEventListener("DOMContentLoaded", function () {
       animacaoRolagem = null;
     }
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
+    abrirMenu?.focus();
   }
 
-  if (abrirMenu) {
-    abrirMenu.addEventListener("click", abrirPainel);
-  }
+  abrirMenu?.addEventListener("click", abrirPainel);
+  fecharMenu?.addEventListener("click", fecharPainel);
+  fundoMenu?.addEventListener("click", fecharPainel);
 
-  // Compatível com os dois nomes de botão usados nas páginas.
-  const botoesExplorar = [botaoExplorar, explorarMenu].filter(Boolean);
-
-  botoesExplorar.forEach(function (botao) {
-    botao.addEventListener("click", function () {
+  [botaoExplorar, explorarMenu].filter(Boolean).forEach((botao) => {
+    botao.addEventListener("click", () => {
       if (!comunidades) {
         abrirPainel();
         return;
       }
 
       aguardandoAbertura = true;
-
-      comunidades.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+      comunidades.scrollIntoView({ behavior: "smooth", block: "start" });
 
       if (animacaoRolagem !== null) {
         cancelAnimationFrame(animacaoRolagem);
@@ -88,10 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
       function verificarRolagem() {
         if (!aguardandoAbertura) return;
 
-        const posicao = comunidades.getBoundingClientRect();
-
-        // Não exige que a seção chegue exatamente ao pixel zero.
-        if (Math.abs(posicao.top) < 30) {
+        if (Math.abs(comunidades.getBoundingClientRect().top) < 30) {
           aguardandoAbertura = false;
           animacaoRolagem = null;
           abrirPainel();
@@ -105,177 +155,147 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  if (fecharMenu) {
-    fecharMenu.addEventListener("click", fecharPainel);
-  }
-
-  if (fundoMenu) {
-    fundoMenu.addEventListener("click", fecharPainel);
-  }
-
-  document.addEventListener("keydown", function (evento) {
+  document.addEventListener("keydown", (evento) => {
     if (
       evento.key === "Escape" &&
-      menuLateral &&
-      menuLateral.classList.contains("menu-aberto")
+      menuLateral?.classList.contains("menu-aberto")
     ) {
       fecharPainel();
     }
   });
 
-
   // ==========================================
-  // 2. CONTROLE VISUAL DO PERFIL NA INÍCIO
+  // 3. SAIR DA CONTA
   // ==========================================
 
-  const itemPerfil = document.getElementById("itemPerfil");
-  const linkLogin = document.getElementById("linkLogin");
+  document.querySelectorAll("[data-link-sair], #botaoSair").forEach((botao) => {
+    botao.addEventListener("click", async (evento) => {
+      evento.preventDefault();
 
-  function atualizarEstadoLogin() {
-    if (!itemPerfil) return;
-
-    const estaLogado = document.body.dataset.logado === "true";
-
-    itemPerfil.hidden = !estaLogado;
-    itemPerfil.style.display = estaLogado ? "" : "none";
-
-    if (linkLogin && document.body.dataset.logado !== undefined) {
-      if (estaLogado) {
-        linkLogin.textContent = "Minha conta";
-        linkLogin.href = "perfil.html";
-      } else {
-        linkLogin.textContent = "Login";
-        linkLogin.href = "login.html";
+      if (!supabase) {
+        alert("Não foi possível conectar à autenticação.");
+        return;
       }
-    }
-  }
 
-  atualizarEstadoLogin();
+      const { error } = await supabase.auth.signOut();
 
+      if (error) {
+        alert("Não foi possível sair: " + error.message);
+        return;
+      }
+
+      window.location.href = "login.html";
+    });
+  });
 
   // ==========================================
-  // 3. CURTIDAS
+  // 4. CURTIDAS VISUAIS
   // ==========================================
 
   function alternarCurtida(botao) {
-    const estaCurtido = botao.classList.toggle("curtido");
-
-    botao.textContent = estaCurtido ? "♥ Curtido" : "♡ Curtir";
+    const curtido = botao.classList.toggle("curtido");
+    botao.textContent = curtido ? "♥ Curtido" : "♡ Curtir";
   }
 
-  document.addEventListener("click", function (evento) {
+  document.addEventListener("click", (evento) => {
     const alvo = evento.target;
-
     if (!(alvo instanceof Element)) return;
 
     const botaoCurtir = alvo.closest(".botao-curtir");
-
     if (botaoCurtir) {
       alternarCurtida(botaoCurtir);
       return;
     }
 
-    // ==========================================
-    // 4. ABRIR E FECHAR COMENTÁRIOS
-    // ==========================================
-
     const botaoComentar = alvo.closest(".botao-comentar");
-
     if (botaoComentar) {
       const publicacao = botaoComentar.closest(".publicacao");
-      if (!publicacao) return;
-
-      const area = publicacao.querySelector(".area-comentarios");
+      const area = publicacao?.querySelector(".area-comentarios");
       if (!area) return;
 
       area.hidden = !area.hidden;
 
       if (!area.hidden) {
-        const campo = area.querySelector(".texto-comentario");
-        if (campo) campo.focus();
+        area.querySelector(".texto-comentario")?.focus();
       }
     }
   });
 
-
   // ==========================================
-  // 5. PUBLICAR COMENTÁRIOS
+  // 5. COMENTÁRIOS VISUAIS
   // ==========================================
 
-  document.addEventListener("submit", function (evento) {
+  document.addEventListener("submit", (evento) => {
     const formulario = evento.target;
 
-    if (!(formulario instanceof HTMLFormElement)) return;
-    if (!formulario.matches(".form-comentario")) return;
+    if (
+      !(formulario instanceof HTMLFormElement) ||
+      !formulario.matches(".form-comentario")
+    ) return;
 
     evento.preventDefault();
 
     const area = formulario.closest(".area-comentarios");
     const campo = formulario.querySelector(".texto-comentario");
+    const lista = area?.querySelector(".lista-comentarios");
+    const mensagem = campo?.value.trim();
 
-    if (!area || !campo) return;
-
-    const lista = area.querySelector(".lista-comentarios");
-    const mensagem = campo.value.trim();
-
-    if (!lista || !mensagem) return;
+    if (!lista || !campo || !mensagem) return;
 
     const comentario = document.createElement("div");
     comentario.className = "comentario";
 
     const autor = document.createElement("strong");
-    autor.textContent = "Artista RefugiART";
+    autor.textContent = usuarioAtual?.user_metadata?.nome ||
+      usuarioAtual?.email || "Artista RefugiART";
 
     const texto = document.createElement("p");
     texto.textContent = mensagem;
 
     comentario.append(autor, texto);
     lista.appendChild(comentario);
-
     campo.value = "";
   });
 
-
   // ==========================================
-  // 6. CRIAR PUBLICAÇÕES
+  // 6. PUBLICAÇÕES DE TEXTO — VISUAIS
   // ==========================================
 
   const formPublicacao = document.getElementById("form-publicacao");
   const campoPublicacao = document.getElementById("texto-publicacao");
 
   if (formPublicacao && campoPublicacao) {
-    formPublicacao.addEventListener("submit", function (evento) {
+    formPublicacao.addEventListener("submit", (evento) => {
       evento.preventDefault();
 
       const texto = campoPublicacao.value.trim();
-      if (!texto) return;
-
       const feed = document.getElementById("feed");
 
-      if (!feed) {
-        console.error("A área do feed não foi encontrada.");
-        return;
-      }
+      if (!texto || !feed) return;
 
-      const novaPublicacao = document.createElement("article");
-      novaPublicacao.className = "publicacao";
+      const publicacao = document.createElement("article");
+      publicacao.className = "publicacao";
 
       const cabecalho = document.createElement("div");
       cabecalho.className = "autor";
 
       const avatar = document.createElement("div");
       avatar.className = "avatar";
-      avatar.textContent = "A";
+      avatar.textContent = (
+        usuarioAtual?.user_metadata?.nome ||
+        usuarioAtual?.email ||
+        "A"
+      ).charAt(0).toUpperCase();
 
       const identificacao = document.createElement("div");
-
-      const nomeElemento = document.createElement("strong");
-      nomeElemento.textContent = "Artista RefugiART";
+      const nome = document.createElement("strong");
+      nome.textContent = usuarioAtual?.user_metadata?.nome ||
+        usuarioAtual?.email || "Artista RefugiART";
 
       const data = document.createElement("p");
-      data.textContent = "Nova publicação";
+      data.textContent = "Agora";
 
-      identificacao.append(nomeElemento, data);
+      identificacao.append(nome, data);
       cabecalho.append(avatar, identificacao);
 
       const mensagem = document.createElement("p");
@@ -296,47 +316,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
       acoes.append(curtir, comentar);
 
-      const areaComentarios = document.createElement("div");
-      areaComentarios.className = "area-comentarios";
-      areaComentarios.hidden = true;
+      const area = document.createElement("div");
+      area.className = "area-comentarios";
+      area.hidden = true;
 
-      const formularioComentario = document.createElement("form");
-      formularioComentario.className = "form-comentario";
+      const formulario = document.createElement("form");
+      formulario.className = "form-comentario";
 
-      const campoComentario = document.createElement("input");
-      campoComentario.type = "text";
-      campoComentario.className = "texto-comentario";
-      campoComentario.placeholder = "Escreva um comentário construtivo...";
-      campoComentario.maxLength = 300;
-      campoComentario.required = true;
-      campoComentario.setAttribute("aria-label", "Escreva um comentário");
+      const campo = document.createElement("input");
+      campo.type = "text";
+      campo.className = "texto-comentario";
+      campo.placeholder = "Escreva um comentário...";
+      campo.maxLength = 300;
+      campo.required = true;
 
-      const publicarComentario = document.createElement("button");
-      publicarComentario.type = "submit";
-      publicarComentario.textContent = "Publicar";
+      const enviar = document.createElement("button");
+      enviar.type = "submit";
+      enviar.textContent = "Publicar";
 
-      formularioComentario.append(campoComentario, publicarComentario);
+      formulario.append(campo, enviar);
 
-      const listaComentarios = document.createElement("div");
-      listaComentarios.className = "lista-comentarios";
+      const lista = document.createElement("div");
+      lista.className = "lista-comentarios";
 
-      areaComentarios.append(formularioComentario, listaComentarios);
+      area.append(formulario, lista);
+      publicacao.append(cabecalho, mensagem, acoes, area);
 
-      novaPublicacao.append(
-        cabecalho,
-        mensagem,
-        acoes,
-        areaComentarios
-      );
-
-      formPublicacao.insertAdjacentElement("afterend", novaPublicacao);
+      formPublicacao.insertAdjacentElement("afterend", publicacao);
       formPublicacao.reset();
     });
   }
 
-
   // ==========================================
-  // 7. CRIAÇÃO DE PERFIL ARTÍSTICO
+  // 7. PERFIL VISUAL DE DEMONSTRAÇÃO
   // ==========================================
 
   const botaoCriarPerfil = document.getElementById("btn-criar-perfil");
@@ -344,45 +356,21 @@ document.addEventListener("DOMContentLoaded", function () {
   const areaPerfil = document.getElementById("perfil-criado");
 
   if (botaoCriarPerfil && formPerfil && areaPerfil) {
-    botaoCriarPerfil.addEventListener("click", function () {
+    botaoCriarPerfil.addEventListener("click", () => {
       formPerfil.hidden = false;
       botaoCriarPerfil.hidden = true;
-
-      const campoNome = document.getElementById("nome-artista");
-      if (campoNome) campoNome.focus();
+      document.getElementById("nome-artista")?.focus();
     });
 
-    formPerfil.addEventListener("submit", function (evento) {
+    formPerfil.addEventListener("submit", (evento) => {
       evento.preventDefault();
 
-      const campoNome = document.getElementById("nome-artista");
-      const campoArea = document.getElementById("area-artista");
-      const campoBio = document.getElementById("bio-artista");
-      const campoSenha = document.getElementById("senha-artista");
-      const campoConfirmacao = document.getElementById("confirmar-senha");
-
-      if (!campoNome || !campoArea || !campoSenha || !campoConfirmacao) {
-        return;
-      }
-
-      const nome = campoNome.value.trim();
-      const area = campoArea.value;
-      const bio = campoBio ? campoBio.value.trim() : "";
-      const senha = campoSenha.value;
-      const confirmarSenha = campoConfirmacao.value;
+      const nome = document.getElementById("nome-artista")?.value.trim();
+      const area = document.getElementById("area-artista")?.value;
+      const bio = document.getElementById("bio-artista")?.value.trim();
 
       if (!nome || !area) {
         alert("Preencha o nome artístico e a área de atuação.");
-        return;
-      }
-
-      if (senha.length < 8) {
-        alert("A senha deve ter pelo menos 8 caracteres.");
-        return;
-      }
-
-      if (senha !== confirmarSenha) {
-        alert("As senhas não coincidem. Confira e tente novamente.");
         return;
       }
 
@@ -393,13 +381,13 @@ document.addEventListener("DOMContentLoaded", function () {
       avatar.className = "avatar";
       avatar.textContent = nome.charAt(0).toUpperCase();
 
-      const identificacao = document.createElement("h3");
-      identificacao.textContent = nome;
+      const titulo = document.createElement("h3");
+      titulo.textContent = nome;
 
       const especialidade = document.createElement("p");
       especialidade.textContent = area;
 
-      perfil.append(avatar, identificacao, especialidade);
+      perfil.append(avatar, titulo, especialidade);
 
       if (bio) {
         const apresentacao = document.createElement("p");
@@ -408,16 +396,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       areaPerfil.appendChild(perfil);
-
       formPerfil.reset();
       formPerfil.hidden = true;
       botaoCriarPerfil.hidden = false;
-
-      perfil.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
     });
   }
-
 });

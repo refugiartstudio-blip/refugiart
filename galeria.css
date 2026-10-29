@@ -1,0 +1,351 @@
+
+/* ==========================================
+   GALERIA REFUGIART
+   Identidade visual institucional
+   ========================================== */
+
+:root {
+  --galeria-verde: #243e35;
+  --galeria-verde-claro: #dce8dc;
+  --galeria-bege: #f4f1e9;
+  --galeria-ocre: #d6a45d;
+  --galeria-texto: #26342d;
+  --galeria-branco: #ffffff;
+}
+
+/* ==========================================
+   ÁREA PRINCIPAL
+   ========================================== */
+
+.pagina-galeria {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+  color: var(--galeria-texto);
+}
+
+/* ==========================================
+   CARROSSEL INSTITUCIONAL
+   ========================================== */
+
+.carrossel-galeria {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0;
+  border-radius: 16px;
+  background: var(--galeria-verde);
+  color: var(--galeria-bege);
+  box-sizing: border-box;
+
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.carrossel-galeria.arrastando {
+  cursor: grabbing;
+}
+
+.trilho-carrossel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.slide-carrossel {
+  grid-area: 1 / 1;
+  min-width: 0;
+  min-height: 300px;
+  padding: clamp(24px, 5vw, 56px);
+
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(18px);
+
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease,
+    visibility 0.4s;
+}
+
+.slide-carrossel.ativo {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  z-index: 1;
+}
+
+.conteudo-slide {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.carrossel-galeria .etiqueta-galeria {
+  display: inline-block;
+  margin-bottom: 14px;
+  color: var(--galeria-ocre);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.carrossel-galeria h2 {
+  margin: 0 0 18px;
+  color: var(--galeria-bege);
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+  line-height: 1.15;
+}
+
+.carrossel-galeria p {
+  margin: 0 0 14px;
+  color: #e4e9e3;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.aviso-slide {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--galeria-ocre);
+  font-size: 0.85rem;
+}
+
+/* Oculta os controles visíveis do carrossel */
+
+.controles-carrossel {
+  display: none !important;
+}
+
+/* Evita arrastar imagens acidentalmente */
+
+.carrossel-galeria img {
+  -webkit-user-drag: none;
+}
+
+/* ==========================================
+   SEÇÕES INSTITUCIONAIS
+   ========================================== */
+
+.mensagem-galeria {
+  margin: 24px 0;
+  padding: clamp(22px, 4vw, 36px);
+  border: 1px solid #e0e4dc;
+  border-radius: 14px;
+  background: var(--galeria-branco);
+  box-sizing: border-box;
+}
+
+.mensagem-galeria .etiqueta-galeria {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #667b55;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+}
+
+.mensagem-galeria h2 {
+  margin: 0 0 14px;
+  color: var(--galeria-verde);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.25;
+}
+
+.mensagem-galeria p {
+  margin: 0;
+  color: #4c574f;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.secao-salao {
+  background: var(--galeria-verde-claro);
+  border-color: #d0ddcf;
+}
+
+/* ==========================================
+   ACESSIBILIDADE E ANIMAÇÕES
+   ========================================== */
+
+.carrossel-galeria:focus-visible {
+  outline: 3px solid var(--galeria-ocre);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-carrossel {
+    transition: none;
+  }
+}
+
+/* ==========================================
+   RESPONSIVIDADE PARA CELULARES
+   ========================================== */
+
+@media (max-width: 600px) {
+  .pagina-galeria {
+    padding: 14px;
+  }
+
+  .slide-carrossel {
+    min-height: 320px;
+    padding: 26px 22px;
+  }
+
+  .carrossel-galeria h2 {
+    font-size: 1.8rem;
+  }
+
+  .carrossel-galeria p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .mensagem-galeria {
+    padding: 22px 18px;
+  }
+}
+
+
+/* ==========================================
+   ACERVO DE ARTISTAS
+   ========================================== */
+
+.area-acervo,
+.area-salao {
+  width: 100%;
+}
+
+.lista-artistas,
+.obras-artista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+  margin: 24px 0;
+}
+
+.cartao-artista {
+  padding: 18px;
+  text-align: left;
+  color: var(--galeria-texto);
+  background: var(--galeria-branco);
+  border: 1px solid #e0e4dc;
+  border-radius: 12px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.cartao-artista:hover,
+.cartao-artista:focus-visible {
+  border-color: var(--galeria-verde);
+  outline-color: var(--galeria-ocre);
+}
+
+.cartao-artista img,
+.foto-perfil-artista,
+.obra-artista img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.cartao-artista h3 {
+  margin: 14px 0 8px;
+  color: var(--galeria-verde);
+}
+
+.cartao-artista p,
+.obra-artista p {
+  line-height: 1.6;
+}
+
+.perfil-artista {
+  margin: 24px 0;
+  padding: 24px;
+  background: var(--galeria-branco);
+  border: 1px solid #e0e4dc;
+  border-radius: 14px;
+}
+
+.perfil-artista [hidden],
+.area-acervo[hidden],
+.area-salao[hidden],
+.lista-artistas[hidden] {
+  display: none !important;
+}
+
+#fecharPerfilArtista {
+  margin-bottom: 20px;
+  padding: 10px 0;
+  color: var(--galeria-verde);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+
+.obra-artista {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .lista-artistas,
+  .obras-artista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .cartao-artista {
+    padding: 12px;
+  }
+
+  .perfil-artista {
+    padding: 18px;
+  }
+}
+
+/* Cabeçalho do Acervo sem card ou balão */
+
+.cabecalho-acervo {
+  margin: 24px 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.cabecalho-acervo .etiqueta-galeria {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #667b55;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+}
+
+.cabecalho-acervo h2 {
+  margin: 0 0 10px;
+  color: var(--galeria-verde);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.25;
+}
+
+.cabecalho-acervo p {
+  margin: 0;
+  color: #4c574f;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+

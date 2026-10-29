@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#243e35">
+  <title>Ateliê | RefugiART</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="atelie.css">
+</head>
+<body>
+  <header class="cabecalho">
+    <img src="imagens/logo.png" alt="RefugiART" class="logo">
+    <div class="identidade">
+      <h1>Ateliê</h1>
+      <p>Onde a arte encontra pessoas.</p>
+    </div>
+    <a class="icone-topo" href="perfil.html" aria-label="Meu perfil">♙</a>
+  </header>
+
+  <nav class="navegacao-principal">
+    <a href="index.html">Início</a>
+    <a href="atelie.html" aria-current="page">Ateliê</a>
+    <a href="mercado.html">Mercado</a>
+    <a href="comunidades.html">Comunidades</a>
+    <a href="perfil.html">Meu perfil</a>
+  </nav>
+
+  <main class="atelie-container">
+    <section class="atelie-boas-vindas">
+      <span class="atelie-etiqueta">COMUNIDADE CRIATIVA</span>
+      <h2>Um mundo de artistas.</h2>
+      <p>Compartilhe seu processo, descubra novos talentos e encontre inspiração.</p>
+      <a href="#nova-publicacao" class="botao-publicar">＋ Compartilhar uma obra</a>
+    </section>
+
+    <section class="atalhos-artistas">
+      <div>
+        <h2>Explore o Ateliê</h2>
+        <p>Conheça diferentes expressões artísticas.</p>
+      </div>
+      <a href="galeria.html">Ver galeria →</a>
+    </section>
+
+    <section class="categorias-atelie" aria-label="Áreas artísticas">
+      <a href="#feed" data-categoria="Todas">✦ Todos</a>
+      <a href="#feed" data-categoria="Desenho">✏️ Desenho</a>
+      <a href="#feed" data-categoria="Pintura">🎨 Pintura</a>
+      <a href="#feed" data-categoria="Fotografia">📷 Fotografia</a>
+      <a href="#feed" data-categoria="Outros">✳ Outras artes</a>
+    </section>
+
+    <section class="criar-obra" id="nova-publicacao">
+      <h2>O que você está criando?</h2>
+      <p>Mostre seu trabalho à comunidade RefugiART.</p>
+
+      <form id="form-obra">
+        <label for="imagem-obra">Imagem da obra</label>
+        <input id="imagem-obra" type="file"
+          accept="image/jpeg,image/png,image/webp" required>
+
+        <img id="previa-obra" alt="Prévia da obra" hidden>
+
+        <label for="legenda-obra">Legenda</label>
+        <textarea id="legenda-obra" maxlength="1500"
+          placeholder="Conte a história por trás da sua obra..."
+          rows="4"></textarea>
+
+        <label for="categoria-obra">Categoria artística</label>
+        <select id="categoria-obra" required>
+          <option value="Desenho">Desenho</option>
+          <option value="Pintura">Pintura</option>
+          <option value="Fotografia">Fotografia</option>
+          <option value="Escultura">Escultura</option>
+          <option value="Tatuagem">Tatuagem</option>
+          <option value="Outros">Outras artes</option>
+        </select>
+
+        <button type="submit" id="botao-enviar-obra">
+          Publicar no Ateliê
+        </button>
+        <p id="status-atelie" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section id="feed">
+      <div class="titulo-feed">
+        <div>
+          <h2>Obras da comunidade</h2>
+          <p>Inspiração compartilhada por artistas.</p>
+        </div>
+        <button type="button" id="atualizar-feed" class="botao-atualizar">
+          ↻ Atualizar
+        </button>
+      </div>
+
+      <div id="lista-obras" aria-live="polite">
+        <p class="mensagem-feed">Carregando publicações...</p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="navegacao-inferior" aria-label="Navegação rápida">
+    <a href="index.html"><span>⌂</span>Início</a>
+    <a href="atelie.html" aria-current="page"><span>▦</span>Ateliê</a>
+    <a href="#nova-publicacao"><span>＋</span>Publicar</a>
+    <a href="comunidades.html"><span>♧</span>Comunidade</a>
+    <a href="perfil.html"><span>♙</span>Perfil</a>
+  </nav>
+
+  <footer>
+    <p>RefugiART © 2026 — Criar é Sentir.</p>
+  </footer>
+
+  <script type="module" src="atelie.js"></script>
+</body>
+</html>

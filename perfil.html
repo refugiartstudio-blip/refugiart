@@ -4,191 +4,245 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#243e35">
   <title>Meu perfil | RefugiART</title>
+
   <link rel="stylesheet" href="style.css">
-  <style>
-    .profile-container {
-      max-width: 650px;
-      margin: 30px auto;
-      padding: 24px;
-      background: #fffdf6;
-      border: 1px solid #ded6c5;
-      border-radius: 14px;
-    }
-    .profile-container label {
-      display: block;
-      margin-top: 16px;
-      font-weight: bold;
-    }
-    .profile-container input,
-    .profile-container textarea {
-      box-sizing: border-box;
-      width: 100%;
-      padding: 12px;
-      margin-top: 6px;
-      border: 1px solid #c9c1b0;
-      border-radius: 8px;
-      font: inherit;
-    }
-    .profile-container textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-    .profile-container button {
-      margin-top: 18px;
-      padding: 12px 18px;
-      border: 0;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    #profile-photo {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 50%;
-      background: #eee7d8;
-      display: block;
-      margin: 15px auto;
-    }
-    #status {
-      overflow-wrap: anywhere;
-    }
-  </style>
+  <link rel="stylesheet" href="perfil.css">
 </head>
+
 <body>
-  <main class="profile-container">
-    <a href="comunidades.html">← Voltar às comunidades</a>
+  <header class="cabecalho">
+    <img src="imagens/logo.png"
+         alt="Símbolo da RefugiART"
+         class="logo">
 
-    <h1>Meu perfil artístico</h1>
-    <p>Apresente seu trabalho à comunidade RefugiART.</p>
+    <div class="identidade">
+      <h1>RefugiART</h1>
+      <p>A arte nos aproxima.</p>
+    </div>
 
-    <img id="profile-photo" alt="Foto de perfil"
-      src="https://placehold.co/120x120/e8dfca/40543c?text=Arte">
+    <button class="botao-menu"
+            id="abrirMenu"
+            type="button"
+            aria-label="Abrir menu"
+            aria-controls="menuLateral"
+            aria-expanded="false">
+      ☰
+    </button>
+  </header>
 
-    <form id="profile-form">
-      <label for="nome">Nome artístico</label>
-      <input id="nome" type="text" maxlength="80"
-        placeholder="Como você quer ser conhecido?" required>
+  <nav class="navegacao-principal" aria-label="Navegação principal">
+    <a href="index.html">Início</a>
+    <a href="mercado.html">Mercado</a>
+    <a href="comunidades.html">Comunidades</a>
+    <a href="galeria.html">Galeria</a>
+    <a href="revista.html">Revista</a>
+    <a href="perfil.html" aria-current="page">Meu perfil</a>
+  </nav>
 
-      <label for="area">Área de atuação</label>
-      <input id="area" type="text" maxlength="120"
-        placeholder="Ex.: desenho, pintura, tatuagem">
+  <main class="perfil-pagina">
+    <section class="perfil-intro">
+      <span class="perfil-selo">ESPAÇO DO ARTISTA</span>
+      <h2>Seu perfil artístico</h2>
+      <p>
+        Apresente sua trajetória, compartilhe suas inspirações
+        e mostre à comunidade quem você é através da arte.
+      </p>
+    </section>
 
-      <label for="bio">Biografia</label>
-      <textarea id="bio" maxlength="1000"
-        placeholder="Conte um pouco sobre você e sua arte"></textarea>
+    <section class="perfil-cartao">
+      <div class="perfil-cartao-cabecalho">
+        <h2>Minha identidade artística</h2>
+        <p>Preencha os campos abaixo para personalizar seu perfil.</p>
+      </div>
 
-      <label for="foto">Endereço da foto (URL)</label>
-      <input id="foto" type="url" maxlength="1000"
-        placeholder="https://...">
+      <div class="perfil-foto-area">
+        <img
+          id="profile-photo"
+          class="perfil-foto"
+          alt="Prévia da foto de perfil"
+          src="https://placehold.co/160x160/e8dfca/40543c?text=Arte">
 
-      <button id="save-button" type="submit">Salvar perfil</button>
-    </form>
+        <p class="perfil-foto-legenda">
+          Sua imagem de apresentação
+        </p>
+      </div>
 
-    <p id="status" role="status">Carregando perfil...</p>
+      <form id="profile-form">
+        <div class="perfil-campo">
+          <label for="nome">Nome artístico *</label>
+          <input
+            id="nome"
+            name="nome"
+            type="text"
+            maxlength="80"
+            placeholder="Como você quer ser conhecido?"
+            autocomplete="nickname"
+            required>
+        </div>
+
+        <div class="perfil-campo">
+          <label for="area">Área de atuação</label>
+          <input
+            id="area"
+            name="area"
+            type="text"
+            maxlength="120"
+            placeholder="Ex.: desenho, pintura, tatuagem">
+        </div>
+
+        <div class="perfil-campo">
+          <label for="bio">Minha trajetória</label>
+          <textarea
+            id="bio"
+            name="bio"
+            maxlength="1000"
+            placeholder="Conte um pouco sobre você, sua arte e suas inspirações."></textarea>
+          <small>Máximo de 1.000 caracteres.</small>
+        </div>
+
+        <div class="perfil-campo">
+          <label for="foto">Link da foto</label>
+          <input
+            id="foto"
+            name="foto"
+            type="url"
+            maxlength="1000"
+            placeholder="https://..."
+            inputmode="url">
+          <small>
+            Cole o endereço público de uma imagem disponível na internet.
+          </small>
+        </div>
+
+        <button id="save-button"
+                class="perfil-botao-salvar"
+                type="submit">
+          Salvar meu perfil
+        </button>
+
+        <p id="status"
+           class="perfil-status"
+           role="status"
+           aria-live="polite">
+          Carregando perfil...
+        </p>
+      </form>
+    </section>
+
+    <p class="perfil-rodape">
+      Sua arte tem uma história. Este é o espaço para compartilhá-la.
+    </p>
   </main>
 
-  <script type="module">
-    import { createClient } from
-      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  <footer>
+    <p>RefugiART — Criar é Sentir.</p>
+  </footer>
 
-    const supabase = createClient(
-      'https://nlqalpiksbqflzxzsgoa.supabase.co',
-      'sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP'
-    );
+  <div class="fundo-menu" id="fundoMenu"></div>
 
-    const form = document.getElementById('profile-form');
-    const nome = document.getElementById('nome');
-    const area = document.getElementById('area');
-    const bio = document.getElementById('bio');
-    const foto = document.getElementById('foto');
-    const photoPreview = document.getElementById('profile-photo');
-    const status = document.getElementById('status');
-    const saveButton = document.getElementById('save-button');
+  <aside class="menu-lateral"
+         id="menuLateral"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="tituloMenu"
+         aria-hidden="true"
+         inert>
 
-    let userId = null;
+    <div class="cabecalho-menu">
+      <div>
+        <h2 id="tituloMenu">RefugiART</h2>
+        <p>Explore nossas iniciativas</p>
+      </div>
 
-    function updatePhoto() {
-      const url = foto.value.trim();
-      photoPreview.src = url || 
-        'https://placehold.co/120x120/e8dfca/40543c?text=Arte';
-    }
+      <button class="botao-fechar"
+              id="fecharMenu"
+              type="button"
+              aria-label="Fechar menu">
+        ×
+      </button>
+    </div>
 
-    foto.addEventListener('input', updatePhoto);
+    <div class="introducao-menu">
+      <span>✦</span>
+      <div>
+        <h3>Conheça nosso universo</h3>
+        <p>Arte, cultura e transformação social.</p>
+      </div>
+    </div>
 
-    photoPreview.addEventListener('error', () => {
-      photoPreview.src =
-        'https://placehold.co/120x120/e8dfca/40543c?text=Arte';
-    });
+    <nav class="opcoes-menu" aria-label="Áreas da RefugiART">
+      <a href="revista.html" class="item-menu">
+        <span class="icone-menu">▤</span>
+        <span class="texto-menu">
+          <strong>Revista RefugiART</strong>
+          <small>Publicações e entrevistas</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
 
-    async function loadProfile() {
-      const { data: sessionData, error: sessionError } =
-        await supabase.auth.getSession();
+      <a href="eventos.html" class="item-menu">
+        <span class="icone-menu">▦</span>
+        <span class="texto-menu">
+          <strong>Eventos</strong>
+          <small>Encontros e programações</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
 
-      if (sessionError || !sessionData.session) {
-        window.location.href = 'login.html';
-        return;
-      }
+      <a href="exposicoes.html" class="item-menu">
+        <span class="icone-menu">▧</span>
+        <span class="texto-menu">
+          <strong>Exposições</strong>
+          <small>Mostras e trabalhos artísticos</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
 
-      const user = sessionData.session.user;
-      userId = user.id;
+      <a href="palestras.html" class="item-menu">
+        <span class="icone-menu">◉</span>
+        <span class="texto-menu">
+          <strong>Palestras e encontros</strong>
+          <small>Ideias e experiências</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('nome_artistico, biografia, area_atuacao, foto_url')
-        .eq('id', userId)
-        .maybeSingle();
+      <a href="acoes-sociais.html" class="item-menu">
+        <span class="icone-menu">♡</span>
+        <span class="texto-menu">
+          <strong>Ações sociais</strong>
+          <small>Arte junto à comunidade</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
 
-      if (error) {
-        status.textContent = 'Erro ao carregar perfil: ' + error.message;
-        return;
-      }
+      <a href="projetos-educativos.html" class="item-menu">
+        <span class="icone-menu">✎</span>
+        <span class="texto-menu">
+          <strong>Projetos educativos</strong>
+          <small>Oficinas, cursos e formação</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
 
-      const metadata = user.user_metadata || {};
+      <a href="perfil.html" class="item-menu">
+        <span class="icone-menu">♙</span>
+        <span class="texto-menu">
+          <strong>Meu perfil</strong>
+          <small>Editar meus dados</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+    </nav>
 
-      nome.value = data?.nome_artistico || metadata.nome || '';
-      area.value = data?.area_atuacao || '';
-      bio.value = data?.biografia || '';
-      foto.value = data?.foto_url || '';
+    <div class="rodape-menu">
+      <p>RefugiART — Criar é Sentir.</p>
+    </div>
+  </aside>
 
-      updatePhoto();
-      status.textContent = data
-        ? 'Perfil carregado. Você pode editar os campos.'
-        : 'Preencha seus dados e salve seu primeiro perfil.';
-    }
-
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      if (!userId) return;
-
-      saveButton.disabled = true;
-      status.textContent = 'Salvando...';
-
-      const profile = {
-        id: userId,
-        nome_artistico: nome.value.trim(),
-        biografia: bio.value.trim(),
-        area_atuacao: area.value.trim(),
-        foto_url: foto.value.trim() || null,
-        updated_at: new Date().toISOString()
-      };
-
-      const { error } = await supabase
-        .from('profiles')
-        .upsert(profile, { onConflict: 'id' });
-
-      saveButton.disabled = false;
-
-      if (error) {
-        status.textContent = 'Erro ao salvar: ' + error.message;
-        return;
-      }
-
-      status.textContent = 'Perfil salvo com sucesso!';
-    });
-
-    loadProfile();
-  </script>
+  <script src="script.js"></script>
+  <script type="module" src="perfil.js"></script>
 </body>
 </html>

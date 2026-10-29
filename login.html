@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar ou cadastrar | RefugiART</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="pagina-login">
+
+  <header class="cabecalho">
+    <div class="logo">
+      <img src="imagens/logo.png" alt="Logo RefugiART">
+    </div>
+
+    <div class="identidade">
+      <h1>RefugiART</h1>
+      <p>A arte nos aproxima.</p>
+    </div>
+
+    <nav class="navegacao-principal">
+      <a href="inicio.html">Início</a>
+      <a href="mercado.html">Mercado</a>
+      <a href="comunidades.html">Comunidades</a>
+      <a href="galeria.html">Galeria</a>
+    </nav>
+  </header>
+
+  <main class="login-container">
+
+    <section class="login-apresentacao">
+      <span class="login-etiqueta">SEU ESPAÇO CRIATIVO</span>
+
+      <h2>A arte nos aproxima.<br>
+      Faça parte dessa história.</h2>
+
+      <p>
+        Entre na RefugiART para conhecer artistas, compartilhar suas
+        criações, participar de comunidades e descobrir novas obras.
+      </p>
+
+      <div class="login-destaque">
+        <span>✦</span>
+        <div>
+          <h3>Você cria. A RefugiART conecta.</h3>
+          <p>Um espaço para expressar ideias, descobrir talentos e aproximar pessoas pela arte.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="login-cartao">
+      <div class="login-abas">
+        <button type="button" class="login-aba ativa"
+          id="aba-entrar" onclick="mostrarFormulario('entrar')">
+          Entrar
+        </button>
+
+        <button type="button" class="login-aba"
+          id="aba-cadastro" onclick="mostrarFormulario('cadastro')">
+          Criar conta
+        </button>
+      </div>
+
+      <form id="form-entrar" class="login-formulario"
+        onsubmit="return demonstrarAviso(event, 'entrar')">
+
+        <h2>Boas-vindas!</h2>
+        <p class="login-subtitulo">Entre na sua conta RefugiART.</p>
+
+        <label for="email-entrar">E-mail</label>
+        <input type="email" id="email-entrar"
+          placeholder="seuemail@exemplo.com" required>
+
+        <label for="senha-entrar">Senha</label>
+        <input type="password" id="senha-entrar"
+          placeholder="Digite sua senha" required>
+
+        <a href="#" class="login-esqueci"
+          onclick="alert('A recuperação de senha será disponibilizada futuramente.'); return false;">
+          Esqueci minha senha
+        </a>
+
+        <button type="submit" class="login-botao">
+          Entrar na minha conta
+        </button>
+
+        <p class="login-aviso" id="aviso-entrar" hidden>
+          O acesso real será disponibilizado futuramente.
+        </p>
+
+        <p class="login-troca">
+          Ainda não tem conta?
+          <a href="#" onclick="mostrarFormulario('cadastro'); return false;">
+            Cadastre-se
+          </a>
+        </p>
+      </form>
+
+      <form id="form-cadastro" class="login-formulario"
+        hidden onsubmit="return demonstrarAviso(event, 'cadastro')">
+
+        <h2>Crie sua conta</h2>
+        <p class="login-subtitulo">Comece a fazer parte da comunidade.</p>
+
+        <label for="nome-cadastro">Nome completo ou artístico</label>
+        <input type="text" id="nome-cadastro"
+          placeholder="Como deseja ser conhecido?" required>
+
+        <label for="email-cadastro">E-mail</label>
+        <input type="email" id="email-cadastro"
+          placeholder="seuemail@exemplo.com" required>
+
+        <label for="senha-cadastro">Crie uma senha</label>
+        <input type="password" id="senha-cadastro"
+          placeholder="Crie uma senha" minlength="8" required>
+
+        <label for="tipo-conta">Como deseja participar?</label>
+        <select id="tipo-conta" required>
+          <option value="">Selecione uma opção</option>
+          <option value="apreciador">Apreciador de arte</option>
+          <option value="artista">Artista ou criador</option>
+          <option value="educador">Arte-educador</option>
+        </select>
+
+        <button type="submit" class="login-botao">
+          Criar minha conta
+        </button>
+
+        <p class="login-aviso" id="aviso-cadastro" hidden>
+          O cadastro real será disponibilizado futuramente.
+        </p>
+
+        <p class="login-troca">
+          Já tem uma conta?
+          <a href="#" onclick="mostrarFormulario('entrar'); return false;">
+            Entre aqui
+          </a>
+        </p>
+      </form>
+
+      <p class="login-rodape">
+        RefugiART · Criar é Sentir.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="rodape-login">
+    RefugiART © 2026 — Criar é Sentir.
+  </footer>
+
+  <script>
+    function mostrarFormulario(tipo) {
+      const entrar = tipo === 'entrar';
+
+      document.getElementById('form-entrar').hidden = !entrar;
+      document.getElementById('form-cadastro').hidden = entrar;
+
+      document.getElementById('aba-entrar').classList.toggle('ativa', entrar);
+      document.getElementById('aba-cadastro').classList.toggle('ativa', !entrar);
+    }
+
+    function demonstrarAviso(evento, tipo) {
+      evento.preventDefault();
+
+      const aviso = document.getElementById(
+        tipo === 'entrar' ? 'aviso-entrar' : 'aviso-cadastro'
+      );
+
+      aviso.hidden = false;
+      return false;
+    }
+  </script>
+
+</body>
+</html>

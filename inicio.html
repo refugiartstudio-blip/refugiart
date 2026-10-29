@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#243e35">
+  <title>RefugiART — Comunidade Artística</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body data-logado="false">
+
+  <header class="cabecalho">
+    <img src="imagens/logo.png" alt="Símbolo da RefugiART" class="logo">
+
+    <div class="identidade">
+      <h1>RefugiART</h1>
+      <p>A arte nos aproxima.</p>
+    </div>
+
+    <button
+      class="botao-menu"
+      id="abrirMenu"
+      type="button"
+      aria-label="Abrir menu"
+      aria-controls="menuLateral"
+      aria-expanded="false">
+      ☰
+    </button>
+  </header>
+
+  <nav class="navegacao-principal">
+    <a href="inicio.html" aria-current="page">Início</a>
+    <a href="mercado.html">Mercado</a>
+    <a href="comunidades.html">Comunidades</a>
+    <a href="galeria.html">Galeria</a>
+    <a href="login.html" id="linkLogin">Login</a>
+  </nav>
+
+  <main>
+    <section class="boas-vindas" id="inicio">
+      <h2>O que é a RefugiART?</h2>
+
+      <p>
+        A RefugiART propõe ser um espaço de expressão,
+        aprendizado e inspiração, com conteúdos que
+        incentivam a prática artística, a apreciação
+        cultural e o protagonismo jovem nas artes visuais,
+        na literatura e em outras linguagens criativas.
+      </p>
+
+      <h3>Público-alvo</h3>
+
+      <p>
+        Alunos do Ensino Fundamental II e do Ensino Médio
+        de escolas públicas, professores interessados em
+        conteúdos artístico-pedagógicos e a comunidade
+        de apreciadores de arte dos municípios do Pará.
+      </p>
+
+      <button
+        class="botao-explorar"
+        id="explorarMenu"
+        type="button">
+        Explorar a RefugiART
+      </button>
+    </section>
+  </main>
+
+  <footer>
+    <p>RefugiART © 2026 — Criar é Sentir.</p>
+  </footer>
+
+  <div class="fundo-menu" id="fundoMenu"></div>
+
+  <aside
+    class="menu-lateral"
+    id="menuLateral"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tituloMenu"
+    aria-hidden="true"
+    inert>
+
+    <div class="cabecalho-menu">
+      <div>
+        <h2 id="tituloMenu">RefugiART</h2>
+        <p>Explore nossas iniciativas</p>
+      </div>
+
+      <button
+        class="botao-fechar"
+        id="fecharMenu"
+        type="button"
+        aria-label="Fechar menu">
+        ×
+      </button>
+    </div>
+
+  <div class="introducao-menu">
+  <span>✦</span>
+  <div>
+    <h3>Conheça nosso universo</h3>
+    <p>Arte, cultura e transformação social.</p>
+  </div>
+</div>
+
+    <nav class="opcoes-menu" aria-label="Menu lateral">
+
+      <a href="revista.html" class="item-menu">
+        <span class="icone-menu">▤</span>
+        <span class="texto-menu">
+          <strong>Revista RefugiART</strong>
+          <small>Publicações e entrevistas</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="eventos.html" class="item-menu">
+        <span class="icone-menu">▦</span>
+        <span class="texto-menu">
+          <strong>Eventos</strong>
+          <small>Encontros e programações</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="exposicoes.html" class="item-menu">
+        <span class="icone-menu">▧</span>
+        <span class="texto-menu">
+          <strong>Exposições</strong>
+          <small>Mostras e trabalhos artísticos</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="palestras.html" class="item-menu">
+        <span class="icone-menu">◉</span>
+        <span class="texto-menu">
+          <strong>Palestras e encontros</strong>
+          <small>Ideias e experiências</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="acoes-sociais.html" class="item-menu">
+        <span class="icone-menu">♡</span>
+        <span class="texto-menu">
+          <strong>Ações sociais</strong>
+          <small>Arte junto à comunidade</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="projetos-educativos.html" class="item-menu">
+        <span class="icone-menu">✎</span>
+        <span class="texto-menu">
+          <strong>Projetos educativos</strong>
+          <small>Oficinas, cursos e formação</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="perfil.html" class="item-menu" id="itemPerfil" hidden>
+        <span class="icone-menu">♙</span>
+        <span class="texto-menu">
+          <strong>Meu perfil</strong>
+          <small>Seu espaço artístico</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+    </nav>
+
+    <div class="rodape-menu">
+      <p>RefugiART — Criar é Sentir.</p>
+    </div>
+
+  </aside>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const abrirMenu = document.getElementById("abrirMenu");
+      const explorarMenu = document.getElementById("explorarMenu");
+      const fecharMenu = document.getElementById("fecharMenu");
+      const menuLateral = document.getElementById("menuLateral");
+      const fundoMenu = document.getElementById("fundoMenu");
+      const itemPerfil = document.getElementById("itemPerfil");
+      const linkLogin = document.getElementById("linkLogin");
+
+      // Lê o estado definido no body.
+      const estaLogado =
+        document.body.dataset.logado === "true";
+
+      // Controla a visibilidade do perfil.
+      if (itemPerfil) {
+        itemPerfil.hidden = !estaLogado;
+        itemPerfil.style.display = estaLogado ? "" : "none";
+      }
+
+      // Ajusta o link de acesso conforme o estado de teste.
+      if (linkLogin && estaLogado) {
+        linkLogin.textContent = "Minha conta";
+        linkLogin.href = "perfil.html";
+      }
+
+      function abrirPainel() {
+        menuLateral.inert = false;
+        menuLateral.setAttribute("aria-hidden", "false");
+        menuLateral.classList.add("menu-aberto");
+        fundoMenu.classList.add("fundo-visivel");
+        document.body.classList.add("menu-bloqueio");
+        abrirMenu.setAttribute("aria-expanded", "true");
+        fecharMenu.focus();
+      }
+
+      function fecharPainel() {
+        menuLateral.classList.remove("menu-aberto");
+        fundoMenu.classList.remove("fundo-visivel");
+        document.body.classList.remove("menu-bloqueio");
+        menuLateral.setAttribute("aria-hidden", "true");
+        menuLateral.inert = true;
+        abrirMenu.setAttribute("aria-expanded", "false");
+        abrirMenu.focus();
+      }
+
+      abrirMenu.addEventListener("click", abrirPainel);
+      explorarMenu.addEventListener("click", abrirPainel);
+      fecharMenu.addEventListener("click", fecharPainel);
+      fundoMenu.addEventListener("click", fecharPainel);
+
+      document.addEventListener("keydown", function (evento) {
+        if (
+          evento.key === "Escape" &&
+          menuLateral.classList.contains("menu-aberto")
+        ) {
+          fecharPainel();
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

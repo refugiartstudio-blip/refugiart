@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
     {
       id: "Residente",
       nome: "Henrique Sousa",
-      foto: "",
+      foto: "galeria/acervo/artistas/Henrique/1793314172 (1).png",
       apresentacao: "Artista visual",
       biografia:
         "Henrique Sousa é artista visual, arte-educador e tatuador, formado em Licenciatura em Artes Visuais pela UNIFESSPA. Sua produção transita entre diferentes linguagens artísticas, com interesse pela cultura amazônica, pela formação artística e pelas relações entre arte, corpo e sociedade. É fundador da RefugiART, iniciativa dedicada à valorização da arte, à formação de novos artistas e à democratização do acesso à cultura. ",

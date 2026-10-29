@@ -11,6 +11,25 @@
   --galeria-ocre: #d6a45d;
   --galeria-texto: #26342d;
   --galeria-branco: #ffffff;
+  --galeria-borda: #e0e4dc;
+  --galeria-texto-suave: #4c574f;
+}
+
+/* ==========================================
+   REGRAS DE VISIBILIDADE
+   Importante para os atributos hidden
+   ========================================== */
+
+[hidden] {
+  display: none !important;
+}
+
+#perfilArtista[hidden],
+#visaoGeral[hidden],
+#acervo[hidden],
+#salao[hidden],
+#listaArtistas[hidden] {
+  display: none !important;
 }
 
 /* ==========================================
@@ -24,6 +43,117 @@
   padding: 24px;
   box-sizing: border-box;
   color: var(--galeria-texto);
+}
+
+.pagina-galeria *,
+.coluna-galeria * {
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   CABEÇALHO EXCLUSIVO DA GALERIA
+   Afeta somente a página que contém
+   #conteudoGaleria
+   ========================================== */
+
+body:has(#conteudoGaleria) > header.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  min-height: 170px;
+  padding: 28px 5%;
+  background: var(--galeria-verde);
+  color: var(--galeria-branco);
+  text-align: left;
+}
+
+body:has(#conteudoGaleria) > header.cabecalho .logo {
+  display: block;
+  width: 95px;
+  height: 95px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+body:has(#conteudoGaleria) > header.cabecalho .identidade {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+body:has(#conteudoGaleria) > header.cabecalho h1 {
+  margin: 0;
+  color: var(--galeria-branco);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1.15;
+}
+
+body:has(#conteudoGaleria) > header.cabecalho p {
+  margin: 8px 0 0;
+  color: var(--galeria-verde-claro);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+body:has(#conteudoGaleria) > header.cabecalho .botao-menu {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* ==========================================
+   LAYOUT DA GALERIA E NAVEGAÇÃO LATERAL
+   ========================================== */
+
+.galeria-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+  width: 100%;
+}
+
+.coluna-galeria {
+  width: 260px;
+  min-width: 0;
+  padding: 22px 16px;
+  background: var(--galeria-branco);
+  border: 1px solid var(--galeria-borda);
+  border-radius: 14px;
+}
+
+.coluna-galeria a.link-coluna-galeria {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 5px 0;
+  padding: 12px;
+  color: var(--galeria-verde);
+  background: transparent;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.coluna-galeria a.link-coluna-galeria:hover,
+.coluna-galeria a.link-coluna-galeria.ativo {
+  color: var(--galeria-verde);
+  background: var(--galeria-verde-claro);
+}
+
+.coluna-galeria a.link-coluna-galeria:focus-visible {
+  outline: 2px solid var(--galeria-ocre);
+  outline-offset: 2px;
+}
+
+/* Área que recebe o conteúdo da navegação */
+
+#conteudoGaleria {
+  width: 100%;
+  min-width: 0;
 }
 
 /* ==========================================
@@ -40,7 +170,6 @@
   background: var(--galeria-verde);
   color: var(--galeria-bege);
   box-sizing: border-box;
-
   touch-action: pan-y;
   cursor: grab;
   user-select: none;
@@ -54,6 +183,7 @@
 .trilho-carrossel {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  width: 100%;
 }
 
 .slide-carrossel {
@@ -61,15 +191,12 @@
   min-width: 0;
   min-height: 300px;
   padding: clamp(24px, 5vw, 56px);
-
   display: flex;
   align-items: center;
   box-sizing: border-box;
-
   opacity: 0;
   visibility: hidden;
   transform: translateX(18px);
-
   transition:
     opacity 0.4s ease,
     transform 0.4s ease,
@@ -119,29 +246,25 @@
   font-size: 0.85rem;
 }
 
-/* Oculta os controles visíveis do carrossel */
-
 .controles-carrossel {
   display: none !important;
 }
 
-/* Evita arrastar imagens acidentalmente */
-
 .carrossel-galeria img {
   -webkit-user-drag: none;
+  user-select: none;
 }
 
 /* ==========================================
-   SEÇÕES INSTITUCIONAIS
+   CONTEÚDO INSTITUCIONAL
    ========================================== */
 
 .mensagem-galeria {
   margin: 24px 0;
   padding: clamp(22px, 4vw, 36px);
-  border: 1px solid #e0e4dc;
+  border: 1px solid var(--galeria-borda);
   border-radius: 14px;
   background: var(--galeria-branco);
-  box-sizing: border-box;
 }
 
 .mensagem-galeria .etiqueta-galeria {
@@ -162,7 +285,7 @@
 
 .mensagem-galeria p {
   margin: 0;
-  color: #4c574f;
+  color: var(--galeria-texto-suave);
   font-size: 1rem;
   line-height: 1.8;
 }
@@ -173,157 +296,17 @@
 }
 
 /* ==========================================
-   ACESSIBILIDADE E ANIMAÇÕES
+   CABEÇALHO DO ACERVO
+   Sem cartão, fundo ou balão
    ========================================== */
-
-.carrossel-galeria:focus-visible {
-  outline: 3px solid var(--galeria-ocre);
-  outline-offset: 4px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .slide-carrossel {
-    transition: none;
-  }
-}
-
-/* ==========================================
-   RESPONSIVIDADE PARA CELULARES
-   ========================================== */
-
-@media (max-width: 600px) {
-  .pagina-galeria {
-    padding: 14px;
-  }
-
-  .slide-carrossel {
-    min-height: 320px;
-    padding: 26px 22px;
-  }
-
-  .carrossel-galeria h2 {
-    font-size: 1.8rem;
-  }
-
-  .carrossel-galeria p {
-    font-size: 0.95rem;
-    line-height: 1.7;
-  }
-
-  .mensagem-galeria {
-    padding: 22px 18px;
-  }
-}
-
-
-/* ==========================================
-   ACERVO DE ARTISTAS
-   ========================================== */
-
-.area-acervo,
-.area-salao {
-  width: 100%;
-}
-
-.lista-artistas,
-.obras-artista {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 18px;
-  margin: 24px 0;
-}
-
-.cartao-artista {
-  padding: 18px;
-  text-align: left;
-  color: var(--galeria-texto);
-  background: var(--galeria-branco);
-  border: 1px solid #e0e4dc;
-  border-radius: 12px;
-  cursor: pointer;
-  font: inherit;
-}
-
-.cartao-artista:hover,
-.cartao-artista:focus-visible {
-  border-color: var(--galeria-verde);
-  outline-color: var(--galeria-ocre);
-}
-
-.cartao-artista img,
-.foto-perfil-artista,
-.obra-artista img {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.cartao-artista h3 {
-  margin: 14px 0 8px;
-  color: var(--galeria-verde);
-}
-
-.cartao-artista p,
-.obra-artista p {
-  line-height: 1.6;
-}
-
-.perfil-artista {
-  margin: 24px 0;
-  padding: 24px;
-  background: var(--galeria-branco);
-  border: 1px solid #e0e4dc;
-  border-radius: 14px;
-}
-
-.perfil-artista [hidden],
-.area-acervo[hidden],
-.area-salao[hidden],
-.lista-artistas[hidden] {
-  display: none !important;
-}
-
-#fecharPerfilArtista {
-  margin-bottom: 20px;
-  padding: 10px 0;
-  color: var(--galeria-verde);
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  font: inherit;
-  font-weight: 600;
-}
-
-.obra-artista {
-  min-width: 0;
-}
-
-@media (max-width: 600px) {
-  .lista-artistas,
-  .obras-artista {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .cartao-artista {
-    padding: 12px;
-  }
-
-  .perfil-artista {
-    padding: 18px;
-  }
-}
-
-/* Cabeçalho do Acervo sem card ou balão */
 
 .cabecalho-acervo {
   margin: 24px 0;
   padding: 0;
-  border: none;
+  border: 0;
   border-radius: 0;
   background: transparent;
+  box-shadow: none;
 }
 
 .cabecalho-acervo .etiqueta-galeria {
@@ -344,128 +327,158 @@
 
 .cabecalho-acervo p {
   margin: 0;
-  color: #4c574f;
+  color: var(--galeria-texto-suave);
   font-size: 1rem;
   line-height: 1.7;
 }
 
-
 /* ==========================================
-   CABEÇALHO EXCLUSIVO DA GALERIA
+   LISTA DE ARTISTAS E OBRAS
    ========================================== */
 
-body:has(#conteudoGaleria) > header.cabecalho {
-  display: flex;
+.area-acervo,
+.area-salao {
+  width: 100%;
+  min-width: 0;
+}
+
+.lista-artistas,
+.obras-artista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+  margin: 24px 0;
+}
+
+.cartao-artista {
+  display: block;
+  min-width: 0;
+  padding: 18px;
+  text-align: left;
+  color: var(--galeria-texto);
+  background: var(--galeria-branco);
+  border: 1px solid var(--galeria-borda);
+  border-radius: 12px;
+  cursor: pointer;
+  font: inherit;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.cartao-artista:hover {
+  border-color: var(--galeria-verde);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgb(36 62 53 / 8%);
+}
+
+.cartao-artista:focus-visible {
+  outline: 2px solid var(--galeria-ocre);
+  outline-offset: 3px;
+}
+
+.cartao-artista img,
+.foto-perfil-artista,
+.obra-artista img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.cartao-artista h3 {
+  margin: 14px 0 8px;
+  color: var(--galeria-verde);
+  font-size: 1.1rem;
+  line-height: 1.35;
+}
+
+.cartao-artista p,
+.obra-artista p {
+  margin: 0 0 10px;
+  color: var(--galeria-texto-suave);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   PERFIL INDIVIDUAL DO ARTISTA
+   ========================================== */
+
+.perfil-artista {
+  width: 100%;
+  min-width: 0;
+  margin: 24px 0;
+  padding: 24px;
+  background: var(--galeria-branco);
+  border: 1px solid var(--galeria-borda);
+  border-radius: 14px;
+}
+
+/* O próprio perfil deve ficar oculto quando hidden */
+
+#perfilArtista[hidden] {
+  display: none !important;
+}
+
+#fecharPerfilArtista {
+  display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 20px;
-  min-height: 190px;
-  padding: 28px 5%;
-  background: var(--galeria-verde);
-  color: white;
-  text-align: left;
-}
-
-body:has(#conteudoGaleria) > header.cabecalho .logo {
-  width: 95px;
-  height: 95px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-body:has(#conteudoGaleria) > header.cabecalho .identidade {
-  flex: 1;
-  min-width: 0;
-  text-align: left;
-}
-
-body:has(#conteudoGaleria) > header.cabecalho h1 {
-  margin: 0;
-  color: white;
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  line-height: 1.15;
-}
-
-body:has(#conteudoGaleria) > header.cabecalho p {
-  margin: 8px 0 0;
-  color: var(--galeria-verde-claro);
-  font-size: 1rem;
-}
-
-body:has(#conteudoGaleria) > header.cabecalho .botao-menu {
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-@media (max-width: 600px) {
-  body:has(#conteudoGaleria) > header.cabecalho {
-    gap: 14px;
-    min-height: 170px;
-    padding: 22px 18px;
-  }
-
-  body:has(#conteudoGaleria) > header.cabecalho .logo {
-    width: 80px;
-    height: 80px;
-  }
-
-  body:has(#conteudoGaleria) > header.cabecalho h1 {
-    font-size: 2rem;
-  }
-
-  body:has(#conteudoGaleria) > header.cabecalho .botao-menu {
-    width: 42px;
-    height: 42px;
-    padding: 0;
-    font-size: 23px;
-  }
-}
-
-
-/* ==========================================
-   NAVEGAÇÃO INTERNA DA GALERIA
-   ========================================== */
-
-.coluna-galeria {
-  width: 260px;
-  min-width: 260px;
-  padding: 22px 16px;
-  background: #ffffff;
-  border: 1px solid #e0e4dc;
-  border-radius: 14px;
-  box-sizing: border-box;
-}
-
-.coluna-galeria a.link-coluna-galeria {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 5px 0;
-  padding: 12px;
-  color: #243e35;
+  margin: 0 0 20px;
+  padding: 10px 0;
+  color: var(--galeria-verde);
   background: transparent;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 15px;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  font: inherit;
   font-weight: 600;
 }
 
-.coluna-galeria a.link-coluna-galeria:hover,
-.coluna-galeria a.link-coluna-galeria.ativo {
-  color: #243e35;
-  background: #dce8dc;
+#fecharPerfilArtista:hover {
+  color: #456b55;
+  text-decoration: underline;
 }
 
-.coluna-galeria a.link-coluna-galeria:focus-visible {
-  outline: 2px solid #d6a45d;
-  outline-offset: 2px;
+#fecharPerfilArtista:focus-visible {
+  outline: 2px solid var(--galeria-ocre);
+  outline-offset: 3px;
 }
 
-.galeria-layout {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  align-items: start;
-  gap: 24px;
+.obra-artista {
+  min-width: 0;
+}
+
+.obra-artista h3 {
+  color: var(--galeria-verde);
+}
+
+/* ==========================================
+   ACESSIBILIDADE
+   ========================================== */
+
+.carrossel-galeria:focus-visible {
+  outline: 3px solid var(--galeria-ocre);
+  outline-offset: 4px;
+}
+
+/* ==========================================
+   RESPONSIVIDADE PARA TABLETS E CELULARES
+   ========================================== */
+
+@media (max-width: 900px) {
+  .galeria-layout {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .coluna-galeria {
+    width: 220px;
+    padding: 18px 12px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -476,8 +489,94 @@ body:has(#conteudoGaleria) > header.cabecalho .botao-menu {
 
   .coluna-galeria {
     width: 100%;
-    min-width: 0;
+    padding: 14px;
+  }
+
+  .coluna-galeria a.link-coluna-galeria {
+    margin: 3px 0;
+    padding: 11px;
   }
 }
 
+@media (max-width: 600px) {
+  .pagina-galeria {
+    padding: 14px;
+  }
 
+  body:has(#conteudoGaleria) > header.cabecalho {
+    gap: 14px;
+    min-height: 150px;
+    padding: 22px 16px;
+  }
+
+  body:has(#conteudoGaleria) > header.cabecalho .logo {
+    width: 68px;
+    height: 68px;
+  }
+
+  body:has(#conteudoGaleria) > header.cabecalho h1 {
+    font-size: clamp(1.5rem, 7vw, 2rem);
+  }
+
+  body:has(#conteudoGaleria) > header.cabecalho p {
+    font-size: 0.85rem;
+  }
+
+  body:has(#conteudoGaleria) > header.cabecalho .botao-menu {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    font-size: 23px;
+  }
+
+  .slide-carrossel {
+    min-height: 320px;
+    padding: 26px 22px;
+  }
+
+  .carrossel-galeria h2 {
+    font-size: 1.8rem;
+  }
+
+  .carrossel-galeria p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .mensagem-galeria {
+    padding: 22px 18px;
+  }
+
+  .lista-artistas,
+  .obras-artista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .cartao-artista {
+    padding: 12px;
+  }
+
+  .perfil-artista {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .lista-artistas,
+  .obras-artista {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-carrossel,
+  .cartao-artista,
+  .coluna-galeria a.link-coluna-galeria {
+    transition: none;
+  }
+
+  .cartao-artista:hover {
+    transform: none;
+  }
+}

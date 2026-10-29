@@ -13,21 +13,25 @@
 
 <body>
   <header class="cabecalho">
-    <img src="imagens/logo.png"
-         alt="Símbolo da RefugiART"
-         class="logo">
+    <img
+      src="imagens/logo.png"
+      alt="Símbolo da RefugiART"
+      class="logo"
+    >
 
     <div class="identidade">
       <h1>RefugiART</h1>
       <p>A arte nos aproxima.</p>
     </div>
 
-    <button class="botao-menu"
-            id="abrirMenu"
-            type="button"
-            aria-label="Abrir menu"
-            aria-controls="menuLateral"
-            aria-expanded="false">
+    <button
+      class="botao-menu"
+      id="abrirMenu"
+      type="button"
+      aria-label="Abrir menu"
+      aria-controls="menuLateral"
+      aria-expanded="false"
+    >
       ☰
     </button>
   </header>
@@ -43,7 +47,9 @@
   <main class="perfil-pagina">
     <section class="perfil-intro">
       <span class="perfil-selo">ESPAÇO DO ARTISTA</span>
+
       <h2>Seu perfil artístico</h2>
+
       <p>
         Apresente sua trajetória, compartilhe suas inspirações
         e mostre à comunidade quem você é através da arte.
@@ -56,35 +62,36 @@
         <p>Preencha os campos abaixo para personalizar seu perfil.</p>
       </div>
 
-      
-<div class="seletor-foto">
-  <input
-    id="foto"
-    type="file"
-    accept="image/*"
-    hidden
-  >
+      <!-- Foto de perfil: toque na moldura para abrir a galeria -->
+      <div class="seletor-foto">
+        <input
+          id="foto"
+          name="foto"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          hidden
+        >
 
-  <button
-    type="button"
-    class="botao-foto"
-    id="escolher-foto"
-    aria-label="Escolher foto de perfil"
-    title="Toque para escolher uma foto"
-  >
-    <img
-      id="profile-photo"
-      class="perfil-foto"
-      src="https://placehold.co/160x160/e8dfca/40543c?text=Arte"
-      alt="Foto de perfil"
-    >
+        <button
+          type="button"
+          class="botao-foto"
+          id="escolher-foto"
+          aria-label="Escolher foto de perfil na galeria"
+          title="Toque para escolher uma foto"
+        >
+          <img
+            id="profile-photo"
+            class="perfil-foto"
+            src="https://placehold.co/160x160/e8dfca/40543c?text=Arte"
+            alt="Prévia da foto de perfil"
+          >
 
-    <span class="foto-editar" aria-hidden="true">📷</span>
-  </button>
+          <span class="foto-editar" aria-hidden="true">📷</span>
+        </button>
 
-  <p>Toque na foto para alterá-la</p>
-</div>
-
+        <p>Toque na foto para alterá-la</p>
+        <small>JPG, PNG, WEBP ou GIF. Máximo de 5 MB.</small>
+      </div>
 
       <form id="profile-form">
         <div class="perfil-campo">
@@ -96,7 +103,8 @@
             maxlength="80"
             placeholder="Como você quer ser conhecido?"
             autocomplete="nickname"
-            required>
+            required
+          >
         </div>
 
         <div class="perfil-campo">
@@ -106,7 +114,8 @@
             name="area"
             type="text"
             maxlength="120"
-            placeholder="Ex.: desenho, pintura, tatuagem">
+            placeholder="Ex.: desenho, pintura, tatuagem"
+          >
         </div>
 
         <div class="perfil-campo">
@@ -115,34 +124,26 @@
             id="bio"
             name="bio"
             maxlength="1000"
-            placeholder="Conte um pouco sobre você, sua arte e suas inspirações."></textarea>
+            placeholder="Conte um pouco sobre você, sua arte e suas inspirações."
+          ></textarea>
+
           <small>Máximo de 1.000 caracteres.</small>
         </div>
 
-        <div class="perfil-campo">
-          <label for="foto">Link da foto</label>
-          <input
-            id="foto"
-            name="foto"
-            type="url"
-            maxlength="1000"
-            placeholder="https://..."
-            inputmode="url">
-          <small>
-            Cole o endereço público de uma imagem disponível na internet.
-          </small>
-        </div>
-
-        <button id="save-button"
-                class="perfil-botao-salvar"
-                type="submit">
+        <button
+          id="save-button"
+          class="perfil-botao-salvar"
+          type="submit"
+        >
           Salvar meu perfil
         </button>
 
-        <p id="status"
-           class="perfil-status"
-           role="status"
-           aria-live="polite">
+        <p
+          id="status"
+          class="perfil-status"
+          role="status"
+          aria-live="polite"
+        >
           Carregando perfil...
         </p>
       </form>
@@ -159,30 +160,34 @@
 
   <div class="fundo-menu" id="fundoMenu"></div>
 
-  <aside class="menu-lateral"
-         id="menuLateral"
-         role="dialog"
-         aria-modal="true"
-         aria-labelledby="tituloMenu"
-         aria-hidden="true"
-         inert>
-
+  <aside
+    class="menu-lateral"
+    id="menuLateral"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tituloMenu"
+    aria-hidden="true"
+    inert
+  >
     <div class="cabecalho-menu">
       <div>
         <h2 id="tituloMenu">RefugiART</h2>
         <p>Explore nossas iniciativas</p>
       </div>
 
-      <button class="botao-fechar"
-              id="fecharMenu"
-              type="button"
-              aria-label="Fechar menu">
+      <button
+        class="botao-fechar"
+        id="fecharMenu"
+        type="button"
+        aria-label="Fechar menu"
+      >
         ×
       </button>
     </div>
 
     <div class="introducao-menu">
       <span>✦</span>
+
       <div>
         <h3>Conheça nosso universo</h3>
         <p>Arte, cultura e transformação social.</p>

@@ -673,3 +673,60 @@ body:has(#conteudoGaleria) > header.cabecalho .botao-menu {
   -webkit-user-select: none;
   user-select: none;
 }
+
+
+/* CORREÇÃO DO LAYOUT DA GALERIA */
+
+.galeria-layout {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.coluna-galeria {
+  flex: 0 0 52px;
+  width: 52px;
+  min-width: 52px;
+  box-sizing: border-box;
+  transition: flex-basis 0.25s ease, width 0.25s ease;
+}
+
+.coluna-galeria.expandida {
+  flex-basis: 190px;
+  width: 190px;
+  min-width: 190px;
+}
+
+.pagina-galeria {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+}
+
+@media (max-width: 700px) {
+  .galeria-layout {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px;
+  }
+
+  .coluna-galeria {
+    flex-basis: 48px;
+    width: 48px;
+    min-width: 48px;
+  }
+
+  .coluna-galeria.expandida {
+    flex-basis: 170px;
+    width: 170px;
+    min-width: 170px;
+  }
+
+  .pagina-galeria {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 6px;
+  }
+}

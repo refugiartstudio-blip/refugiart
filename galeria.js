@@ -366,3 +366,5 @@ document.addEventListener("DOMContentLoaded", function () {
   if (visaoGeral && acervo && salao) {
     mostrarArea("visaoGeral");
   }
+
+});

@@ -730,3 +730,109 @@ body:has(#conteudoGaleria) > header.cabecalho .botao-menu {
     padding: 6px;
   }
 }
+
+
+/* ==========================================
+   CORREÇÃO DEFINITIVA DO MENU LATERAL
+   ========================================== */
+
+/* Layout horizontal: menu à esquerda, conteúdo à direita */
+.galeria-layout {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Menu recolhido: coluna estreita */
+.galeria-layout > .coluna-galeria {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 0 0 52px;
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
+  padding: 12px 5px;
+  overflow: hidden;
+  transition:
+    flex-basis 0.25s ease,
+    width 0.25s ease,
+    max-width 0.25s ease;
+  z-index: 2;
+}
+
+/* Menu expandido */
+.galeria-layout > .coluna-galeria.expandida {
+  flex-basis: 190px;
+  width: 190px;
+  min-width: 190px;
+  max-width: 190px;
+  padding: 14px 10px;
+}
+
+/* Itens sempre empilhados verticalmente */
+.coluna-galeria .conteudo-coluna-galeria {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.coluna-galeria a.link-coluna-galeria {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
+  margin: 4px 0;
+  white-space: nowrap;
+}
+
+/* Recolhido: esconder textos, preservar ícones e seta */
+.coluna-galeria:not(.expandida) .marca-galeria-texto,
+.coluna-galeria:not(.expandida) .titulo-coluna-galeria,
+.coluna-galeria:not(.expandida) .texto-coluna-galeria,
+.coluna-galeria:not(.expandida) .divisor-coluna-galeria {
+  display: none !important;
+}
+
+.coluna-galeria:not(.expandida) a.link-coluna-galeria {
+  justify-content: center;
+  padding: 12px 2px;
+}
+
+/* Conteúdo ocupa todo o espaço restante */
+.galeria-layout > #conteudoGaleria,
+.galeria-layout > .pagina-galeria {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+}
+
+/* Celular */
+@media (max-width: 700px) {
+  .galeria-layout {
+    gap: 8px;
+  }
+
+  .galeria-layout > .coluna-galeria {
+    flex-basis: 48px;
+    width: 48px;
+    min-width: 48px;
+    max-width: 48px;
+  }
+
+  .galeria-layout > .coluna-galeria.expandida {
+    flex-basis: 165px;
+    width: 165px;
+    min-width: 165px;
+    max-width: 165px;
+  }
+}

@@ -353,3 +353,10 @@
   pointer-events: none;
 }
 
+
+/* Esconde a câmera quando houver uma foto selecionada */
+.seletor-foto.tem-foto .foto-editar {
+  display: none !important;
+}
+
+

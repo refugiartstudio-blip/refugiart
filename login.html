@@ -7,19 +7,16 @@
   <title>Entrar ou cadastrar | RefugiART</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body class="pagina-login">
 
   <header class="cabecalho">
     <div class="logo">
       <img src="imagens/logo.png" alt="Logo RefugiART">
     </div>
-
     <div class="identidade">
       <h1>RefugiART</h1>
       <p>A arte nos aproxima.</p>
     </div>
-
     <nav class="navegacao-principal">
       <a href="inicio.html">Início</a>
       <a href="mercado.html">Mercado</a>
@@ -29,18 +26,13 @@
   </header>
 
   <main class="login-container">
-
     <section class="login-apresentacao">
       <span class="login-etiqueta">SEU ESPAÇO CRIATIVO</span>
-
-      <h2>A arte nos aproxima.<br>
-      Faça parte dessa história.</h2>
-
+      <h2>A arte nos aproxima.<br>Faça parte dessa história.</h2>
       <p>
         Entre na RefugiART para conhecer artistas, compartilhar suas
         criações, participar de comunidades e descobrir novas obras.
       </p>
-
       <div class="login-destaque">
         <span>✦</span>
         <div>
@@ -56,65 +48,57 @@
           id="aba-entrar" onclick="mostrarFormulario('entrar')">
           Entrar
         </button>
-
         <button type="button" class="login-aba"
           id="aba-cadastro" onclick="mostrarFormulario('cadastro')">
           Criar conta
         </button>
       </div>
 
-      <form id="form-entrar" class="login-formulario"
-        onsubmit="return demonstrarAviso(event, 'entrar')">
-
+      <form id="form-entrar" class="login-formulario">
         <h2>Boas-vindas!</h2>
         <p class="login-subtitulo">Entre na sua conta RefugiART.</p>
 
         <label for="email-entrar">E-mail</label>
         <input type="email" id="email-entrar"
-          placeholder="seuemail@exemplo.com" required>
+          placeholder="seuemail@exemplo.com" autocomplete="email" required>
 
         <label for="senha-entrar">Senha</label>
         <input type="password" id="senha-entrar"
-          placeholder="Digite sua senha" required>
+          placeholder="Digite sua senha" autocomplete="current-password" required>
 
-        <a href="#" class="login-esqueci"
-          onclick="alert('A recuperação de senha será disponibilizada futuramente.'); return false;">
+        <a href="#" class="login-esqueci" id="link-recuperar">
           Esqueci minha senha
         </a>
 
-        <button type="submit" class="login-botao">
+        <button type="submit" class="login-botao" id="botao-entrar">
           Entrar na minha conta
         </button>
 
-        <p class="login-aviso" id="aviso-entrar" hidden>
-          O acesso real será disponibilizado futuramente.
-        </p>
+        <p class="login-aviso" id="aviso-entrar" role="status" aria-live="polite" hidden></p>
 
         <p class="login-troca">
           Ainda não tem conta?
-          <a href="#" onclick="mostrarFormulario('cadastro'); return false;">
-            Cadastre-se
-          </a>
+          <a href="#" onclick="mostrarFormulario('cadastro'); return false;">Cadastre-se</a>
         </p>
       </form>
 
-      <form id="form-cadastro" class="login-formulario"
-        hidden onsubmit="return demonstrarAviso(event, 'cadastro')">
-
+      <form id="form-cadastro" class="login-formulario" hidden>
         <h2>Crie sua conta</h2>
         <p class="login-subtitulo">Comece a fazer parte da comunidade.</p>
 
         <label for="nome-cadastro">Nome completo ou artístico</label>
         <input type="text" id="nome-cadastro"
-          placeholder="Como deseja ser conhecido?" required>
+          placeholder="Como deseja ser conhecido?"
+          autocomplete="name" maxlength="80" required>
 
         <label for="email-cadastro">E-mail</label>
         <input type="email" id="email-cadastro"
-          placeholder="seuemail@exemplo.com" required>
+          placeholder="seuemail@exemplo.com" autocomplete="email" required>
 
         <label for="senha-cadastro">Crie uma senha</label>
         <input type="password" id="senha-cadastro"
-          placeholder="Crie uma senha" minlength="8" required>
+          placeholder="Mínimo de 8 caracteres"
+          autocomplete="new-password" minlength="8" required>
 
         <label for="tipo-conta">Como deseja participar?</label>
         <select id="tipo-conta" required>
@@ -124,55 +108,167 @@
           <option value="educador">Arte-educador</option>
         </select>
 
-        <button type="submit" class="login-botao">
+        <button type="submit" class="login-botao" id="botao-cadastro">
           Criar minha conta
         </button>
 
-        <p class="login-aviso" id="aviso-cadastro" hidden>
-          O cadastro real será disponibilizado futuramente.
-        </p>
+        <p class="login-aviso" id="aviso-cadastro" role="status" aria-live="polite" hidden></p>
 
         <p class="login-troca">
           Já tem uma conta?
-          <a href="#" onclick="mostrarFormulario('entrar'); return false;">
-            Entre aqui
-          </a>
+          <a href="#" onclick="mostrarFormulario('entrar'); return false;">Entre aqui</a>
         </p>
       </form>
 
-      <p class="login-rodape">
-        RefugiART · Criar é Sentir.
-      </p>
+      <p class="login-rodape">RefugiART · Criar é Sentir.</p>
     </section>
-
   </main>
 
   <footer class="rodape-login">
     RefugiART © 2026 — Criar é Sentir.
   </footer>
 
-  <script>
-    function mostrarFormulario(tipo) {
-      const entrar = tipo === 'entrar';
+  <script type="module">
+    import { createClient } from
+      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-      document.getElementById('form-entrar').hidden = !entrar;
-      document.getElementById('form-cadastro').hidden = entrar;
+    const SUPABASE_URL = 'https://nlqalpiksbqflzxzsgoa.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY =
+      'sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP';
 
-      document.getElementById('aba-entrar').classList.toggle('ativa', entrar);
-      document.getElementById('aba-cadastro').classList.toggle('ativa', !entrar);
-    }
+    const supabase = createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
 
-    function demonstrarAviso(evento, tipo) {
-      evento.preventDefault();
+    const URL_LOGIN =
+      'https://refugiartstudio-blip.github.io/refugiart/login.html';
 
+    function mostrarAviso(tipo, mensagem, erro = false) {
       const aviso = document.getElementById(
         tipo === 'entrar' ? 'aviso-entrar' : 'aviso-cadastro'
       );
-
+      aviso.textContent = mensagem;
       aviso.hidden = false;
-      return false;
+      aviso.style.color = erro ? '#a12626' : '';
     }
-  </script>
 
+    function definirCarregando(botaoId, carregando, textoOriginal) {
+      const botao = document.getElementById(botaoId);
+      botao.disabled = carregando;
+      botao.textContent = carregando ? 'Aguarde...' : textoOriginal;
+    }
+
+    window.mostrarFormulario = function(tipo) {
+      const entrar = tipo === 'entrar';
+      document.getElementById('form-entrar').hidden = !entrar;
+      document.getElementById('form-cadastro').hidden = entrar;
+      document.getElementById('aba-entrar').classList.toggle('ativa', entrar);
+      document.getElementById('aba-cadastro').classList.toggle('ativa', !entrar);
+    };
+
+    document.getElementById('form-cadastro').addEventListener('submit', async (evento) => {
+      evento.preventDefault();
+
+      const nome = document.getElementById('nome-cadastro').value.trim();
+      const email = document.getElementById('email-cadastro').value.trim();
+      const senha = document.getElementById('senha-cadastro').value;
+      const tipoConta = document.getElementById('tipo-conta').value;
+
+      if (!nome || nome.length > 80) {
+        mostrarAviso('cadastro', 'Informe um nome válido.', true);
+        return;
+      }
+
+      definirCarregando('botao-cadastro', true, 'Criar minha conta');
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password: senha,
+          options: {
+            emailRedirectTo: URL_LOGIN,
+            data: {
+              nome,
+              tipo_conta: tipoConta
+            }
+          }
+        });
+
+        if (error) throw error;
+
+        if (data.session) {
+          mostrarAviso('cadastro', 'Conta criada! Você já pode entrar na RefugiART.');
+        } else {
+          mostrarAviso(
+            'cadastro',
+            'Cadastro iniciado! Confira seu e-mail e clique no link de confirmação antes de entrar.'
+          );
+        }
+      } catch (erro) {
+        mostrarAviso('cadastro', erro.message || 'Não foi possível criar sua conta.', true);
+      } finally {
+        definirCarregando('botao-cadastro', false, 'Criar minha conta');
+      }
+    });
+
+    document.getElementById('form-entrar').addEventListener('submit', async (evento) => {
+      evento.preventDefault();
+
+      const email = document.getElementById('email-entrar').value.trim();
+      const senha = document.getElementById('senha-entrar').value;
+
+      definirCarregando('botao-entrar', true, 'Entrar na minha conta');
+
+      try {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password: senha
+        });
+
+        if (error) throw error;
+
+        mostrarAviso('entrar', 'Login realizado! Abrindo Comunidades...');
+
+        window.location.href =
+          'https://refugiartstudio-blip.github.io/refugiart/comunidades.html';
+      } catch (erro) {
+        mostrarAviso(
+          'entrar',
+          erro.message || 'Não foi possível entrar. Confira seus dados.',
+          true
+        );
+      } finally {
+        definirCarregando('botao-entrar', false, 'Entrar na minha conta');
+      }
+    });
+
+    document.getElementById('link-recuperar').addEventListener('click', async (evento) => {
+      evento.preventDefault();
+
+      const email = document.getElementById('email-entrar').value.trim();
+
+      if (!email) {
+        mostrarAviso('entrar', 'Digite seu e-mail no campo acima para recuperar a senha.', true);
+        document.getElementById('email-entrar').focus();
+        return;
+      }
+
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: URL_LOGIN
+        });
+
+        if (error) throw error;
+
+        mostrarAviso(
+          'entrar',
+          'Se esse e-mail estiver cadastrado, você receberá instruções para recuperar a senha.'
+        );
+      } catch (erro) {
+        mostrarAviso('entrar', erro.message || 'Não foi possível solicitar a recuperação.', true);
+      }
+    });
+  </script>
 </body>
 </html>

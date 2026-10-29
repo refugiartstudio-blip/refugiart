@@ -17,7 +17,8 @@ const photoPreview = document.getElementById('profile-photo');
 const botaoEscolherFoto = document.getElementById('escolher-foto');
 const status = document.getElementById('status');
 const saveButton = document.getElementById('save-button');
-const iconeCamera = document.querySelector('.foto-editar');
+const seletorFoto = document.querySelector('.seletor-foto');
+const iconeCamera = seletorFoto?.querySelector('.foto-editar');
 
 // Configurações
 const fotoPadrao =
@@ -39,23 +40,31 @@ let fotoAtualUrl = null;
 
 // Exibe mensagens
 function mostrarStatus(mensagem) {
-  status.textContent = mensagem;
+  if (status) status.textContent = mensagem;
 }
 
-// Controla a câmera decorativa
+// Controla a câmera e a classe do contêiner
 function mostrarCamera(mostrar) {
   if (iconeCamera) {
-    iconeCamera.style.display = mostrar ? '' : 'none';
+    iconeCamera.style.setProperty(
+      'display',
+      mostrar ? 'grid' : 'none',
+      'important'
+    );
+  }
+
+  if (seletorFoto) {
+    seletorFoto.classList.toggle('tem-foto', !mostrar);
   }
 }
 
 // Abre a galeria ao tocar na moldura
-botaoEscolherFoto.addEventListener('click', () => {
-  foto.click();
+botaoEscolherFoto?.addEventListener('click', () => {
+  foto?.click();
 });
 
 // Mostra a imagem escolhida antes de salvar
-foto.addEventListener('change', () => {
+foto?.addEventListener('change', () => {
   const arquivo = foto.files?.[0];
 
   if (!arquivo) return;
@@ -63,8 +72,8 @@ foto.addEventListener('change', () => {
   if (!tiposPermitidos[arquivo.type]) {
     foto.value = '';
     arquivoFoto = null;
-
     mostrarCamera(!fotoAtualUrl);
+
     mostrarStatus(
       'Formato inválido. Escolha JPG, PNG, WEBP ou GIF.'
     );
@@ -74,8 +83,8 @@ foto.addEventListener('change', () => {
   if (arquivo.size > tamanhoMaximo) {
     foto.value = '';
     arquivoFoto = null;
-
     mostrarCamera(!fotoAtualUrl);
+
     mostrarStatus(
       'A imagem ultrapassa 5 MB. Escolha uma imagem menor.'
     );
@@ -91,7 +100,7 @@ foto.addEventListener('change', () => {
   urlPreviaLocal = URL.createObjectURL(arquivo);
   photoPreview.src = urlPreviaLocal;
 
-  // Esconde a câmera imediatamente após escolher a foto
+  // A câmera some assim que a imagem é selecionada.
   mostrarCamera(false);
 
   mostrarStatus(
@@ -100,7 +109,7 @@ foto.addEventListener('change', () => {
 });
 
 // Evita erro visual se uma imagem não carregar
-photoPreview.addEventListener('error', () => {
+photoPreview?.addEventListener('error', () => {
   if (photoPreview.src !== fotoPadrao) {
     photoPreview.src = fotoPadrao;
   }
@@ -153,8 +162,8 @@ async function carregarPerfil() {
     fotoAtualUrl = data?.foto_url || null;
     photoPreview.src = fotoAtualUrl || fotoPadrao;
 
-    // Sem foto salva, mostra a câmera.
-    // Com foto salva, esconde a câmera.
+    // Foto salva: esconde a câmera.
+    // Sem foto salva: mostra a câmera.
     mostrarCamera(!fotoAtualUrl);
 
     mostrarStatus(
@@ -169,7 +178,7 @@ async function carregarPerfil() {
 }
 
 // Salva os dados e envia uma nova foto, se selecionada
-form.addEventListener('submit', async (evento) => {
+form?.addEventListener('submit', async (evento) => {
   evento.preventDefault();
 
   if (!userId) {
@@ -214,7 +223,6 @@ form.addEventListener('submit', async (evento) => {
       fotoUrlSalva = urlPublica.publicUrl;
     }
 
-    // Dados do perfil
     const perfil = {
       id: userId,
       nome_artistico: nome.value.trim(),
@@ -262,4 +270,5 @@ form.addEventListener('submit', async (evento) => {
 });
 
 // Inicia a página
+mostrarCamera(true);
 carregarPerfil();

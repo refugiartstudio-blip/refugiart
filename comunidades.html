@@ -4,641 +4,222 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#243e35">
-  <meta name="description" content="Conheça as comunidades artísticas, iniciativas culturais e projetos educativos da RefugiART.">
-  <title>Comunidades — RefugiART</title>
+  <title>Comunidades | RefugiART</title>
   <link rel="stylesheet" href="style.css">
-
   <style>
-    /* Estilos exclusivos desta página */
-    .pagina-comunidades {
-      width: min(100% - 32px, 1100px);
-      margin: 32px auto 48px;
+    .chat-container {
+      max-width: 850px;
+      margin: 30px auto;
+      padding: 20px;
     }
-
-    .hero-comunidades {
-      position: relative;
-      overflow: hidden;
-      background: var(--verde, #243e35);
-      color: #fff;
-      border-radius: 18px;
-      padding: clamp(28px, 6vw, 58px);
-      margin-bottom: 28px;
+    .chat-box {
+      height: 380px;
+      overflow-y: auto;
+      padding: 15px;
+      background: #fffdf6;
+      border: 1px solid #d8d0bd;
+      border-radius: 12px;
+      margin: 15px 0;
     }
-
-    .hero-comunidades::after {
-      content: "✳";
-      position: absolute;
-      right: 18px;
-      bottom: -65px;
-      font-size: clamp(150px, 30vw, 280px);
-      line-height: 1;
-      color: rgba(255, 255, 255, 0.06);
-      pointer-events: none;
-    }
-
-    .selo-comunidades {
-      display: inline-block;
-      color: #f0cf94;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 2px;
-      margin-bottom: 12px;
-    }
-
-    .hero-comunidades h2 {
-      position: relative;
-      z-index: 1;
-      max-width: 680px;
-      margin: 0 0 16px;
-      font-family: Georgia, serif;
-      font-size: clamp(30px, 6vw, 48px);
-      line-height: 1.12;
-    }
-
-    .hero-comunidades p {
-      position: relative;
-      z-index: 1;
-      max-width: 650px;
-      margin: 0;
-      color: #e4e9e3;
-      font-size: 16px;
-      line-height: 1.8;
-    }
-
-    .secao-comunidades {
-      margin-top: 36px;
-    }
-
-    .titulo-secao-comunidades {
-      color: var(--verde, #243e35);
-      font-family: Georgia, serif;
-      font-size: clamp(24px, 4vw, 32px);
-      margin: 0 0 10px;
-    }
-
-    .texto-secao-comunidades {
-      color: var(--texto-suave, #6c746d);
-      max-width: 720px;
-      margin: 0 0 22px;
-      line-height: 1.8;
-    }
-
-    .grade-comunidades {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .cartao-comunidade {
-      min-width: 0;
-      background: var(--cartao, #fff);
-      border: 1px solid var(--verde-claro, #dce8dc);
-      border-radius: 14px;
-      padding: 24px;
-      box-shadow: 0 4px 14px rgba(36, 62, 53, 0.05);
-    }
-
-    .icone-comunidade {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 54px;
-      height: 54px;
-      margin-bottom: 17px;
-      border-radius: 14px;
-      background: var(--verde-claro, #dce8dc);
-      color: var(--verde, #243e35);
-      font-size: 26px;
-    }
-
-    .cartao-comunidade h3 {
-      color: var(--verde, #243e35);
-      font-size: 19px;
-      margin: 0 0 10px;
-    }
-
-    .cartao-comunidade p {
-      color: var(--texto-suave, #6c746d);
-      font-size: 14px;
-      line-height: 1.8;
-      margin: 0;
-    }
-
-    .faixa-comunidades {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 26px;
-      align-items: center;
-      background: var(--verde-claro, #dce8dc);
-      border-radius: 16px;
-      padding: clamp(22px, 5vw, 38px);
-      margin-top: 38px;
-    }
-
-    .faixa-comunidades h2 {
-      color: var(--verde, #243e35);
-      font-family: Georgia, serif;
-      font-size: clamp(25px, 4vw, 34px);
-      line-height: 1.2;
-      margin: 0 0 12px;
-    }
-
-    .faixa-comunidades p {
-      color: var(--texto, #282b28);
-      line-height: 1.8;
-      margin: 0;
-    }
-
-    .lista-participacao {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      gap: 12px;
-    }
-
-    .lista-participacao li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      color: var(--texto, #282b28);
-      line-height: 1.6;
-    }
-
-    .lista-participacao li span {
-      color: var(--verde, #243e35);
-      font-weight: bold;
-    }
-
-    .chamada-comunidades {
-      text-align: center;
-      background: var(--cartao, #fff);
-      border: 1px solid var(--verde-claro, #dce8dc);
-      border-radius: 16px;
-      padding: clamp(24px, 5vw, 42px);
-      margin-top: 28px;
-    }
-
-    .chamada-comunidades h2 {
-      color: var(--verde, #243e35);
-      font-family: Georgia, serif;
-      font-size: clamp(24px, 4vw, 32px);
-      margin: 0 0 12px;
-    }
-
-    .chamada-comunidades p {
-      max-width: 650px;
-      margin: 0 auto 22px;
-      color: var(--texto-suave, #6c746d);
-      line-height: 1.8;
-    }
-
-    .botoes-comunidades {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .botao-comunidades {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 46px;
-      padding: 12px 20px;
+    .message {
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      background: #f0eadb;
       border-radius: 8px;
-      background: var(--verde, #243e35);
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background 0.2s ease;
+      overflow-wrap: anywhere;
     }
-
-    .botao-comunidades:hover {
-      background: #365b4d;
+    .message small {
+      display: block;
+      color: #666;
+      margin-bottom: 4px;
     }
-
-    .botao-comunidades.secundario {
-      background: var(--destaque, #d6a45d);
-      color: #28251f;
+    .chat-form {
+      display: flex;
+      gap: 8px;
     }
-
-    .botao-comunidades.secundario:hover {
-      background: #c4944e;
+    .chat-form input {
+      flex: 1;
+      min-width: 0;
+      padding: 12px;
     }
-
-    .nota-comunidades {
-      margin-top: 18px;
-      color: var(--texto-suave, #6c746d);
-      font-size: 12px;
-      line-height: 1.7;
+    .chat-form button, .logout-button {
+      padding: 10px 15px;
+      cursor: pointer;
     }
-
-    @media (max-width: 760px) {
-      .grade-comunidades {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .faixa-comunidades {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .pagina-comunidades {
-        width: calc(100% - 20px);
-        margin: 18px auto 32px;
-      }
-
-      .hero-comunidades {
-        border-radius: 13px;
-        padding: 27px 21px;
-      }
-
-      .grade-comunidades {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      .cartao-comunidade {
-        padding: 20px;
-      }
-
-      .secao-comunidades {
-        margin-top: 28px;
-      }
-
-      .faixa-comunidades,
-      .chamada-comunidades {
-        border-radius: 13px;
-      }
-
-      .botoes-comunidades {
-        flex-direction: column;
-      }
-
-      .botao-comunidades {
-        width: 100%;
-        box-sizing: border-box;
-      }
+    #status {
+      color: #555;
+      font-size: 0.9rem;
     }
   </style>
 </head>
-
-<body data-logado="false">
-
-  <!-- Cabeçalho institucional -->
-  <header class="cabecalho">
-    <img
-      src="imagens/logo.png"
-      alt="Símbolo da RefugiART"
-      class="logo">
-
-    <div class="identidade">
-      <h1>RefugiART</h1>
-      <p>A arte nos aproxima.</p>
-    </div>
-
-    <button
-      class="botao-menu"
-      id="abrirMenu"
-      type="button"
-      aria-label="Abrir menu"
-      aria-controls="menuLateral"
-      aria-expanded="false">
-      ☰
+<body>
+  <main class="chat-container">
+    <h1>Comunidades RefugiART</h1>
+    <p>Bem-vindo(a), <strong id="member-name">membro</strong>!</p>
+    <button id="logout-button" class="logout-button" type="button">
+      Sair da conta
     </button>
-  </header>
 
-  <!-- Navegação principal -->
-  <nav class="navegacao-principal">
-    <a href="inicio.html">Início</a>
-    <a href="mercado.html">Mercado</a>
-    <a href="comunidades.html" aria-current="page">Comunidades</a>
-    <a href="galeria.html">Galeria</a>
-    <a href="login.html" id="linkLogin">Login</a>
-  </nav>
+    <h2>Chat global</h2>
+    <p>Converse com outros membros da comunidade artística.</p>
+    <p id="status">Verificando conexão...</p>
 
-  <main class="pagina-comunidades">
+    <div id="chat-box" class="chat-box" aria-live="polite"></div>
 
-    <!-- Apresentação -->
-    <section class="hero-comunidades">
-      <span class="selo-comunidades">ARTE • CULTURA • PARTICIPAÇÃO</span>
-
-      <h2>Onde a arte encontra a comunidade.</h2>
-
-      <p>
-        A RefugiART acredita na arte como espaço de encontro,
-        expressão e transformação. Este é um lugar para valorizar
-        talentos, aproximar pessoas e fortalecer iniciativas
-        artísticas e culturais.
-      </p>
-    </section>
-
-    <!-- Áreas artísticas -->
-    <section class="secao-comunidades">
-      <h2 class="titulo-secao-comunidades">
-        Nosso universo artístico
-      </h2>
-
-      <p class="texto-secao-comunidades">
-        Diferentes linguagens, experiências e formas de criar podem
-        construir uma comunidade cultural mais participativa.
-      </p>
-
-      <div class="grade-comunidades">
-
-        <article class="cartao-comunidade">
-          <div class="icone-comunidade" aria-hidden="true">✎</div>
-          <h3>Desenho e pintura</h3>
-          <p>
-            Um espaço para valorizar estudos, experimentações,
-            técnicas e processos criativos de artistas iniciantes
-            e experientes.
-          </p>
-        </article>
-
-        <article class="cartao-comunidade">
-          <div class="icone-comunidade" aria-hidden="true">▧</div>
-          <h3>Grafite e arte urbana</h3>
-          <p>
-            Expressões visuais que ocupam os espaços, contam
-            histórias e dialogam com a realidade das comunidades.
-          </p>
-        </article>
-
-        <article class="cartao-comunidade">
-          <div class="icone-comunidade" aria-hidden="true">◉</div>
-          <h3>Cultura amazônica</h3>
-          <p>
-            Valorização das identidades, memórias, saberes e
-            manifestações culturais presentes na Amazônia.
-          </p>
-        </article>
-
-        <article class="cartao-comunidade">
-          <div class="icone-comunidade" aria-hidden="true">▤</div>
-          <h3>Educação artística</h3>
-          <p>
-            Oficinas, práticas educativas e experiências que
-            aproximam a arte de estudantes, educadores e moradores.
-          </p>
-        </article>
-
-        <article class="cartao-comunidade">
-          <div class="icone-comunidade" aria-hidden="true">✦</div>
-          <h3>Artistas independentes</h3>
-          <p>
-            Um espaço de valorização da produção autoral e de
-            diferentes trajetórias, técnicas e linguagens artísticas.
-          </p>
-        </article>
-
-        <article class="cartao-comunidade">
-          <div class="icone-comunidade" aria-hidden="true">♡</div>
-          <h3>Ações comunitárias</h3>
-          <p>
-            Iniciativas que utilizam a arte para estimular o diálogo,
-            a colaboração e a participação cultural.
-          </p>
-        </article>
-
-      </div>
-    </section>
-
-    <!-- Projetos -->
-    <section class="faixa-comunidades">
-      <div>
-        <h2>Arte que aproxima pessoas</h2>
-        <p>
-          A comunidade RefugiART também é um convite à construção
-          coletiva. Projetos educativos, oficinas, encontros e
-          exposições podem aproximar artistas e público.
-        </p>
-      </div>
-
-      <ul class="lista-participacao">
-        <li>
-          <span aria-hidden="true">✦</span>
-          Compartilhar experiências e conhecimentos artísticos.
-        </li>
-        <li>
-          <span aria-hidden="true">✦</span>
-          Conhecer iniciativas culturais e educativas.
-        </li>
-        <li>
-          <span aria-hidden="true">✦</span>
-          Valorizar artistas e produções locais.
-        </li>
-        <li>
-          <span aria-hidden="true">✦</span>
-          Participar de futuras atividades e projetos.
-        </li>
-      </ul>
-    </section>
-
-    <!-- Participação -->
-    <section class="chamada-comunidades" id="participar">
-      <h2>Faça parte desse movimento</h2>
-
-      <p>
-        Você é artista, estudante, educador ou alguém que acredita
-        na força da cultura? Conheça os espaços da RefugiART e
-        acompanhe nossas iniciativas.
-      </p>
-
-      <div class="botoes-comunidades">
-        <a class="botao-comunidades" href="login.html">
-          Acessar login
-        </a>
-
-        <a class="botao-comunidades secundario" href="galeria.html">
-          Conhecer a galeria
-        </a>
-      </div>
-
-      <p class="nota-comunidades">
-        O acesso ao login utiliza a página existente do site.
-        A participação em grupos, publicações e interações depende
-        dos recursos que estiverem efetivamente implementados.
-      </p>
-    </section>
-
+    <form id="chat-form" class="chat-form">
+      <input
+        id="message-input"
+        type="text"
+        maxlength="2000"
+        placeholder="Escreva sua mensagem..."
+        autocomplete="off"
+        required
+      >
+      <button id="send-button" type="submit">Enviar</button>
+    </form>
   </main>
 
-  <!-- Rodapé institucional -->
-  <footer>
-    <p>RefugiART © 2026 — Criar é Sentir.</p>
-  </footer>
+  <script type="module">
+    import { createClient } from
+      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-  <!-- Fundo do menu lateral -->
-  <div class="fundo-menu" id="fundoMenu"></div>
+    const SUPABASE_URL = 'https://nlqalpiksbqflzxzsgoa.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP';
 
-  <!-- Menu lateral no padrão do site -->
-  <aside
-    class="menu-lateral"
-    id="menuLateral"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="tituloMenu"
-    aria-hidden="true"
-    inert>
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    <div class="cabecalho-menu">
-      <div>
-        <h2 id="tituloMenu">RefugiART</h2>
-        <p>Explore nossas iniciativas</p>
-      </div>
+    const status = document.getElementById('status');
+    const chatBox = document.getElementById('chat-box');
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const logoutButton = document.getElementById('logout-button');
+    const memberName = document.getElementById('member-name');
 
-      <button
-        class="botao-fechar"
-        id="fecharMenu"
-        type="button"
-        aria-label="Fechar menu">
-        ×
-      </button>
-    </div>
+    let currentUser = null;
+    let channel = null;
 
-    <div class="introducao-menu">
-      <span>✦</span>
-      <div>
-        <h3>Conheça nosso universo</h3>
-        <p>Arte, cultura e transformação social.</p>
-      </div>
-    </div>
+    function showStatus(message) {
+      status.textContent = message;
+    }
 
-    <nav class="opcoes-menu" aria-label="Menu lateral">
+    function addMessage(message) {
+      const item = document.createElement('div');
+      item.className = 'message';
 
-      <a href="revista.html" class="item-menu">
-        <span class="icone-menu">▤</span>
-        <span class="texto-menu">
-          <strong>Revista RefugiART</strong>
-          <small>Publicações e entrevistas</small>
-        </span>
-        <span class="seta-menu">›</span>
-      </a>
+      const author = document.createElement('small');
+      author.textContent = 'Membro ' + message.user_id.slice(0, 6);
 
-      <a href="eventos.html" class="item-menu">
-        <span class="icone-menu">▦</span>
-        <span class="texto-menu">
-          <strong>Eventos</strong>
-          <small>Encontros e programações</small>
-        </span>
-        <span class="seta-menu">›</span>
-      </a>
+      const content = document.createElement('div');
+      content.textContent = message.content;
 
-      <a href="exposicoes.html" class="item-menu">
-        <span class="icone-menu">▧</span>
-        <span class="texto-menu">
-          <strong>Exposições</strong>
-          <small>Mostras e trabalhos artísticos</small>
-        </span>
-        <span class="seta-menu">›</span>
-      </a>
+      const date = document.createElement('small');
+      date.textContent = new Date(message.created_at).toLocaleString('pt-BR');
 
-      <a href="palestras.html" class="item-menu">
-        <span class="icone-menu">◉</span>
-        <span class="texto-menu">
-          <strong>Palestras e encontros</strong>
-          <small>Ideias e experiências</small>
-        </span>
-        <span class="seta-menu">›</span>
-      </a>
+      item.append(author, content, date);
+      chatBox.appendChild(item);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
-      <a href="acoes-sociais.html" class="item-menu">
-        <span class="icone-menu">♡</span>
-        <span class="texto-menu">
-          <strong>Ações sociais</strong>
-          <small>Arte junto à comunidade</small>
-        </span>
-        <span class="seta-menu">›</span>
-      </a>
+    async function loadMessages() {
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('id, user_id, content, created_at')
+        .order('created_at', { ascending: false })
+        .limit(50);
 
-      <a href="projetos-educativos.html" class="item-menu">
-        <span class="icone-menu">✎</span>
-        <span class="texto-menu">
-          <strong>Projetos educativos</strong>
-          <small>Oficinas, cursos e formação</small>
-        </span>
-        <span class="seta-menu">›</span>
-      </a>
-
-      <a href="perfil.html" class="item-menu" id="itemPerfil" hidden>
-        <span class="icone-menu">♙</span>
-        <span class="texto-menu">
-          <strong>Meu perfil</strong>
-          <small>Seu espaço artístico</small>
-        </span>
-        <span class="seta-menu">›</span>
-      </a>
-
-    </nav>
-
-    <div class="rodape-menu">
-      <p>RefugiART — Criar é Sentir.</p>
-    </div>
-  </aside>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const abrirMenu = document.getElementById("abrirMenu");
-      const fecharMenu = document.getElementById("fecharMenu");
-      const menu = document.getElementById("menuLateral");
-      const fundo = document.getElementById("fundoMenu");
-      const itemPerfil = document.getElementById("itemPerfil");
-      const linkLogin = document.getElementById("linkLogin");
-
-      /*
-       * Mantém o comportamento compatível com a estrutura existente.
-       * O estado abaixo não autentica usuários por conta própria.
-       */
-      const estaLogado = document.body.dataset.logado === "true";
-
-      if (itemPerfil) {
-        itemPerfil.hidden = !estaLogado;
-        itemPerfil.style.display = estaLogado ? "" : "none";
+      if (error) {
+        showStatus('Não foi possível carregar as mensagens: ' + error.message);
+        return;
       }
 
-      if (linkLogin && estaLogado) {
-        linkLogin.textContent = "Minha conta";
-        linkLogin.href = "perfil.html";
+      chatBox.replaceChildren();
+      data.reverse().forEach(addMessage);
+      showStatus('Chat conectado. Você pode enviar mensagens.');
+    }
+
+    async function startChat() {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error || !data.session) {
+        window.location.href = 'login.html';
+        return;
       }
 
-      function abrirPainel() {
-        menu.inert = false;
-        menu.setAttribute("aria-hidden", "false");
-        menu.classList.add("menu-aberto");
-        fundo.classList.add("fundo-visivel");
-        document.body.classList.add("menu-bloqueio");
-        abrirMenu.setAttribute("aria-expanded", "true");
-        fecharMenu.focus();
+      currentUser = data.session.user;
+
+      const metadata = currentUser.user_metadata || {};
+      memberName.textContent =
+        metadata.nome || currentUser.email || 'membro';
+
+      await loadMessages();
+
+      channel = supabase
+        .channel('chat-global')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'chat_messages'
+          },
+          (payload) => {
+            if (!document.querySelector(
+              '[data-message-id="' + payload.new.id + '"]'
+            )) {
+              addMessage(payload.new);
+            }
+          }
+        )
+        .subscribe((state) => {
+          if (state === 'SUBSCRIBED') {
+            showStatus('Chat conectado em tempo real.');
+          } else if (state === 'CHANNEL_ERROR') {
+            showStatus('Erro na conexão em tempo real. Confira o Supabase.');
+          }
+        });
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const content = input.value.trim();
+      if (!content || !currentUser) return;
+
+      sendButton.disabled = true;
+
+      const { error } = await supabase
+        .from('chat_messages')
+        .insert({
+          user_id: currentUser.id,
+          content
+        });
+
+      sendButton.disabled = false;
+
+      if (error) {
+        showStatus('Não foi possível enviar: ' + error.message);
+        return;
       }
 
-      function fecharPainel() {
-        menu.classList.remove("menu-aberto");
-        fundo.classList.remove("fundo-visivel");
-        document.body.classList.remove("menu-bloqueio");
-        menu.setAttribute("aria-hidden", "true");
-        menu.inert = true;
-        abrirMenu.setAttribute("aria-expanded", "false");
-        abrirMenu.focus();
-      }
-
-      abrirMenu.addEventListener("click", abrirPainel);
-      fecharMenu.addEventListener("click", fecharPainel);
-      fundo.addEventListener("click", fecharPainel);
-
-      document.addEventListener("keydown", function (evento) {
-        if (
-          evento.key === "Escape" &&
-          menu.classList.contains("menu-aberto")
-        ) {
-          fecharPainel();
-        }
-      });
+      input.value = '';
+      input.focus();
     });
-  </script>
 
+    logoutButton.addEventListener('click', async () => {
+      logoutButton.disabled = true;
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        showStatus('Erro ao sair: ' + error.message);
+        logoutButton.disabled = false;
+        return;
+      }
+
+      window.location.href = 'login.html';
+    });
+
+    startChat();
+  </script>
 </body>
 </html>

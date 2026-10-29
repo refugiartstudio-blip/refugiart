@@ -6,11 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#243e35">
   <title>Galeria | RefugiART</title>
+
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="galeria.css">
 </head>
 
 <body>
 
+  <!-- CABEÇALHO ORIGINAL -->
   <header class="cabecalho">
     <img src="imagens/logo.png"
          alt="Símbolo da RefugiART"
@@ -23,6 +26,7 @@
 
     <button class="botao-menu"
             id="abrirMenu"
+            type="button"
             aria-label="Abrir menu"
             aria-controls="menuLateral"
             aria-expanded="false">
@@ -30,6 +34,7 @@
     </button>
   </header>
 
+  <!-- NAVEGAÇÃO ORIGINAL -->
   <nav class="navegacao-principal">
     <a href="inicio.html">Início</a>
     <a href="mercado.html">Mercado</a>
@@ -38,55 +43,232 @@
     <a href="login.html">Login</a>
   </nav>
 
-  <main class="pagina-galeria">
+  <!-- ESTRUTURA DA GALERIA -->
+  <div class="galeria-layout">
 
-    <section class="apresentacao-galeria">
-      <span class="etiqueta-galeria">ARTE • CULTURA • EDUCAÇÃO</span>
+    <!-- MENU LATERAL -->
+    <aside class="coluna-galeria" id="colunaGaleria">
 
-      <h2>Galeria RefugiART</h2>
-
-      <p>
-        A arte vai além da criação individual: ela conecta pessoas,
-        preserva memórias, estimula o pensamento e transforma
-        realidades.
-      </p>
-
-      <p>
-        Conheça as iniciativas, publicações e experiências culturais
-        que dão vida à RefugiART.
-      </p>
-
-      <button class="botao-explorar" id="explorarMenu">
-        <span>☷</span> Explorar a RefugiART
+      <button
+        type="button"
+        class="seta-coluna-galeria"
+        id="alternarColunaGaleria"
+        aria-label="Expandir menu da galeria"
+        aria-controls="navegacaoGaleria"
+        aria-expanded="false">
+        <span id="iconeSetaGaleria">➜</span>
       </button>
-    </section>
 
-    <section class="mensagem-galeria">
-      <h2>Arte que aproxima pessoas</h2>
-      <p>
-        Publicações, encontros, exposições e ações educativas:
-        diferentes caminhos para compartilhar conhecimento,
-        valorizar artistas e fortalecer a cultura.
-      </p>
-    </section>
+      <div class="conteudo-coluna-galeria" id="navegacaoGaleria">
 
-  </main>
+        <div class="marca-coluna-galeria">
+          <span class="marca-galeria-simbolo">R</span>
+          <span class="marca-galeria-texto">Explorar</span>
+        </div>
+
+        <p class="titulo-coluna-galeria">GALERIA</p>
+
+        <a href="#visaoGeral"
+           class="link-coluna-galeria ativo"
+           data-tela-galeria="visaoGeral"
+           title="Visão geral">
+          <span class="icone-coluna-galeria">⌂</span>
+          <span class="texto-coluna-galeria">Visão geral</span>
+        </a>
+
+        <a href="#acervo"
+           class="link-coluna-galeria"
+           data-tela-galeria="acervo"
+           title="Acervo">
+          <span class="icone-coluna-galeria">▤</span>
+          <span class="texto-coluna-galeria">Acervo</span>
+        </a>
+
+        <a href="#salao"
+           class="link-coluna-galeria"
+           data-tela-galeria="salao"
+           title="Salão">
+          <span class="icone-coluna-galeria">▧</span>
+          <span class="texto-coluna-galeria">Salão</span>
+        </a>
+
+        <div class="divisor-coluna-galeria"></div>
+
+        <p class="titulo-coluna-galeria">REFUGIART</p>
+
+        <a href="atelie.html" class="link-coluna-galeria" title="Ateliê">
+          <span class="icone-coluna-galeria">✎</span>
+          <span class="texto-coluna-galeria">Ateliê</span>
+        </a>
+
+        <a href="revista.html" class="link-coluna-galeria" title="Revista">
+          <span class="icone-coluna-galeria">▥</span>
+          <span class="texto-coluna-galeria">Revista</span>
+        </a>
+
+        <a href="comunidades.html"
+           class="link-coluna-galeria"
+           title="Comunidades">
+          <span class="icone-coluna-galeria">♧</span>
+          <span class="texto-coluna-galeria">Comunidades</span>
+        </a>
+
+        <a href="mercado.html" class="link-coluna-galeria" title="Mercado">
+          <span class="icone-coluna-galeria">◇</span>
+          <span class="texto-coluna-galeria">Mercado</span>
+        </a>
+
+      </div>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="pagina-galeria" id="conteudoGaleria">
+
+   
+<!-- CARROSSEL: PERMANECE VISÍVEL NA GALERIA -->
+<section
+  class="apresentacao-galeria carrossel-galeria"
+  id="apresentacaoGaleria"
+  aria-label="Destaques da Galeria RefugiART">
+
+  <div class="trilho-carrossel" id="trilhoCarrossel">
+
+    <article class="slide-carrossel ativo" aria-hidden="false">
+      <div class="conteudo-slide">
+        <span class="etiqueta-galeria">ARTE • CULTURA • EDUCAÇÃO</span>
+        <h2>Galeria RefugiART</h2>
+        <p>
+          Um espaço dedicado à valorização das artes visuais,
+          à difusão cultural e ao encontro entre artistas e comunidade.
+          Por meio de exposições, iniciativas educativas e ações culturais,
+          buscamos ampliar o acesso à arte.
+        </p>
+      </div>
+    </article>
+
+    <article class="slide-carrossel" aria-hidden="true">
+      <div class="conteudo-slide">
+        <span class="etiqueta-galeria">SALÃO REFUGIART</span>
+        <h2>Novos olhares, novas exposições</h2>
+        <p>
+          Um espaço dedicado a apresentar diferentes expressões artísticas
+          e valorizar a diversidade de olhares sobre o mundo.
+        </p>
+      </div>
+    </article>
+
+    <article class="slide-carrossel" aria-hidden="true">
+      <div class="conteudo-slide">
+        <span class="etiqueta-galeria">CULTURA EM MOVIMENTO</span>
+        <h2>Arte que cria conexões</h2>
+        <p>
+          Notícias, registros de eventos, iniciativas educativas
+          e outras ações da trajetória RefugiART.
+        </p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- CONTEÚDO QUE MUDA ABAIXO DO CARROSSEL -->
+<section class="mensagem-galeria" id="visaoGeral">
+  <span class="etiqueta-galeria">NOSSA PROPOSTA</span>
+  <h2>Arte que aproxima pessoas</h2>
+  <p>
+    A Galeria RefugiART é um espaço de encontro entre artistas,
+    obras e comunidade. Aqui, a produção artística ganha visibilidade,
+    a memória cultural é valorizada e novas experiências estéticas
+    podem ser descobertas.
+  </p>
+</section>
+
+<!-- ACERVO -->
+<section id="acervo" class="area-acervo" hidden>
+
+  <header class="cabecalho-acervo">
+    <span class="etiqueta-galeria">NOSSO ACERVO</span>
+    
+  </header>
+
+  <!-- Cartões dos artistas -->
+  <div id="listaArtistas" class="lista-artistas"></div>
+
+  <!-- Perfil individual do artista -->
+  <section id="perfilArtista" class="perfil-artista" hidden>
+    <button id="fecharPerfilArtista" type="button">
+      ← Voltar ao acervo
+    </button>
+
+    <div id="conteudoPerfilArtista"></div>
+  </section>
+
+</section>
+>
+
+<!-- SALÃO -->
+<section id="salao" class="area-salao" hidden>
+  <section class="mensagem-galeria secao-salao">
+    <span class="etiqueta-galeria">ESPAÇO EXPOSITIVO</span>
+    <h2>Salão RefugiART</h2>
+    <p>
+      Conheça as exposições e obras em destaque na Galeria.
+    </p>
+  </section>
+
+  <div id="listaObras" class="lista-obras"></div>
+</section>
+
+
+      <!-- TELA 3: SALÃO ATUAL -->
+      <section
+        class="tela-galeria"
+        id="salao"
+        data-conteudo-galeria="salao"
+        aria-label="Exposição atual do Salão"
+        hidden>
+
+        <section class="mensagem-galeria secao-salao">
+          <span class="etiqueta-galeria">ESPAÇO EXPOSITIVO</span>
+          <h2>Salão RefugiART</h2>
+
+          <p>
+            Conheça a exposição em destaque na Galeria RefugiART.
+            Este espaço apresentará as obras, os artistas participantes
+            e as informações de cada mostra em cartaz.
+          </p>
+
+          <p>
+            Quando uma nova exposição começar, o conteúdo desta área
+            poderá ser atualizado para apresentar a nova mostra.
+          </p>
+        </section>
+
+        <div class="lista-obras" id="listaObras">
+          <!-- As obras da exposição atual serão adicionadas nesta área. -->
+        </div>
+
+      </section>
+
+    </main>
+  </div>
 
   <footer>
     <p>RefugiART © 2026 — Criar é Sentir.</p>
   </footer>
 
-  <!-- Fundo escurecido -->
+  <!-- FUNDO DO MENU INSTITUCIONAL -->
   <div class="fundo-menu" id="fundoMenu"></div>
 
-  <!-- Menu lateral direito -->
-  <aside class="menu-lateral"
-         id="menuLateral"
-         role="dialog"
-         aria-modal="true"
-         aria-labelledby="tituloMenu"
-         aria-hidden="true"
-         inert>
+  <!-- MENU INSTITUCIONAL ORIGINAL -->
+  <aside
+    class="menu-lateral"
+    id="menuLateral"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tituloMenu"
+    aria-hidden="true"
+    inert>
 
     <div class="cabecalho-menu">
       <div>
@@ -94,9 +276,11 @@
         <p>Explore nossas iniciativas</p>
       </div>
 
-      <button class="botao-fechar"
-              id="fecharMenu"
-              aria-label="Fechar menu">
+      <button
+        class="botao-fechar"
+        id="fecharMenu"
+        type="button"
+        aria-label="Fechar menu">
         ×
       </button>
     </div>
@@ -173,47 +357,8 @@
 
   </aside>
 
-  <script>
-    const abrirMenu = document.getElementById("abrirMenu");
-    const explorarMenu = document.getElementById("explorarMenu");
-    const fecharMenu = document.getElementById("fecharMenu");
-    const menuLateral = document.getElementById("menuLateral");
-    const fundoMenu = document.getElementById("fundoMenu");
-
-    function abrirPainel() {
-      menuLateral.inert = false;
-      menuLateral.setAttribute("aria-hidden", "false");
-      menuLateral.classList.add("menu-aberto");
-      fundoMenu.classList.add("fundo-visivel");
-      document.body.classList.add("menu-bloqueio");
-
-      abrirMenu.setAttribute("aria-expanded", "true");
-      fecharMenu.focus();
-    }
-
-    function fecharPainel() {
-      menuLateral.classList.remove("menu-aberto");
-      fundoMenu.classList.remove("fundo-visivel");
-      document.body.classList.remove("menu-bloqueio");
-
-      abrirMenu.setAttribute("aria-expanded", "false");
-      menuLateral.setAttribute("aria-hidden", "true");
-      menuLateral.inert = true;
-      abrirMenu.focus();
-    }
-
-    abrirMenu.addEventListener("click", abrirPainel);
-    explorarMenu.addEventListener("click", abrirPainel);
-    fecharMenu.addEventListener("click", fecharPainel);
-    fundoMenu.addEventListener("click", fecharPainel);
-
-    document.addEventListener("keydown", function(evento) {
-      if (evento.key === "Escape" &&
-          menuLateral.classList.contains("menu-aberto")) {
-        fecharPainel();
-      }
-    });
-  </script>
+  <script src="script.js"></script>
+  <script src="galeria.js"></script>
 
 </body>
 </html>

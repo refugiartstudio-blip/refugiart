@@ -5,114 +5,304 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#243e35">
+  <meta name="description" content="Descubra artistas, compartilhe suas obras e encontre inspiração na comunidade RefugiART.">
   <title>Ateliê | RefugiART</title>
+
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="atelie.css">
 </head>
-<body>
-  <header class="cabecalho">
-    <img src="imagens/logo.png" alt="RefugiART" class="logo">
-    <div class="identidade">
-      <h1>Ateliê</h1>
-      <p>Onde a arte encontra pessoas.</p>
+
+<body class="pagina-atelie">
+
+  <!-- Cabeçalho -->
+  <header class="cabecalho atelie-cabecalho">
+    <a href="index.html" class="marca-atelie" aria-label="RefugiART — Início">
+      <img src="imagens/logo.png" alt="" class="logo">
+      <span class="identidade">
+        <strong>RefugiART</strong>
+        <small>A arte nos aproxima.</small>
+      </span>
+    </a>
+
+    <form class="busca-atelie" role="search" id="form-busca-atelie">
+      <span aria-hidden="true">⌕</span>
+      <input
+        type="search"
+        id="busca-atelie"
+        placeholder="Buscar artistas, obras e inspirações..."
+        aria-label="Buscar no Ateliê"
+      >
+    </form>
+
+    <div class="acoes-cabecalho">
+      <a href="comunidades.html" class="atalho-cabecalho" aria-label="Comunidades" title="Comunidades">♧</a>
+      <a href="perfil.html" class="avatar-cabecalho" aria-label="Meu perfil">♙</a>
     </div>
-    <a class="icone-topo" href="perfil.html" aria-label="Meu perfil">♙</a>
   </header>
 
-  <nav class="navegacao-principal">
+  <nav class="navegacao-principal atelie-nav" aria-label="Navegação principal">
     <a href="index.html">Início</a>
     <a href="atelie.html" aria-current="page">Ateliê</a>
+    <a href="galeria.html">Galeria</a>
     <a href="mercado.html">Mercado</a>
     <a href="comunidades.html">Comunidades</a>
-    <a href="perfil.html">Meu perfil</a>
+    <a href="revista.html">Revista</a>
   </nav>
 
-  <main class="atelie-container">
-    <section class="atelie-boas-vindas">
-      <span class="atelie-etiqueta">COMUNIDADE CRIATIVA</span>
-      <h2>Um mundo de artistas.</h2>
-      <p>Compartilhe seu processo, descubra novos talentos e encontre inspiração.</p>
-      <a href="#nova-publicacao" class="botao-publicar">＋ Compartilhar uma obra</a>
-    </section>
+  <main class="atelie-layout">
 
-    <section class="atalhos-artistas">
-      <div>
-        <h2>Explore o Ateliê</h2>
-        <p>Conheça diferentes expressões artísticas.</p>
+    <!-- Coluna esquerda -->
+    <aside class="painel-lateral painel-esquerdo">
+      <a href="index.html" class="voltar-inicio">
+        <span aria-hidden="true">←</span> Voltar ao início
+      </a>
+
+      <div class="boas-vindas-lateral">
+        <span class="mini-etiqueta">SEU ESPAÇO CRIATIVO</span>
+        <h2>Olá, artista.</h2>
+        <p>Inspire-se, compartilhe e encontre pessoas que também vivem a arte.</p>
       </div>
-      <a href="galeria.html">Ver galeria →</a>
-    </section>
 
-    <section class="categorias-atelie" aria-label="Áreas artísticas">
-      <a href="#feed" data-categoria="Todas">✦ Todos</a>
-      <a href="#feed" data-categoria="Desenho">✏️ Desenho</a>
-      <a href="#feed" data-categoria="Pintura">🎨 Pintura</a>
-      <a href="#feed" data-categoria="Fotografia">📷 Fotografia</a>
-      <a href="#feed" data-categoria="Outros">✳ Outras artes</a>
-    </section>
+      <div class="menu-atelie">
+        <h3>Explore</h3>
 
-    <section class="criar-obra" id="nova-publicacao">
-      <h2>O que você está criando?</h2>
-      <p>Mostre seu trabalho à comunidade RefugiART.</p>
+        <a href="#feed" class="link-lateral ativo" data-categoria="Todas">
+          <span>✦</span> Todas as obras
+        </a>
+        <a href="#feed" class="link-lateral" data-categoria="Desenho">
+          <span>✎</span> Desenho
+        </a>
+        <a href="#feed" class="link-lateral" data-categoria="Pintura">
+          <span>▧</span> Pintura
+        </a>
+        <a href="#feed" class="link-lateral" data-categoria="Fotografia">
+          <span>▣</span> Fotografia
+        </a>
+        <a href="#feed" class="link-lateral" data-categoria="Escultura">
+          <span>◈</span> Escultura
+        </a>
+        <a href="#feed" class="link-lateral" data-categoria="Tatuagem">
+          <span>✳</span> Tatuagem
+        </a>
+        <a href="#feed" class="link-lateral" data-categoria="Outros">
+          <span>＋</span> Outras artes
+        </a>
+      </div>
 
-      <form id="form-obra">
-        <label for="imagem-obra">Imagem da obra</label>
-        <input id="imagem-obra" type="file"
-          accept="image/jpeg,image/png,image/webp" required>
+      <div class="convite-lateral">
+        <span class="convite-simbolo">✺</span>
+        <h3>A arte aproxima.</h3>
+        <p>Cada obra carrega um olhar único sobre o mundo.</p>
+        <a href="#nova-publicacao">Compartilhe o seu →</a>
+      </div>
 
-        <img id="previa-obra" alt="Prévia da obra" hidden>
+      <a href="perfil.html" class="link-meu-perfil">
+        <span class="icone-perfil-lateral">♙</span>
+        <span>
+          <strong>Meu perfil artístico</strong>
+          <small>Editar minha identidade</small>
+        </span>
+        <span class="seta-lateral">›</span>
+      </a>
+    </aside>
 
-        <label for="legenda-obra">Legenda</label>
-        <textarea id="legenda-obra" maxlength="1500"
-          placeholder="Conte a história por trás da sua obra..."
-          rows="4"></textarea>
+    <!-- Coluna central -->
+    <div class="conteudo-atelie">
 
-        <label for="categoria-obra">Categoria artística</label>
-        <select id="categoria-obra" required>
-          <option value="Desenho">Desenho</option>
-          <option value="Pintura">Pintura</option>
-          <option value="Fotografia">Fotografia</option>
-          <option value="Escultura">Escultura</option>
-          <option value="Tatuagem">Tatuagem</option>
-          <option value="Outros">Outras artes</option>
-        </select>
-
-        <button type="submit" id="botao-enviar-obra">
-          Publicar no Ateliê
-        </button>
-        <p id="status-atelie" role="status" aria-live="polite"></p>
-      </form>
-    </section>
-
-    <section id="feed">
-      <div class="titulo-feed">
-        <div>
-          <h2>Obras da comunidade</h2>
-          <p>Inspiração compartilhada por artistas.</p>
+      <section class="banner-editorial">
+        <div class="banner-texto">
+          <span class="mini-etiqueta">REFUGIART · COMUNIDADE CRIATIVA</span>
+          <h1>Um lugar para<br> a arte <em>florescer.</em></h1>
+          <p>
+            Descubra novos olhares, conheça artistas e compartilhe
+            as histórias que suas obras têm para contar.
+          </p>
+          <a href="#nova-publicacao" class="botao-banner">
+            <span>＋</span> Compartilhar uma obra
+          </a>
         </div>
-        <button type="button" id="atualizar-feed" class="botao-atualizar">
-          ↻ Atualizar
-        </button>
-      </div>
 
-      <div id="lista-obras" aria-live="polite">
-        <p class="mensagem-feed">Carregando publicações...</p>
+        <div class="banner-ilustracao" aria-hidden="true">
+          <div class="banner-circulo circulo-grande"></div>
+          <div class="banner-circulo circulo-pequeno"></div>
+          <div class="banner-folha folha-um"></div>
+          <div class="banner-folha folha-dois"></div>
+          <div class="banner-folha folha-tres"></div>
+          <span class="banner-estrela">✳</span>
+          <span class="banner-assinatura">arte em movimento</span>
+        </div>
+      </section>
+
+      <!-- Atalhos de descoberta -->
+      <section class="descoberta-atelie">
+        <div>
+          <span class="mini-etiqueta">DESCUBRA</span>
+          <h2>O universo dos artistas</h2>
+          <p>Uma comunidade feita de diferentes expressões.</p>
+        </div>
+        <a href="galeria.html" class="link-galeria">Explorar galeria <span>↗</span></a>
+      </section>
+
+      <section class="categorias-atelie" aria-label="Filtrar por expressão artística">
+        <button type="button" class="categoria-chip selecionada" data-categoria="Todas">Todas</button>
+        <button type="button" class="categoria-chip" data-categoria="Desenho">Desenho</button>
+        <button type="button" class="categoria-chip" data-categoria="Pintura">Pintura</button>
+        <button type="button" class="categoria-chip" data-categoria="Fotografia">Fotografia</button>
+        <button type="button" class="categoria-chip" data-categoria="Escultura">Escultura</button>
+        <button type="button" class="categoria-chip" data-categoria="Tatuagem">Tatuagem</button>
+        <button type="button" class="categoria-chip" data-categoria="Outros">Outras artes</button>
+      </section>
+
+      <!-- Formulário de publicação -->
+      <section class="criar-obra" id="nova-publicacao">
+        <div class="criar-obra-topo">
+          <div class="mini-avatar-criar">✎</div>
+          <div>
+            <h2>Compartilhe seu processo</h2>
+            <p>Que obra você gostaria de mostrar ao mundo?</p>
+          </div>
+        </div>
+
+        <form id="form-obra">
+          <label for="imagem-obra" class="seletor-imagem-obra">
+            <span class="simbolo-upload">＋</span>
+            <strong>Adicionar imagem da obra</strong>
+            <small>JPG, PNG ou WEBP</small>
+          </label>
+
+          <input
+            id="imagem-obra"
+            name="imagem-obra"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            required
+          >
+
+          <img id="previa-obra" class="previa-obra" alt="Prévia da obra selecionada" hidden>
+
+          <label for="legenda-obra">A história por trás da obra</label>
+          <textarea
+            id="legenda-obra"
+            name="legenda-obra"
+            maxlength="1500"
+            placeholder="Fale sobre sua inspiração, seu processo ou sua ideia..."
+            rows="3"
+          ></textarea>
+
+          <div class="linha-categoria">
+            <label for="categoria-obra">Expressão artística</label>
+            <select id="categoria-obra" name="categoria-obra" required>
+              <option value="Desenho">Desenho</option>
+              <option value="Pintura">Pintura</option>
+              <option value="Fotografia">Fotografia</option>
+              <option value="Escultura">Escultura</option>
+              <option value="Tatuagem">Tatuagem</option>
+              <option value="Outros">Outras artes</option>
+            </select>
+          </div>
+
+          <div class="rodape-formulario">
+            <span class="nota-publicacao">✦ Sua criatividade merece espaço.</span>
+            <button type="submit" id="botao-enviar-obra" class="botao-publicar">
+              Publicar obra <span>↗</span>
+            </button>
+          </div>
+
+          <p id="status-atelie" class="status-atelie" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <!-- Feed vertical -->
+      <section class="feed-atelie" id="feed">
+        <div class="titulo-feed">
+          <div>
+            <span class="mini-etiqueta">JANELA CRIATIVA</span>
+            <h2>Obras da comunidade</h2>
+            <p>Ideias, processos e expressões de artistas.</p>
+          </div>
+
+          <button type="button" id="atualizar-feed" class="botao-atualizar" aria-label="Atualizar publicações">
+            ↻ <span>Atualizar</span>
+          </button>
+        </div>
+
+        <div id="lista-obras" aria-live="polite">
+          <p class="mensagem-feed">Carregando publicações...</p>
+        </div>
+      </section>
+
+      <div class="frase-final-atelie">
+        <span>✳</span>
+        <p>Cada artista enxerga o mundo de um jeito.</p>
+        <span>✳</span>
       </div>
-    </section>
+    </div>
+
+    <!-- Coluna direita -->
+    <aside class="painel-lateral painel-direito">
+
+      <section class="cartao-publicar-lateral">
+        <span class="mini-etiqueta">SEU PRÓXIMO PASSO</span>
+        <h2>Mostre ao mundo o que você cria.</h2>
+        <p>Uma obra pode inspirar alguém que você ainda nem conhece.</p>
+        <a href="#nova-publicacao" class="botao-lateral-publicar">Publicar minha obra <span>↗</span></a>
+      </section>
+
+      <section class="artistas-em-alta">
+        <div class="titulo-lateral">
+          <div>
+            <span class="mini-etiqueta">COMUNIDADE</span>
+            <h2>Artistas em destaque</h2>
+          </div>
+          <span class="icone-destaque">✦</span>
+        </div>
+
+        <div id="lista-artistas-destaque">
+          <p class="texto-artistas-vazio">
+            Em breve, você poderá descobrir artistas da comunidade por aqui.
+          </p>
+        </div>
+
+        <a href="galeria.html" class="link-ver-artistas">Descobrir artistas <span>→</span></a>
+      </section>
+
+      <section class="citacao-atelie">
+        <span class="aspas">“</span>
+        <blockquote>
+          A arte torna visível aquilo que nem sempre conseguimos dizer.
+        </blockquote>
+        <div class="linha-citacao"></div>
+        <p>UM ESPAÇO PARA A EXPRESSÃO</p>
+      </section>
+
+      <section class="sobre-atelie">
+        <span class="mini-etiqueta">SOBRE ESTE ESPAÇO</span>
+        <h2>Arte feita por pessoas.</h2>
+        <p>
+          O Ateliê conecta diferentes trajetórias, técnicas e ideias
+          em uma comunidade aberta à criatividade.
+        </p>
+        <a href="index.html">Conheça a RefugiART →</a>
+      </section>
+
+    </aside>
   </main>
 
+  <!-- Navegação inferior para celulares -->
   <nav class="navegacao-inferior" aria-label="Navegação rápida">
     <a href="index.html"><span>⌂</span>Início</a>
     <a href="atelie.html" aria-current="page"><span>▦</span>Ateliê</a>
-    <a href="#nova-publicacao"><span>＋</span>Publicar</a>
+    <a href="#nova-publicacao"><span class="icone-mais">＋</span>Publicar</a>
     <a href="comunidades.html"><span>♧</span>Comunidade</a>
     <a href="perfil.html"><span>♙</span>Perfil</a>
   </nav>
 
-  <footer>
+  <footer class="rodape-atelie">
     <p>RefugiART © 2026 — Criar é Sentir.</p>
+    <a href="index.html">Voltar ao início ↑</a>
   </footer>
 
+  <script src="script.js"></script>
   <script type="module" src="atelie.js"></script>
 </body>
 </html>

@@ -1,396 +1,1371 @@
 
-.atelie-container {
-  width: min(100% - 28px, 760px);
-  margin: 24px auto 90px;
+/* =========================================================
+   REFUGIART — ATELIÊ
+   Identidade visual editorial, responsiva e mobile-first
+   ========================================================= */
+
+:root {
+  --atelie-fundo: #f4f1e9;
+  --atelie-verde: #243e35;
+  --atelie-verde-claro: #dce8dc;
+  --atelie-ocre: #d6a45d;
+  --atelie-branco: #fffefa;
+  --atelie-texto: #28342e;
+  --atelie-texto-suave: #777d75;
+  --atelie-borda: #e4e0d6;
+  --atelie-sombra: 0 8px 28px rgba(36, 62, 53, 0.07);
+  --atelie-raio: 18px;
 }
 
-.atelie-boas-vindas {
-  padding: 28px 22px;
-  border-radius: 18px;
-  background: var(--verde, #243e35);
-  color: white;
-}
+/* ---------- Base ---------- */
 
-.atelie-etiqueta {
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: #e5c38d;
-  font-weight: bold;
-}
-
-.atelie-boas-vindas h2 {
-  margin: 12px 0 6px;
-  font-size: clamp(27px, 6vw, 38px);
-  line-height: 1.15;
-}
-
-.atelie-boas-vindas p {
-  color: #e4e9e3;
-}
-
-.botao-publicar {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 12px 16px;
-  border-radius: 9px;
-  background: #d6a45d;
-  color: #243e35;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.atalhos-artistas {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 26px 0 14px;
-}
-
-.atalhos-artistas h2,
-.titulo-feed h2 {
+.pagina-atelie {
   margin: 0;
-  color: var(--verde, #243e35);
-  font-size: 21px;
+  min-height: 100vh;
+  background: var(--atelie-fundo);
+  color: var(--atelie-texto);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
-.atalhos-artistas p,
-.titulo-feed p {
-  margin: 3px 0;
-  color: var(--texto-suave, #6c746d);
-  font-size: 13px;
+.pagina-atelie *,
+.pagina-atelie *::before,
+.pagina-atelie *::after {
+  box-sizing: border-box;
 }
 
-.atalhos-artistas > a {
-  color: var(--verde, #243e35);
-  font-weight: bold;
-  text-decoration: none;
-  white-space: nowrap;
-  font-size: 13px;
+.pagina-atelie img {
+  max-width: 100%;
 }
 
-.categorias-atelie {
-  display: flex;
-  gap: 9px;
-  overflow-x: auto;
-  padding: 5px 0 18px;
-  scrollbar-width: thin;
-}
-
-.categorias-atelie a {
-  flex-shrink: 0;
-  padding: 9px 13px;
-  border-radius: 24px;
-  border: 1px solid #ded9cc;
-  background: white;
-  color: #243e35;
-  text-decoration: none;
-  font-size: 13px;
-}
-
-.categorias-atelie a.ativa {
-  background: #243e35;
-  color: white;
-}
-
-.criar-obra {
-  padding: 20px;
-  margin: 10px 0 30px;
-  border: 1px solid #e3ded2;
-  border-radius: 15px;
-  background: white;
-}
-
-.criar-obra h2 {
-  color: #243e35;
-  margin: 0;
-  font-size: 20px;
-}
-
-.criar-obra > p {
-  color: #6c746d;
-  font-size: 14px;
-}
-
-#form-obra {
-  display: grid;
-  gap: 10px;
-}
-
-#form-obra label {
-  margin-top: 6px;
-  color: #243e35;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-#form-obra input,
-#form-obra textarea,
-#form-obra select {
-  width: 100%;
-  min-width: 0;
-  padding: 12px;
-  border: 1px solid #d8d4c9;
-  border-radius: 9px;
-  background: #fffdf8;
-  color: #282b28;
+.pagina-atelie button,
+.pagina-atelie input,
+.pagina-atelie textarea,
+.pagina-atelie select {
   font: inherit;
 }
 
-#form-obra input[type="file"] {
-  font-size: 13px;
+.pagina-atelie button,
+.pagina-atelie a {
+  -webkit-tap-highlight-color: transparent;
 }
 
-#form-obra textarea {
-  resize: vertical;
+.pagina-atelie a {
+  color: inherit;
+  text-decoration: none;
 }
 
-#form-obra button {
-  background: #243e35;
-  color: white;
-  margin-top: 5px;
+.pagina-atelie button {
+  cursor: pointer;
 }
 
-#form-obra button:disabled {
-  opacity: 0.6;
+.pagina-atelie button:focus-visible,
+.pagina-atelie a:focus-visible,
+.pagina-atelie input:focus-visible,
+.pagina-atelie textarea:focus-visible,
+.pagina-atelie select:focus-visible {
+  outline: 3px solid var(--atelie-ocre);
+  outline-offset: 3px;
 }
 
-#previa-obra {
-  display: block;
+.pagina-atelie h1,
+.pagina-atelie h2,
+.pagina-atelie h3,
+.pagina-atelie p {
+  margin-top: 0;
+}
+
+.pagina-atelie h1,
+.pagina-atelie h2,
+.pagina-atelie h3 {
+  color: var(--atelie-verde);
+}
+
+.pagina-atelie h1,
+.pagina-atelie h2,
+.pagina-atelie .titulo-editorial {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.pagina-atelie .texto-suave {
+  color: var(--atelie-texto-suave);
+}
+
+/* ---------- Cabeçalho ---------- */
+
+.pagina-atelie .cabecalho-atelie {
   width: 100%;
-  max-height: 360px;
-  object-fit: contain;
-  background: #f4f1e9;
-  border-radius: 10px;
+  background: var(--atelie-branco);
+  border-bottom: 1px solid var(--atelie-borda);
 }
 
-#status-atelie {
-  overflow-wrap: anywhere;
-  font-size: 13px;
-  color: #536458;
-}
-
-.titulo-feed {
+.pagina-atelie .cabecalho-superior {
+  width: min(1440px, 100%);
+  min-height: 84px;
+  margin: 0 auto;
+  padding: 16px 32px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  justify-content: space-between;
+  gap: 24px;
 }
 
-.botao-atualizar {
-  padding: 9px 12px;
-  background: #dce8dc;
-  color: #243e35;
-  white-space: nowrap;
+.pagina-atelie .marca-atelie {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
 }
 
-.mensagem-feed {
-  padding: 22px;
-  background: white;
-  border-radius: 12px;
-  color: #6c746d;
+.pagina-atelie .logo-atelie {
+  display: block;
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.pagina-atelie .marca-texto {
+  min-width: 0;
+}
+
+.pagina-atelie .marca-nome {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 25px;
+  line-height: 1.1;
+  color: var(--atelie-verde);
+}
+
+.pagina-atelie .marca-descricao {
+  margin: 4px 0 0;
+  color: var(--atelie-texto-suave);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.pagina-atelie .acoes-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.pagina-atelie .busca-atelie {
+  width: min(310px, 30vw);
+}
+
+.pagina-atelie #form-busca-atelie {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagina-atelie #busca-atelie {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 15px;
+  border: 1px solid var(--atelie-borda);
+  border-radius: 30px;
+  background: var(--atelie-fundo);
+  color: var(--atelie-texto);
+}
+
+.pagina-atelie #busca-atelie::placeholder {
+  color: #85887f;
+}
+
+.pagina-atelie #form-busca-atelie button {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--atelie-verde);
+  color: white;
+  flex-shrink: 0;
+}
+
+.pagina-atelie .link-perfil-cabecalho {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 9px 17px;
+  border: 1px solid var(--atelie-verde);
+  border-radius: 30px;
+  color: var(--atelie-verde);
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pagina-atelie .link-perfil-cabecalho:hover {
+  background: var(--atelie-verde);
+  color: white;
+}
+
+/* ---------- Navegação principal ---------- */
+
+.pagina-atelie .navegacao-principal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  padding: 0 24px;
+  border-top: 1px solid #efede6;
+  background: var(--atelie-branco);
+}
+
+.pagina-atelie .navegacao-principal a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 49px;
+  color: #676e66;
+  font-size: 13px;
+  transition: color 0.2s;
+}
+
+.pagina-atelie .navegacao-principal a:hover,
+.pagina-atelie .navegacao-principal a.ativo {
+  color: var(--atelie-verde);
+}
+
+.pagina-atelie .navegacao-principal a.ativo {
+  font-weight: 700;
+}
+
+.pagina-atelie .navegacao-principal a.ativo::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--atelie-ocre);
+  content: "";
+}
+
+/* ---------- Estrutura em três colunas ---------- */
+
+.pagina-atelie .atelie-layout {
+  width: min(1440px, 100%);
+  margin: 0 auto;
+  padding: 30px 32px 60px;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 650px) 260px;
+  justify-content: center;
+  align-items: start;
+  gap: 26px;
+}
+
+.pagina-atelie .painel-lateral,
+.pagina-atelie .conteudo-atelie {
+  min-width: 0;
+}
+
+.pagina-atelie .painel-lateral {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pagina-atelie .bloco-lateral {
+  padding: 20px;
+  border: 1px solid var(--atelie-borda);
+  border-radius: var(--atelie-raio);
+  background: var(--atelie-branco);
+}
+
+.pagina-atelie .titulo-lateral {
+  margin: 0 0 15px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.pagina-atelie .subtitulo-lateral {
+  margin: -7px 0 15px;
+  color: var(--atelie-texto-suave);
+  font-size: 12px;
+}
+
+/* ---------- Painel esquerdo ---------- */
+
+.pagina-atelie .perfil-resumo {
   text-align: center;
 }
 
-.obra-card {
-  overflow: hidden;
-  margin: 18px 0;
-  background: white;
-  border: 1px solid #e6e2d9;
-  border-radius: 15px;
+.pagina-atelie .perfil-resumo .avatar-perfil {
+  display: block;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 12px;
+  border: 3px solid var(--atelie-verde-claro);
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-.obra-autor {
+.pagina-atelie .perfil-resumo h2 {
+  margin-bottom: 4px;
+  font-size: 19px;
+}
+
+.pagina-atelie .perfil-resumo p {
+  margin-bottom: 13px;
+  color: var(--atelie-texto-suave);
+  font-size: 12px;
+}
+
+.pagina-atelie .link-perfil {
+  display: inline-flex;
+  justify-content: center;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 25px;
+  background: var(--atelie-verde);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pagina-atelie .lista-categorias {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pagina-atelie .lista-categorias a,
+.pagina-atelie .lista-categorias button {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 14px;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #5f685f;
+  text-align: left;
+  font-size: 13px;
+  transition: background 0.2s, color 0.2s;
 }
 
-.obra-avatar {
+.pagina-atelie .lista-categorias a:hover,
+.pagina-atelie .lista-categorias button:hover,
+.pagina-atelie .lista-categorias .ativo {
+  background: var(--atelie-verde-claro);
+  color: var(--atelie-verde);
+}
+
+.pagina-atelie .lista-categorias .ativo {
+  font-weight: 700;
+}
+
+.pagina-atelie .atalho-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 23px;
+  height: 23px;
+  border-radius: 7px;
+  background: #f0eee6;
+  font-size: 13px;
+}
+
+/* ---------- Conteúdo central ---------- */
+
+.pagina-atelie .conteudo-atelie {
+  display: flex;
+  flex-direction: column;
+  gap: 23px;
+}
+
+.pagina-atelie .boas-vindas-atelie {
+  padding: 0 2px;
+}
+
+.pagina-atelie .etiqueta-editorial,
+.pagina-atelie .atelie-etiqueta {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #8b6839;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.pagina-atelie .boas-vindas-atelie h1 {
+  margin: 0 0 10px;
+  font-size: clamp(31px, 3vw, 43px);
+  letter-spacing: -1px;
+}
+
+.pagina-atelie .boas-vindas-atelie p {
+  max-width: 560px;
+  margin-bottom: 0;
+  color: #6f756c;
+  font-size: 14px;
+}
+
+/* ---------- Banner editorial ---------- */
+
+.pagina-atelie .banner-editorial {
+  position: relative;
+  overflow: hidden;
+  min-height: 225px;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  border-radius: 22px;
+  background:
+    radial-gradient(
+      circle at 92% 18%,
+      rgba(214, 164, 93, 0.34),
+      transparent 28%
+    ),
+    linear-gradient(120deg, #243e35 0%, #355447 100%);
+  color: white;
+  box-shadow: var(--atelie-sombra);
+}
+
+.pagina-atelie .banner-editorial::before {
+  position: absolute;
+  right: -35px;
+  bottom: -105px;
+  width: 250px;
+  height: 250px;
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  border-radius: 50%;
+  content: "";
+}
+
+.pagina-atelie .banner-editorial::after {
+  position: absolute;
+  right: 25px;
+  bottom: -125px;
+  width: 205px;
+  height: 205px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  content: "";
+}
+
+.pagina-atelie .banner-editorial-conteudo {
+  position: relative;
+  z-index: 1;
+  max-width: 430px;
+}
+
+.pagina-atelie .banner-editorial .etiqueta-editorial {
+  color: #e5c18a;
+}
+
+.pagina-atelie .banner-editorial h2 {
+  max-width: 400px;
+  margin: 0 0 12px;
+  color: white;
+  font-size: clamp(26px, 3vw, 36px);
+}
+
+.pagina-atelie .banner-editorial p {
+  max-width: 390px;
+  margin-bottom: 19px;
+  color: #e0e7df;
+  font-size: 13px;
+}
+
+.pagina-atelie .botao-banner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 19px;
+  border: 0;
+  border-radius: 25px;
+  background: var(--atelie-ocre);
+  color: #26382e;
+  font-size: 12px;
+  font-weight: 700;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.pagina-atelie .botao-banner:hover {
+  transform: translateY(-2px);
+  background: #e6b970;
+}
+
+/* ---------- Categorias rápidas ---------- */
+
+.pagina-atelie .categorias-atelie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+}
+
+.pagina-atelie .categorias-atelie a,
+.pagina-atelie .categorias-atelie button,
+.pagina-atelie .categoria-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 7px 14px;
+  border: 1px solid var(--atelie-borda);
+  border-radius: 25px;
+  background: var(--atelie-branco);
+  color: #626b61;
+  font-size: 12px;
+  white-space: nowrap;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.pagina-atelie .categorias-atelie a:hover,
+.pagina-atelie .categorias-atelie button:hover,
+.pagina-atelie .categoria-chip:hover {
+  border-color: var(--atelie-verde);
+  color: var(--atelie-verde);
+}
+
+.pagina-atelie .categorias-atelie .selecionada,
+.pagina-atelie .categorias-atelie button.ativo,
+.pagina-atelie .categoria-chip.selecionada {
+  border-color: var(--atelie-verde);
+  background: var(--atelie-verde);
+  color: white;
+}
+
+/* ---------- Criar publicação ---------- */
+
+.pagina-atelie .criar-obra {
+  padding: 22px;
+  border: 1px solid var(--atelie-borda);
+  border-radius: var(--atelie-raio);
+  background: var(--atelie-branco);
+  box-shadow: 0 3px 14px rgba(36, 62, 53, 0.03);
+}
+
+.pagina-atelie .cabecalho-criar-obra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 17px;
+}
+
+.pagina-atelie .icone-criar-obra {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 44px;
   height: 44px;
   flex-shrink: 0;
   border-radius: 50%;
-  object-fit: cover;
-  background: #dce8dc;
+  background: var(--atelie-verde-claro);
+  color: var(--atelie-verde);
+  font-size: 20px;
 }
 
-.obra-autor strong {
-  color: #243e35;
-  overflow-wrap: anywhere;
+.pagina-atelie .cabecalho-criar-obra h2 {
+  margin: 0 0 3px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
 }
 
-.obra-autor small {
-  display: block;
-  color: #6c746d;
+.pagina-atelie .cabecalho-criar-obra p {
+  margin: 0;
+  color: var(--atelie-texto-suave);
   font-size: 12px;
 }
 
-.obra-imagem {
+.pagina-atelie #form-obra {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.pagina-atelie #form-obra label {
+  display: block;
+  margin-bottom: 5px;
+  color: #465348;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pagina-atelie #imagem-obra,
+.pagina-atelie #categoria-obra,
+.pagina-atelie #legenda-obra {
+  width: 100%;
+  border: 1px solid var(--atelie-borda);
+  border-radius: 11px;
+  background: #fff;
+  color: var(--atelie-texto);
+}
+
+.pagina-atelie #imagem-obra {
+  padding: 12px;
+  font-size: 12px;
+}
+
+.pagina-atelie #imagem-obra::file-selector-button {
+  margin-right: 10px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--atelie-verde-claro);
+  color: var(--atelie-verde);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pagina-atelie #categoria-obra {
+  min-height: 44px;
+  padding: 10px 12px;
+}
+
+.pagina-atelie #legenda-obra {
+  min-height: 95px;
+  padding: 12px;
+  resize: vertical;
+}
+
+.pagina-atelie #legenda-obra::placeholder {
+  color: #999b93;
+}
+
+.pagina-atelie #previa-obra {
   display: block;
   width: 100%;
-  max-height: 620px;
+  max-height: 340px;
+  margin-top: 5px;
+  border-radius: 12px;
   object-fit: contain;
-  background: #f4f1e9;
+  background: #eeece4;
 }
 
-.obra-conteudo {
-  padding: 14px 16px 18px;
-}
-
-.obra-categoria {
-  display: inline-block;
-  padding: 4px 9px;
-  background: #dce8dc;
-  border-radius: 15px;
-  color: #243e35;
-  font-size: 11px;
-}
-
-.obra-legenda {
-  margin: 10px 0;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.obra-data {
-  color: #777;
-  font-size: 12px;
-}
-
-.navegacao-inferior {
+.pagina-atelie #previa-obra[src=""] {
   display: none;
 }
 
-@media (max-width: 600px) {
-  .navegacao-principal {
-    display: none;
-  }
-
-  .navegacao-inferior {
-    position: fixed;
-    z-index: 20;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 8px 3px calc(8px + env(safe-area-inset-bottom));
-    background: white;
-    border-top: 1px solid #e5e0d5;
-  }
-
-  .navegacao-inferior a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1px;
-    color: #243e35;
-    text-decoration: none;
-    font-size: 10px;
-  }
-
-  .navegacao-inferior a span {
-    font-size: 23px;
-    line-height: 1.2;
-  }
-
-  .atelie-container {
-    margin-top: 14px;
-  }
-
-  .atelie-boas-vindas {
-    padding: 24px 18px;
-  }
-
-  .criar-obra {
-    padding: 16px;
-  }
+.pagina-atelie .acoes-formulario {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
+.pagina-atelie .dica-publicacao {
+  margin: 0;
+  color: var(--atelie-texto-suave);
+  font-size: 11px;
+}
 
-.obra-card {
+.pagina-atelie #botao-enviar-obra,
+.pagina-atelie .botao-publicar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 43px;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 25px;
+  background: var(--atelie-verde);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.pagina-atelie #botao-enviar-obra:hover,
+.pagina-atelie .botao-publicar:hover {
+  transform: translateY(-1px);
+  background: #345748;
+}
+
+.pagina-atelie #botao-enviar-obra:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+/* ---------- Mensagens de status ---------- */
+
+.pagina-atelie #status-atelie {
+  display: none;
+  margin: 0;
+  padding: 11px 13px;
+  border-radius: 10px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.pagina-atelie #status-atelie:not(:empty) {
+  display: block;
+}
+
+.pagina-atelie #status-atelie[data-tipo="erro"] {
+  border: 1px solid #e8c4bd;
+  background: #fff0ed;
+  color: #963d30;
+}
+
+.pagina-atelie #status-atelie[data-tipo="sucesso"] {
+  border: 1px solid #c9dfc9;
+  background: #edf7ec;
+  color: #285a35;
+}
+
+/* ---------- Feed ---------- */
+
+.pagina-atelie .secao-feed {
+  min-width: 0;
+}
+
+.pagina-atelie .titulo-feed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin: 0 0 17px;
+}
+
+.pagina-atelie .titulo-feed h2 {
+  margin: 0;
+  font-size: 27px;
+}
+
+.pagina-atelie .titulo-feed p {
+  margin: 4px 0 0;
+  color: var(--atelie-texto-suave);
+  font-size: 12px;
+}
+
+.pagina-atelie .botao-atualizar,
+.pagina-atelie #atualizar-feed {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid var(--atelie-borda);
+  border-radius: 25px;
+  background: var(--atelie-branco);
+  color: var(--atelie-verde);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.pagina-atelie .botao-atualizar:hover,
+.pagina-atelie #atualizar-feed:hover {
+  background: var(--atelie-verde-claro);
+}
+
+.pagina-atelie #lista-obras {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pagina-atelie .mensagem-feed {
+  padding: 28px 20px;
+  border: 1px dashed #d4d2c8;
+  border-radius: var(--atelie-raio);
+  background: rgba(255, 254, 250, 0.75);
+  color: var(--atelie-texto-suave);
+  text-align: center;
+  font-size: 13px;
+}
+
+/* ---------- Cartões das obras ---------- */
+
+.pagina-atelie .obra-card {
+  min-width: 0;
   overflow: hidden;
-  border: 1px solid var(--at-borda);
-  border-radius: var(--at-raio);
-  background: var(--at-papel);
-  box-shadow: var(--at-sombra);
+  border: 1px solid var(--atelie-borda);
+  border-radius: var(--atelie-raio);
+  background: var(--atelie-branco);
+  box-shadow: 0 4px 18px rgba(36, 62, 53, 0.04);
+  transition: box-shadow 0.2s, transform 0.2s;
 }
 
-.obra-cabecalho {
+.pagina-atelie .obra-card:hover {
+  box-shadow: var(--atelie-sombra);
+}
+
+.pagina-atelie .obra-cabecalho {
   display: flex;
   align-items: center;
   gap: 11px;
   padding: 16px 18px;
 }
 
-.obra-avatar {
-  width: 39px;
-  height: 39px;
-  flex-shrink: 0;
+.pagina-atelie .obra-avatar {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 43px;
+  height: 43px;
+  flex-shrink: 0;
   overflow: hidden;
+  border: 2px solid var(--atelie-verde-claro);
   border-radius: 50%;
-  background: var(--at-verde-claro);
-  color: var(--at-verde);
-  font-size: 20px;
+  background: var(--atelie-verde-claro);
+  color: var(--atelie-verde);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  font-weight: 700;
 }
 
-.obra-avatar-imagem {
+.pagina-atelie .obra-avatar-imagem {
+  display: block;
   width: 100%;
   height: 100%;
+  border-radius: 50%;
   object-fit: cover;
 }
 
-.obra-info-artista {
+.pagina-atelie .obra-info-artista {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: 5px;
   min-width: 0;
+  gap: 2px;
 }
 
-.obra-nome-artista {
-  color: var(--at-verde);
-  font-size: 12px;
-}
-
-.obra-data {
-  color: var(--at-suave);
-  font-size: 10px;
-}
-
-.obra-conteudo {
-  padding: 15px 18px 18px;
-}
-
-.obra-categoria {
-  display: inline-block;
-  margin-bottom: 10px;
-  padding: 5px 9px;
-  border-radius: 30px;
-  background: var(--at-verde-claro);
-  color: var(--at-verde);
-  font-size: 10px;
-}
-
-.obra-conteudo .obra-legenda {
+.pagina-atelie .obra-nome-artista {
   margin: 0;
-  color: #636b60;
-  font-size: 12px;
-  line-height: 1.8;
+  color: var(--atelie-verde);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
   overflow-wrap: anywhere;
 }
 
-#status-atelie[data-tipo="erro"] {
-  color: #a43d32;
+.pagina-atelie .obra-data {
+  display: block;
+  color: var(--atelie-texto-suave);
+  font-size: 11px;
 }
 
-#status-atelie[data-tipo="sucesso"] {
-  color: #286846;
+.pagina-atelie .obra-imagem {
+  display: block;
+  width: 100%;
+  max-height: 680px;
+  aspect-ratio: auto;
+  object-fit: contain;
+  background: #efede6;
 }
 
+.pagina-atelie .obra-conteudo {
+  padding: 16px 18px 20px;
+}
+
+.pagina-atelie .obra-categoria {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 9px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--atelie-verde-claro);
+  color: var(--atelie-verde);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.pagina-atelie .obra-legenda {
+  margin: 0;
+  color: #424b43;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.pagina-atelie .obra-acoes {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 0 18px 16px;
+}
+
+.pagina-atelie .obra-acoes button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--atelie-texto-suave);
+  font-size: 11px;
+}
+
+/* ---------- Painel direito ---------- */
+
+.pagina-atelie .cartao-publicar {
+  padding: 23px 20px;
+  border-radius: var(--atelie-raio);
+  background: var(--atelie-verde);
+  color: white;
+}
+
+.pagina-atelie .cartao-publicar h2 {
+  margin: 0 0 9px;
+  color: white;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 23px;
+  font-weight: 500;
+}
+
+.pagina-atelie .cartao-publicar p {
+  margin-bottom: 17px;
+  color: #e0e7df;
+  font-size: 12px;
+}
+
+.pagina-atelie .cartao-publicar a,
+.pagina-atelie .cartao-publicar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 25px;
+  background: var(--atelie-ocre);
+  color: #26382e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pagina-atelie .lista-artistas-destaque {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pagina-atelie .artista-destaque {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagina-atelie .artista-destaque img,
+.pagina-atelie .artista-destaque .artista-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 39px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--atelie-verde-claro);
+  color: var(--atelie-verde);
+  object-fit: cover;
+}
+
+.pagina-atelie .artista-destaque-info {
+  min-width: 0;
+}
+
+.pagina-atelie .artista-destaque-info strong {
+  display: block;
+  color: var(--atelie-verde);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.pagina-atelie .artista-destaque-info span {
+  display: block;
+  color: var(--atelie-texto-suave);
+  font-size: 11px;
+}
+
+.pagina-atelie .citacao-atelie {
+  position: relative;
+  padding: 22px 20px;
+  border-radius: var(--atelie-raio);
+  background: #eee7d7;
+}
+
+.pagina-atelie .citacao-atelie .aspas {
+  display: block;
+  margin-bottom: 3px;
+  color: #a67b42;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 42px;
+  line-height: 1;
+}
+
+.pagina-atelie .citacao-atelie blockquote {
+  margin: 0;
+  color: #435047;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.pagina-atelie .citacao-atelie p {
+  margin: 12px 0 0;
+  color: #7c715e;
+  font-size: 10px;
+}
+
+.pagina-atelie .sobre-atelie p {
+  margin-bottom: 0;
+  color: var(--atelie-texto-suave);
+  font-size: 12px;
+}
+
+.pagina-atelie .sobre-atelie a {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--atelie-verde);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ---------- Rodapé ---------- */
+
+.pagina-atelie .rodape-atelie {
+  padding: 24px;
+  border-top: 1px solid var(--atelie-borda);
+  background: var(--atelie-branco);
+  color: var(--atelie-texto-suave);
+  text-align: center;
+  font-size: 11px;
+}
+
+.pagina-atelie .rodape-atelie p {
+  margin: 0;
+}
+
+/* ---------- Navegação inferior para celular ---------- */
+
+.pagina-atelie .navegacao-inferior {
+  display: none;
+}
+
+/* ---------- Ajustes para telas médias ---------- */
+
+@media (max-width: 1180px) {
+  .pagina-atelie .atelie-layout {
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 22px;
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
+  .pagina-atelie .painel-direito {
+    display: none;
+  }
+
+  .pagina-atelie .boas-vindas-atelie h1 {
+    font-size: 36px;
+  }
+
+  .pagina-atelie .navegacao-principal {
+    gap: 25px;
+  }
+}
+
+/* ---------- Tablets e celulares ---------- */
+
+@media (max-width: 760px) {
+  .pagina-atelie {
+    padding-bottom: 70px;
+  }
+
+  .pagina-atelie .cabecalho-superior {
+    min-height: 70px;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .pagina-atelie .logo-atelie {
+    width: 43px;
+    height: 43px;
+  }
+
+  .pagina-atelie .marca-atelie {
+    gap: 9px;
+  }
+
+  .pagina-atelie .marca-nome {
+    font-size: 21px;
+  }
+
+  .pagina-atelie .marca-descricao {
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+
+  .pagina-atelie .acoes-cabecalho {
+    gap: 7px;
+  }
+
+  .pagina-atelie .busca-atelie {
+    width: auto;
+    flex: 1;
+  }
+
+  .pagina-atelie #form-busca-atelie {
+    gap: 5px;
+  }
+
+  .pagina-atelie #busca-atelie {
+    min-width: 0;
+    padding: 9px 11px;
+    font-size: 12px;
+  }
+
+  .pagina-atelie #form-busca-atelie button {
+    width: 37px;
+    height: 37px;
+  }
+
+  .pagina-atelie .link-perfil-cabecalho {
+    min-height: 37px;
+    padding: 8px 11px;
+    font-size: 11px;
+  }
+
+  .pagina-atelie .navegacao-principal {
+    justify-content: flex-start;
+    gap: 24px;
+    overflow-x: auto;
+    padding: 0 16px;
+    scrollbar-width: none;
+  }
+
+  .pagina-atelie .navegacao-principal::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pagina-atelie .navegacao-principal a {
+    min-height: 44px;
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+
+  .pagina-atelie .atelie-layout {
+    display: block;
+    padding: 24px 14px 30px;
+  }
+
+  .pagina-atelie .painel-esquerdo,
+  .pagina-atelie .painel-direito {
+    display: none;
+  }
+
+  .pagina-atelie .conteudo-atelie {
+    gap: 20px;
+  }
+
+  .pagina-atelie .boas-vindas-atelie h1 {
+    font-size: 33px;
+  }
+
+  .pagina-atelie .boas-vindas-atelie p {
+    font-size: 13px;
+  }
+
+  .pagina-atelie .banner-editorial {
+    min-height: 210px;
+    padding: 24px 21px;
+    border-radius: 17px;
+  }
+
+  .pagina-atelie .banner-editorial h2 {
+    font-size: 29px;
+  }
+
+  .pagina-atelie .banner-editorial p {
+    font-size: 12px;
+  }
+
+  .pagina-atelie .categorias-atelie {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 2px 0 7px;
+    scrollbar-width: none;
+  }
+
+  .pagina-atelie .categorias-atelie::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pagina-atelie .categorias-atelie a,
+  .pagina-atelie .categorias-atelie button,
+  .pagina-atelie .categoria-chip {
+    flex-shrink: 0;
+  }
+
+  .pagina-atelie .criar-obra {
+    padding: 17px;
+    border-radius: 15px;
+  }
+
+  .pagina-atelie .cabecalho-criar-obra h2 {
+    font-size: 18px;
+  }
+
+  .pagina-atelie .acoes-formulario {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pagina-atelie #botao-enviar-obra,
+  .pagina-atelie .botao-publicar {
+    width: 100%;
+  }
+
+  .pagina-atelie .titulo-feed h2 {
+    font-size: 24px;
+  }
+
+  .pagina-atelie .obra-card {
+    border-radius: 15px;
+  }
+
+  .pagina-atelie .obra-cabecalho {
+    padding: 13px 14px;
+  }
+
+  .pagina-atelie .obra-imagem {
+    max-height: 560px;
+  }
+
+  .pagina-atelie .obra-conteudo {
+    padding: 14px;
+  }
+
+  .pagina-atelie .obra-acoes {
+    padding: 0 14px 14px;
+  }
+
+  .pagina-atelie .navegacao-inferior {
+    position: fixed;
+    z-index: 1000;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    min-height: 62px;
+    padding: 7px 5px calc(7px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--atelie-borda);
+    background: rgba(255, 254, 250, 0.97);
+    box-shadow: 0 -4px 18px rgba(36, 62, 53, 0.06);
+    backdrop-filter: blur(12px);
+  }
+
+  .pagina-atelie .navegacao-inferior a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 48px;
+    padding: 4px;
+    color: #737970;
+    font-size: 10px;
+  }
+
+  .pagina-atelie .navegacao-inferior a .icone-nav {
+    font-size: 19px;
+    line-height: 1.2;
+  }
+
+  .pagina-atelie .navegacao-inferior a.ativo {
+    color: var(--atelie-verde);
+    font-weight: 700;
+  }
+
+  .pagina-atelie .navegacao-inferior a.ativo .icone-nav {
+    color: var(--atelie-ocre);
+  }
+
+  .pagina-atelie .rodape-atelie {
+    padding: 20px 14px;
+  }
+}
+
+/* ---------- Celulares estreitos ---------- */
+
+@media (max-width: 390px) {
+  .pagina-atelie .cabecalho-superior {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .pagina-atelie .marca-nome {
+    font-size: 18px;
+  }
+
+  .pagina-atelie .marca-descricao {
+    max-width: 130px;
+    font-size: 8px;
+  }
+
+  .pagina-atelie .link-perfil-cabecalho {
+    padding-right: 9px;
+    padding-left: 9px;
+  }
+
+  .pagina-atelie .atelie-layout {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .pagina-atelie .boas-vindas-atelie h1 {
+    font-size: 29px;
+  }
+
+  .pagina-atelie .banner-editorial {
+    padding: 21px 17px;
+  }
+
+  .pagina-atelie .banner-editorial h2 {
+    font-size: 25px;
+  }
+
+  .pagina-atelie .titulo-feed {
+    align-items: flex-start;
+  }
+
+  .pagina-atelie .titulo-feed h2 {
+    font-size: 21px;
+  }
+
+  .pagina-atelie .botao-atualizar,
+  .pagina-atelie #atualizar-feed {
+    padding: 7px 9px;
+    font-size: 10px;
+  }
+}
+
+/* ---------- Acessibilidade ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .pagina-atelie *,
+  .pagina-atelie *::before,
+  .pagina-atelie *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

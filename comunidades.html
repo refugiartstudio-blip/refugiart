@@ -4,87 +4,366 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#243e35">
   <title>Comunidades | RefugiART</title>
   <link rel="stylesheet" href="style.css">
+
   <style>
-    .chat-container {
+    .pagina-comunidades {
+      min-height: 70vh;
+      padding: 30px 16px 50px;
+    }
+
+    .comunidades-intro {
       max-width: 850px;
-      margin: 30px auto;
-      padding: 20px;
+      margin: 0 auto 24px;
+      text-align: center;
     }
-    .chat-box {
-      height: 380px;
-      overflow-y: auto;
-      padding: 15px;
-      background: #fffdf6;
-      border: 1px solid #d8d0bd;
-      border-radius: 12px;
-      margin: 15px 0;
+
+    .comunidades-selo {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: #dce8dc;
+      color: #243e35;
+      font-size: 0.85rem;
+      font-weight: bold;
     }
-    .message {
-      padding: 10px 12px;
-      margin-bottom: 10px;
-      background: #f0eadb;
-      border-radius: 8px;
+
+    .comunidades-intro h1 {
+      color: #243e35;
+      margin: 14px 0 8px;
+    }
+
+    .comunidades-intro p {
+      line-height: 1.6;
+    }
+
+    .membro-cartao,
+    .chat-cartao {
+      box-sizing: border-box;
+      max-width: 850px;
+      margin: 0 auto 22px;
+      padding: 22px;
+      background: #fff;
+      border: 1px solid #e2ddcf;
+      border-radius: 18px;
+      box-shadow: 0 5px 18px rgba(36, 62, 53, 0.07);
+    }
+
+    .membro-cartao {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .membro-cartao h2 {
+      color: #243e35;
+      margin: 0 0 6px;
+      font-size: 1.1rem;
+    }
+
+    .membro-cartao p {
+      margin: 0;
       overflow-wrap: anywhere;
     }
-    .message small {
-      display: block;
-      color: #666;
-      margin-bottom: 4px;
-    }
-    .chat-form {
-      display: flex;
-      gap: 8px;
-    }
-    .chat-form input {
-      flex: 1;
-      min-width: 0;
-      padding: 12px;
-    }
-    .chat-form button, .logout-button {
+
+    .botao-sair {
       padding: 10px 15px;
+      border: 1px solid #d6a45d;
+      border-radius: 10px;
+      background: #fffaf0;
+      color: #243e35;
+      font: inherit;
+      font-weight: 600;
       cursor: pointer;
     }
-    #status {
-      color: #555;
+
+    .botao-sair:hover {
+      background: #f4ead5;
+    }
+
+    .chat-cabecalho {
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e8e2d6;
+    }
+
+    .chat-cabecalho h2 {
+      color: #243e35;
+      margin: 0 0 6px;
+    }
+
+    .chat-cabecalho p {
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .chat-status {
+      padding: 10px 12px;
+      margin: 16px 0;
+      border-radius: 10px;
+      background: #f4f1e9;
+      color: #243e35;
       font-size: 0.9rem;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .chat-box {
+      box-sizing: border-box;
+      height: min(430px, 55vh);
+      min-height: 260px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 15px;
+      background: #f8f6ef;
+      border: 1px solid #e2ddcf;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      scroll-behavior: smooth;
+    }
+
+    .chat-vazio {
+      padding: 35px 12px;
+      color: #6c716b;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .message {
+      max-width: 90%;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      background: #fff;
+      border: 1px solid #e8e2d6;
+      border-left: 4px solid #d6a45d;
+      border-radius: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .message.minha-mensagem {
+      margin-left: auto;
+      background: #e7efe5;
+      border-left-color: #243e35;
+    }
+
+    .message small {
+      display: block;
+      color: #687168;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .message .autor-mensagem {
+      color: #243e35;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .message .conteudo-mensagem {
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    .message .data-mensagem {
+      margin-top: 7px;
+      text-align: right;
+    }
+
+    .chat-form {
+      display: flex;
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .chat-form input {
+      box-sizing: border-box;
+      flex: 1;
+      min-width: 0;
+      padding: 13px 14px;
+      border: 1px solid #d8d2c5;
+      border-radius: 10px;
+      background: #fdfcf8;
+      color: #243e35;
+      font: inherit;
+    }
+
+    .chat-form input:focus {
+      outline: 2px solid #d6a45d;
+      border-color: #243e35;
+    }
+
+    .chat-form button {
+      padding: 12px 20px;
+      border: 1px solid #243e35;
+      border-radius: 10px;
+      background: #243e35;
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chat-form button:hover {
+      background: #34594b;
+    }
+
+    .chat-form button:disabled,
+    .botao-sair:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .chat-nota {
+      margin: 12px 0 0;
+      color: #6c716b;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 520px) {
+      .pagina-comunidades {
+        padding: 22px 12px 35px;
+      }
+
+      .membro-cartao,
+      .chat-cartao {
+        padding: 18px 14px;
+      }
+
+      .membro-cartao {
+        align-items: stretch;
+      }
+
+      .botao-sair {
+        width: 100%;
+      }
+
+      .chat-box {
+        height: 48vh;
+        min-height: 250px;
+        padding: 10px;
+      }
+
+      .message {
+        max-width: 96%;
+      }
+
+      .chat-form {
+        gap: 7px;
+      }
+
+      .chat-form input {
+        padding: 11px 10px;
+      }
+
+      .chat-form button {
+        padding: 11px 13px;
+      }
     }
   </style>
 </head>
+
 <body>
-  <main class="chat-container">
-    <h1>Comunidades RefugiART</h1>
-    <p>Bem-vindo(a), <strong id="member-name">membro</strong>!</p>
-    <button id="logout-button" class="logout-button" type="button">
-      Sair da conta
-    </button>
+  <header class="cabecalho">
+    <div class="identidade">
+      <h1>RefugiART</h1>
+      <p>Arte, cultura e comunidade</p>
+    </div>
+  </header>
 
-    <h2>Chat global</h2>
-    <p>Converse com outros membros da comunidade artística.</p>
-    <p id="status">Verificando conexão...</p>
+  <nav class="navegacao-principal" aria-label="Navegação principal">
+    <a href="index.html">Início</a>
+    <a href="galeria.html">Galeria</a>
+    <a href="mercado.html">Mercado</a>
+    <a href="revista.html">Revista</a>
+    <a href="comunidades.html" aria-current="page">Comunidades</a>
+    <a href="perfil.html">Meu perfil</a>
+  </nav>
 
-    <div id="chat-box" class="chat-box" aria-live="polite"></div>
+  <main class="pagina-comunidades">
+    <section class="comunidades-intro">
+      <span class="comunidades-selo">ESPAÇO COLETIVO</span>
+      <h1>Comunidades RefugiART</h1>
+      <p>
+        Um espaço para artistas compartilharem ideias,
+        experiências e conversas sobre arte e cultura.
+      </p>
+    </section>
 
-    <form id="chat-form" class="chat-form">
-      <input
-        id="message-input"
-        type="text"
-        maxlength="2000"
-        placeholder="Escreva sua mensagem..."
-        autocomplete="off"
-        required
+    <section class="membro-cartao">
+      <div>
+        <h2>Bem-vindo(a) à comunidade!</h2>
+        <p>Conectado como <strong id="member-name">membro</strong></p>
+      </div>
+
+      <button
+        id="logout-button"
+        class="botao-sair"
+        type="button"
       >
-      <button id="send-button" type="submit">Enviar</button>
-    </form>
+        Sair da conta
+      </button>
+    </section>
+
+    <section class="chat-cartao">
+      <div class="chat-cabecalho">
+        <h2>Chat global</h2>
+        <p>
+          Converse com outros membros e participe da comunidade artística.
+        </p>
+      </div>
+
+      <p id="status" class="chat-status" role="status" aria-live="polite">
+        Verificando conexão...
+      </p>
+
+      <div
+        id="chat-box"
+        class="chat-box"
+        role="log"
+        aria-label="Mensagens do chat"
+        aria-live="polite"
+        aria-relevant="additions"
+      >
+        <p class="chat-vazio">Carregando mensagens...</p>
+      </div>
+
+      <form id="chat-form" class="chat-form">
+        <input
+          id="message-input"
+          type="text"
+          maxlength="2000"
+          placeholder="Escreva sua mensagem..."
+          autocomplete="off"
+          aria-label="Sua mensagem"
+          required
+        >
+        <button id="send-button" type="submit">Enviar</button>
+      </form>
+
+      <p class="chat-nota">
+        Seja respeitoso com os outros membros. Suas mensagens são
+        compartilhadas com os participantes que têm acesso ao chat.
+      </p>
+    </section>
   </main>
+
+  <footer>
+    <p>RefugiART — Arte, cultura e comunidade.</p>
+  </footer>
 
   <script type="module">
     import { createClient } from
       'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-    const SUPABASE_URL = 'https://nlqalpiksbqflzxzsgoa.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP';
+    const SUPABASE_URL =
+      'https://nlqalpiksbqflzxzsgoa.supabase.co';
+
+    const SUPABASE_KEY =
+      'sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP';
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -98,23 +377,48 @@
 
     let currentUser = null;
     let channel = null;
+    let sending = false;
 
     function showStatus(message) {
       status.textContent = message;
     }
 
     function addMessage(message) {
+      const messageId = String(message.id);
+
+      if (chatBox.querySelector(
+        '[data-message-id="' + messageId + '"]'
+      )) {
+        return;
+      }
+
+      const emptyMessage = chatBox.querySelector('.chat-vazio');
+      if (emptyMessage) emptyMessage.remove();
+
       const item = document.createElement('div');
       item.className = 'message';
+      item.dataset.messageId = messageId;
+
+      if (currentUser && message.user_id === currentUser.id) {
+        item.classList.add('minha-mensagem');
+      }
 
       const author = document.createElement('small');
-      author.textContent = 'Membro ' + message.user_id.slice(0, 6);
+      author.className = 'autor-mensagem';
+
+      author.textContent =
+        message.user_id === currentUser?.id
+          ? 'Você'
+          : 'Membro ' + String(message.user_id).slice(0, 6);
 
       const content = document.createElement('div');
+      content.className = 'conteudo-mensagem';
       content.textContent = message.content;
 
       const date = document.createElement('small');
-      date.textContent = new Date(message.created_at).toLocaleString('pt-BR');
+      date.className = 'data-mensagem';
+      date.textContent = new Date(message.created_at)
+        .toLocaleString('pt-BR');
 
       item.append(author, content, date);
       chatBox.appendChild(item);
@@ -129,13 +433,25 @@
         .limit(50);
 
       if (error) {
-        showStatus('Não foi possível carregar as mensagens: ' + error.message);
+        showStatus(
+          'Não foi possível carregar as mensagens: ' + error.message
+        );
         return;
       }
 
       chatBox.replaceChildren();
+
       data.reverse().forEach(addMessage);
-      showStatus('Chat conectado. Você pode enviar mensagens.');
+
+      if (data.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'chat-vazio';
+        empty.textContent =
+          'Ainda não há mensagens. Que tal começar a conversa?';
+        chatBox.appendChild(empty);
+      }
+
+      showStatus('Mensagens carregadas. Conectando ao chat em tempo real...');
     }
 
     async function startChat() {
@@ -164,18 +480,21 @@
             table: 'chat_messages'
           },
           (payload) => {
-            if (!document.querySelector(
-              '[data-message-id="' + payload.new.id + '"]'
-            )) {
-              addMessage(payload.new);
-            }
+            addMessage(payload.new);
           }
         )
         .subscribe((state) => {
           if (state === 'SUBSCRIBED') {
             showStatus('Chat conectado em tempo real.');
-          } else if (state === 'CHANNEL_ERROR') {
-            showStatus('Erro na conexão em tempo real. Confira o Supabase.');
+          } else if (
+            state === 'CHANNEL_ERROR' ||
+            state === 'TIMED_OUT'
+          ) {
+            showStatus(
+              'A conexão em tempo real falhou. Verifique sua internet e o Supabase.'
+            );
+          } else if (state === 'CLOSED') {
+            showStatus('A conexão do chat foi encerrada.');
           }
         });
     }
@@ -184,9 +503,12 @@
       event.preventDefault();
 
       const content = input.value.trim();
-      if (!content || !currentUser) return;
 
+      if (!content || !currentUser || sending) return;
+
+      sending = true;
       sendButton.disabled = true;
+      showStatus('Enviando mensagem...');
 
       const { error } = await supabase
         .from('chat_messages')
@@ -195,6 +517,7 @@
           content
         });
 
+      sending = false;
       sendButton.disabled = false;
 
       if (error) {
@@ -204,16 +527,23 @@
 
       input.value = '';
       input.focus();
+      showStatus('Mensagem enviada.');
     });
 
     logoutButton.addEventListener('click', async () => {
       logoutButton.disabled = true;
+      showStatus('Saindo da conta...');
+
       const { error } = await supabase.auth.signOut();
 
       if (error) {
         showStatus('Erro ao sair: ' + error.message);
         logoutButton.disabled = false;
         return;
+      }
+
+      if (channel) {
+        await supabase.removeChannel(channel);
       }
 
       window.location.href = 'login.html';

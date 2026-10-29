@@ -448,3 +448,4 @@ botaoAtualizar?.addEventListener("click", async () => {
 
 // Carrega o feed ao abrir a página.
 carregarObras();
+

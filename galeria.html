@@ -15,26 +15,30 @@
 
   <!-- CABEÇALHO ORIGINAL -->
   <header class="cabecalho">
-    <img src="imagens/logo.png"
-         alt="Símbolo da RefugiART"
-         class="logo">
+    <img
+      src="imagens/logo.png"
+      alt="Símbolo da RefugiART"
+      class="logo"
+    >
 
     <div class="identidade">
       <h1>RefugiART</h1>
       <p>A arte nos aproxima.</p>
     </div>
 
-    <button class="botao-menu"
-            id="abrirMenu"
-            type="button"
-            aria-label="Abrir menu"
-            aria-controls="menuLateral"
-            aria-expanded="false">
+    <button
+      class="botao-menu"
+      id="abrirMenu"
+      type="button"
+      aria-label="Abrir menu"
+      aria-controls="menuLateral"
+      aria-expanded="false"
+    >
       ☰
     </button>
   </header>
 
-  <!-- NAVEGAÇÃO ORIGINAL -->
+  <!-- NAVEGAÇÃO PRINCIPAL -->
   <nav class="navegacao-principal">
     <a href="inicio.html">Início</a>
     <a href="mercado.html">Mercado</a>
@@ -46,7 +50,7 @@
   <!-- ESTRUTURA DA GALERIA -->
   <div class="galeria-layout">
 
-    <!-- MENU LATERAL -->
+    <!-- MENU LATERAL DA GALERIA -->
     <aside class="coluna-galeria" id="colunaGaleria">
 
       <button
@@ -55,7 +59,8 @@
         id="alternarColunaGaleria"
         aria-label="Expandir menu da galeria"
         aria-controls="navegacaoGaleria"
-        aria-expanded="false">
+        aria-expanded="false"
+      >
         <span id="iconeSetaGaleria">➜</span>
       </button>
 
@@ -68,26 +73,32 @@
 
         <p class="titulo-coluna-galeria">GALERIA</p>
 
-        <a href="#visaoGeral"
-           class="link-coluna-galeria ativo"
-           data-tela-galeria="visaoGeral"
-           title="Visão geral">
+        <a
+          href="#visaoGeral"
+          class="link-coluna-galeria ativo"
+          data-tela-galeria="visaoGeral"
+          title="Visão geral"
+        >
           <span class="icone-coluna-galeria">⌂</span>
           <span class="texto-coluna-galeria">Visão geral</span>
         </a>
 
-        <a href="#acervo"
-           class="link-coluna-galeria"
-           data-tela-galeria="acervo"
-           title="Acervo">
+        <a
+          href="#acervo"
+          class="link-coluna-galeria"
+          data-tela-galeria="acervo"
+          title="Acervo"
+        >
           <span class="icone-coluna-galeria">▤</span>
           <span class="texto-coluna-galeria">Acervo</span>
         </a>
 
-        <a href="#salao"
-           class="link-coluna-galeria"
-           data-tela-galeria="salao"
-           title="Salão">
+        <a
+          href="#salao"
+          class="link-coluna-galeria"
+          data-tela-galeria="salao"
+          title="Salão"
+        >
           <span class="icone-coluna-galeria">▧</span>
           <span class="texto-coluna-galeria">Salão</span>
         </a>
@@ -106,9 +117,11 @@
           <span class="texto-coluna-galeria">Revista</span>
         </a>
 
-        <a href="comunidades.html"
-           class="link-coluna-galeria"
-           title="Comunidades">
+        <a
+          href="comunidades.html"
+          class="link-coluna-galeria"
+          title="Comunidades"
+        >
           <span class="icone-coluna-galeria">♧</span>
           <span class="texto-coluna-galeria">Comunidades</span>
         </a>
@@ -124,135 +137,115 @@
     <!-- CONTEÚDO PRINCIPAL -->
     <main class="pagina-galeria" id="conteudoGaleria">
 
-   
-<!-- CARROSSEL: PERMANECE VISÍVEL NA GALERIA -->
-<section
-  class="apresentacao-galeria carrossel-galeria"
-  id="apresentacaoGaleria"
-  aria-label="Destaques da Galeria RefugiART">
-
-  <div class="trilho-carrossel" id="trilhoCarrossel">
-
-    <article class="slide-carrossel ativo" aria-hidden="false">
-      <div class="conteudo-slide">
-        <span class="etiqueta-galeria">ARTE • CULTURA • EDUCAÇÃO</span>
-        <h2>Galeria RefugiART</h2>
-        <p>
-          Um espaço dedicado à valorização das artes visuais,
-          à difusão cultural e ao encontro entre artistas e comunidade.
-          Por meio de exposições, iniciativas educativas e ações culturais,
-          buscamos ampliar o acesso à arte.
-        </p>
-      </div>
-    </article>
-
-    <article class="slide-carrossel" aria-hidden="true">
-      <div class="conteudo-slide">
-        <span class="etiqueta-galeria">SALÃO REFUGIART</span>
-        <h2>Novos olhares, novas exposições</h2>
-        <p>
-          Um espaço dedicado a apresentar diferentes expressões artísticas
-          e valorizar a diversidade de olhares sobre o mundo.
-        </p>
-      </div>
-    </article>
-
-    <article class="slide-carrossel" aria-hidden="true">
-      <div class="conteudo-slide">
-        <span class="etiqueta-galeria">CULTURA EM MOVIMENTO</span>
-        <h2>Arte que cria conexões</h2>
-        <p>
-          Notícias, registros de eventos, iniciativas educativas
-          e outras ações da trajetória RefugiART.
-        </p>
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<!-- CONTEÚDO QUE MUDA ABAIXO DO CARROSSEL -->
-<section class="mensagem-galeria" id="visaoGeral">
-  <span class="etiqueta-galeria">NOSSA PROPOSTA</span>
-  <h2>Arte que aproxima pessoas</h2>
-  <p>
-    A Galeria RefugiART é um espaço de encontro entre artistas,
-    obras e comunidade. Aqui, a produção artística ganha visibilidade,
-    a memória cultural é valorizada e novas experiências estéticas
-    podem ser descobertas.
-  </p>
-</section>
-
-<!-- ACERVO -->
-<section id="acervo" class="area-acervo" hidden>
-
-  <header class="cabecalho-acervo">
-    <span class="etiqueta-galeria">NOSSO ACERVO</span>
-    
-  </header>
-
-  <!-- Cartões dos artistas -->
-  <div id="listaArtistas" class="lista-artistas"></div>
-
-  <!-- Perfil individual do artista -->
-  <section id="perfilArtista" class="perfil-artista" hidden>
-    <button id="fecharPerfilArtista" type="button">
-      ← Voltar ao acervo
-    </button>
-
-    <div id="conteudoPerfilArtista"></div>
-  </section>
-
-</section>
->
-
-<!-- SALÃO -->
-<section id="salao" class="area-salao" hidden>
-  <section class="mensagem-galeria secao-salao">
-    <span class="etiqueta-galeria">ESPAÇO EXPOSITIVO</span>
-    <h2>Salão RefugiART</h2>
-    <p>
-      Conheça as exposições e obras em destaque na Galeria.
-    </p>
-  </section>
-
-  <div id="listaObras" class="lista-obras"></div>
-</section>
-
-
-      <!-- TELA 3: SALÃO ATUAL -->
+      <!-- CARROSSEL -->
       <section
-        class="tela-galeria"
-        id="salao"
-        data-conteudo-galeria="salao"
-        aria-label="Exposição atual do Salão"
-        hidden>
+        class="apresentacao-galeria carrossel-galeria"
+        id="apresentacaoGaleria"
+        aria-label="Destaques da Galeria RefugiART"
+      >
+
+        <div class="trilho-carrossel" id="trilhoCarrossel">
+
+          <article class="slide-carrossel ativo" aria-hidden="false">
+            <div class="conteudo-slide">
+              <span class="etiqueta-galeria">
+                ARTE • CULTURA • EDUCAÇÃO
+              </span>
+              <h2>Galeria RefugiART</h2>
+              <p>
+                Um espaço dedicado à valorização das artes visuais,
+                à difusão cultural e ao encontro entre artistas e comunidade.
+                Por meio de exposições, iniciativas educativas e ações
+                culturais, buscamos ampliar o acesso à arte.
+              </p>
+            </div>
+          </article>
+
+          <article class="slide-carrossel" aria-hidden="true">
+            <div class="conteudo-slide">
+              <span class="etiqueta-galeria">SALÃO REFUGIART</span>
+              <h2>Novos olhares, novas exposições</h2>
+              <p>
+                Um espaço dedicado a apresentar diferentes expressões
+                artísticas e valorizar a diversidade de olhares sobre o mundo.
+              </p>
+            </div>
+          </article>
+
+          <article class="slide-carrossel" aria-hidden="true">
+            <div class="conteudo-slide">
+              <span class="etiqueta-galeria">CULTURA EM MOVIMENTO</span>
+              <h2>Arte que cria conexões</h2>
+              <p>
+                Notícias, registros de eventos, iniciativas educativas
+                e outras ações da trajetória RefugiART.
+              </p>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- VISÃO GERAL -->
+      <section class="mensagem-galeria" id="visaoGeral">
+        <span class="etiqueta-galeria">NOSSA PROPOSTA</span>
+        <h2>Arte que aproxima pessoas</h2>
+        <p>
+          A Galeria RefugiART é um espaço de encontro entre artistas,
+          obras e comunidade. Aqui, a produção artística ganha visibilidade,
+          a memória cultural é valorizada e novas experiências estéticas
+          podem ser descobertas.
+        </p>
+      </section>
+
+      <!-- ACERVO -->
+      <section id="acervo" class="area-acervo" hidden>
+
+        <header class="cabecalho-acervo">
+          <span class="etiqueta-galeria">NOSSO ACERVO</span>
+          <h2>Artistas da RefugiART</h2>
+          <p>
+            Conheça os artistas, suas trajetórias e obras.
+          </p>
+        </header>
+
+        <!-- CARTÕES DOS ARTISTAS -->
+        <div id="listaArtistas" class="lista-artistas"></div>
+
+        <!-- PERFIL INDIVIDUAL DO ARTISTA -->
+        <section id="perfilArtista" class="perfil-artista" hidden>
+
+          <button id="fecharPerfilArtista" type="button">
+            ← Voltar ao acervo
+          </button>
+
+          <div id="conteudoPerfilArtista"></div>
+
+        </section>
+      </section>
+
+      <!-- SALÃO -->
+      <section id="salao" class="area-salao" hidden>
 
         <section class="mensagem-galeria secao-salao">
           <span class="etiqueta-galeria">ESPAÇO EXPOSITIVO</span>
           <h2>Salão RefugiART</h2>
-
           <p>
-            Conheça a exposição em destaque na Galeria RefugiART.
-            Este espaço apresentará as obras, os artistas participantes
-            e as informações de cada mostra em cartaz.
-          </p>
-
-          <p>
-            Quando uma nova exposição começar, o conteúdo desta área
-            poderá ser atualizado para apresentar a nova mostra.
+            Conheça as exposições e obras em destaque na Galeria.
+            Este espaço é dedicado à apresentação de trabalhos artísticos,
+            artistas participantes e informações de cada mostra.
           </p>
         </section>
 
-        <div class="lista-obras" id="listaObras">
-          <!-- As obras da exposição atual serão adicionadas nesta área. -->
-        </div>
+        <!-- OBRAS DO SALÃO -->
+        <div id="listaObras" class="lista-obras"></div>
 
       </section>
 
     </main>
   </div>
 
+  <!-- RODAPÉ -->
   <footer>
     <p>RefugiART © 2026 — Criar é Sentir.</p>
   </footer>
@@ -260,7 +253,7 @@
   <!-- FUNDO DO MENU INSTITUCIONAL -->
   <div class="fundo-menu" id="fundoMenu"></div>
 
-  <!-- MENU INSTITUCIONAL ORIGINAL -->
+  <!-- MENU INSTITUCIONAL -->
   <aside
     class="menu-lateral"
     id="menuLateral"
@@ -268,7 +261,8 @@
     aria-modal="true"
     aria-labelledby="tituloMenu"
     aria-hidden="true"
-    inert>
+    inert
+  >
 
     <div class="cabecalho-menu">
       <div>
@@ -280,7 +274,8 @@
         class="botao-fechar"
         id="fecharMenu"
         type="button"
-        aria-label="Fechar menu">
+        aria-label="Fechar menu"
+      >
         ×
       </button>
     </div>
@@ -357,6 +352,7 @@
 
   </aside>
 
+  <!-- SCRIPTS -->
   <script src="script.js"></script>
   <script src="galeria.js"></script>
 

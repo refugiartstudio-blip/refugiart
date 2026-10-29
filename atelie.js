@@ -1,6 +1,11 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+/* =========================================================
+   REFUGIART — ATELIÊ
+   Feed, filtros, pesquisa, perfis e publicação de obras
+   ========================================================= */
+
 const SUPABASE_URL = "https://nlqalpiksbqflzxzsgoa.supabase.co";
 const SUPABASE_KEY = "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP";
 
@@ -18,12 +23,7 @@ const botaoAtualizar = document.getElementById("atualizar-feed");
 const campoBusca = document.getElementById("busca-atelie");
 const formBusca = document.getElementById("form-busca-atelie");
 
-let imagemSelecionada = null;
-let categoriaAtiva = "Todas";
-let termoBusca = "";
-let urlPreviaTemporaria = null;
-
-const categoriasValidas = [
+const CATEGORIAS = [
   "Desenho",
   "Pintura",
   "Fotografia",
@@ -31,6 +31,29 @@ const categoriasValidas = [
   "Tatuagem",
   "Outros"
 ];
+
+const TAMANHO_MAXIMO = 5 * 1024 * 1024;
+const TIPOS_IMAGEM = ["image/jpeg", "image/png", "image/webp"];
+
+let imagemSelecionada = null;
+let urlPreviaTemporaria = null;
+let categoriaAtiva = "Todas";
+let termoBusca = "";
+let obrasCarregadas = [];
+let temporizadorBusca = null;
+let carregamentoEmAndamento = false;
+let ultimaSolicitacao = 0;
+
+/* ---------- Elementos e mensagens ---------- */
+
+function criarElemento(tag, classe, texto) {
+  const elemento = document.createElement(tag);
+
+  if (classe) elemento.className = classe;
+  if (texto !== undefined) elemento.textContent = texto;
+
+  return elemento;
+}
 
 function mostrarStatus(mensagem, tipo = "normal") {
   if (!statusAtelie) return;
@@ -44,11 +67,9 @@ function mostrarMensagemFeed(mensagem) {
 
   listaObras.replaceChildren();
 
-  const texto = document.createElement("p");
-  texto.className = "mensagem-feed";
-  texto.textContent = mensagem;
-
-  listaObras.appendChild(texto);
+  listaObras.appendChild(
+    criarElemento("p", "mensagem-feed", mensagem)
+  );
 }
 
 function formatarData(data) {
@@ -65,14 +86,15 @@ function formatarData(data) {
   });
 }
 
-function criarElemento(tag, classe, texto) {
-  const elemento = document.createElement(tag);
-
-  if (classe) elemento.className = classe;
-  if (texto !== undefined) elemento.textContent = texto;
-
-  return elemento;
+function normalizarTexto(texto) {
+  return String(texto || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("pt-BR")
+    .trim();
 }
+
+/* ---------- Pré-visualização da imagem ---------- */
 
 function limparPrevia() {
   if (urlPreviaTemporaria) {
@@ -83,41 +105,38 @@ function limparPrevia() {
   if (previaImagem) {
     previaImagem.removeAttribute("src");
     previaImagem.hidden = true;
+    previaImagem.alt = "";
   }
 }
 
 function validarImagem(arquivo) {
-  if (!arquivo) return "Selecione uma imagem para a obra.";
-
-  const tiposAceitos = [
-    "image/jpeg",
-    "image/png",
-    "image/webp"
-  ];
-
-  if (!tiposAceitos.includes(arquivo.type)) {
-    return "Use uma imagem JPG, PNG ou WEBP.";
+  if (!arquivo) {
+    return "Selecione uma imagem para a obra.";
   }
 
-  const tamanhoMaximo = 5 * 1024 * 1024;
+  if (!TIPOS_IMAGEM.includes(arquivo.type)) {
+    return "Formato inválido. Use uma imagem JPG, PNG ou WEBP.";
+  }
 
-  if (arquivo.size > tamanhoMaximo) {
+  if (arquivo.size > TAMANHO_MAXIMO) {
     return "A imagem deve ter no máximo 5 MB.";
+  }
+
+  if (arquivo.size === 0) {
+    return "O arquivo selecionado está vazio.";
   }
 
   return "";
 }
 
-// Pré-visualização da imagem selecionada.
 inputImagem?.addEventListener("change", () => {
-  const arquivo = inputImagem.files?.[0] || null;
-
-  imagemSelecionada = arquivo;
   limparPrevia();
 
-  if (!arquivo) return;
+  imagemSelecionada = inputImagem.files?.[0] || null;
 
-  const erro = validarImagem(arquivo);
+  if (!imagemSelecionada) return;
+
+  const erro = validarImagem(imagemSelecionada);
 
   if (erro) {
     imagemSelecionada = null;
@@ -126,17 +145,19 @@ inputImagem?.addEventListener("change", () => {
     return;
   }
 
-  urlPreviaTemporaria = URL.createObjectURL(arquivo);
+  urlPreviaTemporaria = URL.createObjectURL(imagemSelecionada);
 
   if (previaImagem) {
     previaImagem.src = urlPreviaTemporaria;
+    previaImagem.alt = "Pré-visualização da obra selecionada";
     previaImagem.hidden = false;
   }
 
   mostrarStatus("Imagem pronta para publicação.", "sucesso");
 });
 
-// Descobre se há um usuário autenticado.
+/* ---------- Sessão e perfil ---------- */
+
 async function obterUsuario() {
   const { data, error } = await supabase.auth.getUser();
 
@@ -148,7 +169,6 @@ async function obterUsuario() {
   return data.user || null;
 }
 
-// Busca o perfil público de um artista.
 async function buscarPerfil(userId) {
   if (!userId) return null;
 
@@ -159,14 +179,15 @@ async function buscarPerfil(userId) {
     .maybeSingle();
 
   if (error) {
-    console.warn("Não foi possível carregar o perfil:", error.message);
+    console.warn("Erro ao carregar perfil:", error.message);
     return null;
   }
 
   return data;
 }
 
-// Cria o cartão visual de uma publicação.
+/* ---------- Cartão de publicação ---------- */
+
 function criarCartaoObra(obra) {
   const artigo = criarElemento("article", "obra-card");
 
@@ -177,54 +198,71 @@ function criarCartaoObra(obra) {
 
   if (obra.artista?.foto_url) {
     const fotoArtista = document.createElement("img");
+
     fotoArtista.src = obra.artista.foto_url;
     fotoArtista.alt = "";
     fotoArtista.className = "obra-avatar-imagem";
     fotoArtista.loading = "lazy";
+
+    fotoArtista.addEventListener("error", () => {
+      fotoArtista.remove();
+      avatar.textContent = "✎";
+    }, { once: true });
+
     avatar.replaceChildren(fotoArtista);
   }
 
-  const informacoesArtista = criarElemento("div", "obra-info-artista");
+  const informacoesArtista = criarElemento(
+    "div",
+    "obra-info-artista"
+  );
+
+  const nome = obra.artista?.nome_artistico?.trim()
+    || "Artista da comunidade";
 
   const nomeArtista = criarElemento(
     "strong",
     "obra-nome-artista",
-    obra.artista?.nome_artistico || "Artista da comunidade"
+    nome
   );
 
-  const dataPublicacao = criarElemento(
+  const data = criarElemento(
     "small",
     "obra-data",
     formatarData(obra.created_at)
   );
 
-  informacoesArtista.append(nomeArtista, dataPublicacao);
+  informacoesArtista.append(nomeArtista, data);
   cabecalho.append(avatar, informacoesArtista);
 
   const categoria = criarElemento(
     "span",
     "obra-categoria",
-    obra.category || "Outras artes"
+    obra.category || "Outros"
   );
 
   const imagem = document.createElement("img");
+
   imagem.className = "obra-imagem";
   imagem.src = obra.image_url;
-  imagem.alt = obra.caption
-    ? `Obra de ${obra.artista?.nome_artistico || "artista"}: ${obra.caption}`
-    : `Obra artística de ${obra.artista?.nome_artistico || "artista da comunidade"}`;
+  imagem.alt = `Obra artística de ${nome}`;
   imagem.loading = "lazy";
+  imagem.decoding = "async";
 
   imagem.addEventListener("error", () => {
     imagem.alt = "Não foi possível carregar a imagem desta obra.";
-  });
+    imagem.classList.add("imagem-com-erro");
+  }, { once: true });
 
   const conteudo = criarElemento("div", "obra-conteudo");
+
+  const legendaTexto = obra.caption?.trim()
+    || "Uma obra compartilhada com a comunidade RefugiART.";
 
   const legenda = criarElemento(
     "p",
     "obra-legenda",
-    obra.caption || "Uma obra compartilhada com a comunidade RefugiART."
+    legendaTexto
   );
 
   conteudo.append(categoria, legenda);
@@ -233,122 +271,223 @@ function criarCartaoObra(obra) {
   return artigo;
 }
 
-// Carrega publicações e seus respectivos perfis.
-async function carregarObras() {
-  if (!listaObras) return;
+/* ---------- Filtros e pesquisa ---------- */
 
-  mostrarMensagemFeed("Buscando obras da comunidade...");
+function filtrarObras(obras) {
+  const pesquisa = normalizarTexto(termoBusca);
 
-  const { data: obras, error } = await supabase
-    .from("atelie_posts")
-    .select("id, user_id, image_url, caption, category, created_at")
-    .order("created_at", { ascending: false })
-    .limit(50);
-
-  if (error) {
-    console.error("Erro ao carregar publicações:", error);
-
-    mostrarMensagemFeed(
-      "Não foi possível carregar as obras. Verifique a conexão e a configuração do Supabase."
-    );
-    return;
-  }
-
-  const obrasComPerfil = await Promise.all(
-    (obras || []).map(async (obra) => ({
-      ...obra,
-      artista: await buscarPerfil(obra.user_id)
-    }))
-  );
-
-  renderizarObras(obrasComPerfil);
-}
-
-// Aplica os filtros de categoria e busca.
-function renderizarObras(obras) {
-  if (!listaObras) return;
-
-  const filtradas = obras.filter((obra) => {
+  return obras.filter((obra) => {
     const categoriaObra = obra.category || "Outros";
 
     const correspondeCategoria =
       categoriaAtiva === "Todas" ||
       categoriaObra === categoriaAtiva ||
-      (categoriaAtiva === "Outros" &&
-        !categoriasValidas.includes(categoriaObra));
+      (
+        categoriaAtiva === "Outros" &&
+        !CATEGORIAS.includes(categoriaObra)
+      );
 
-    const textoPesquisa = [
-      obra.caption || "",
-      obra.category || "",
-      obra.artista?.nome_artistico || ""
-    ].join(" ").toLocaleLowerCase("pt-BR");
+    const textoObra = normalizarTexto([
+      obra.caption,
+      obra.category,
+      obra.artista?.nome_artistico
+    ].join(" "));
 
-    const correspondeBusca = textoPesquisa.includes(
-      termoBusca.toLocaleLowerCase("pt-BR")
-    );
+    const correspondePesquisa =
+      !pesquisa || textoObra.includes(pesquisa);
 
-    return correspondeCategoria && correspondeBusca;
+    return correspondeCategoria && correspondePesquisa;
   });
+}
+
+function renderizarObras() {
+  if (!listaObras) return;
+
+  const filtradas = filtrarObras(obrasCarregadas);
 
   listaObras.replaceChildren();
 
   if (!filtradas.length) {
-    const mensagem = termoBusca || categoriaAtiva !== "Todas"
-      ? "Nenhuma obra encontrada com esses filtros."
-      : "Ainda não há publicações. Seja o primeiro artista a compartilhar uma obra!";
+    const existemObras = obrasCarregadas.length > 0;
+
+    let mensagem;
+
+    if (existemObras) {
+      mensagem = "Nenhuma obra encontrada com esses filtros.";
+    } else {
+      mensagem =
+        "Ainda não há publicações. Seja o primeiro artista a compartilhar uma obra!";
+    }
 
     mostrarMensagemFeed(mensagem);
     return;
   }
 
+  const fragmento = document.createDocumentFragment();
+
   filtradas.forEach((obra) => {
-    listaObras.appendChild(criarCartaoObra(obra));
+    fragmento.appendChild(criarCartaoObra(obra));
+  });
+
+  listaObras.appendChild(fragmento);
+}
+
+function atualizarEstadoCategorias() {
+  document.querySelectorAll("[data-categoria]").forEach((elemento) => {
+    const categoria = elemento.dataset.categoria || "Todas";
+    const ativo = categoria === categoriaAtiva;
+
+    elemento.classList.toggle("selecionada", ativo);
+
+    if (
+      elemento.classList.contains("link-lateral") ||
+      elemento.closest(".lista-categorias")
+    ) {
+      elemento.classList.toggle("ativo", ativo);
+    }
+
+    if (elemento.tagName === "BUTTON") {
+      elemento.setAttribute("aria-pressed", String(ativo));
+    }
   });
 }
 
-// Publica a imagem no Storage e os dados na tabela.
+/* ---------- Carregamento do feed ---------- */
+
+async function carregarObras() {
+  if (!listaObras) return;
+
+  const numeroSolicitacao = ++ultimaSolicitacao;
+
+  if (!obrasCarregadas.length) {
+    mostrarMensagemFeed("Carregando publicações...");
+  }
+
+  carregamentoEmAndamento = true;
+
+  try {
+    const { data: obras, error } = await supabase
+      .from("atelie_posts")
+      .select("id, user_id, image_url, caption, category, created_at")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (numeroSolicitacao !== ultimaSolicitacao) return;
+
+    if (error) throw error;
+
+    const publicacoes = obras || [];
+
+    const idsArtistas = [
+      ...new Set(publicacoes.map((obra) => obra.user_id).filter(Boolean))
+    ];
+
+    let perfisPorId = {};
+
+    if (idsArtistas.length) {
+      const { data: perfis, error: erroPerfis } = await supabase
+        .from("profiles")
+        .select("id, nome_artistico, foto_url")
+        .in("id", idsArtistas);
+
+      if (erroPerfis) {
+        console.warn("Não foi possível carregar alguns perfis:", erroPerfis);
+      } else {
+        perfisPorId = Object.fromEntries(
+          (perfis || []).map((perfil) => [perfil.id, perfil])
+        );
+      }
+    }
+
+    if (numeroSolicitacao !== ultimaSolicitacao) return;
+
+    obrasCarregadas = publicacoes.map((obra) => ({
+      ...obra,
+      artista: perfisPorId[obra.user_id] || null
+    }));
+
+    renderizarObras();
+  } catch (erro) {
+    console.error("Erro ao carregar o feed:", erro);
+
+    if (numeroSolicitacao === ultimaSolicitacao) {
+      mostrarMensagemFeed(
+        "Não foi possível carregar as obras. Verifique sua conexão e as configurações do Supabase."
+      );
+    }
+  } finally {
+    if (numeroSolicitacao === ultimaSolicitacao) {
+      carregamentoEmAndamento = false;
+    }
+  }
+}
+
+/* ---------- Publicação de uma obra ---------- */
+
 form?.addEventListener("submit", async (evento) => {
   evento.preventDefault();
 
-  const usuario = await obterUsuario();
+  if (botaoPublicar?.disabled) return;
 
-  if (!usuario) {
-    mostrarStatus(
-      "Entre na sua conta para publicar uma obra.",
-      "erro"
-    );
-
-    window.location.href = "login.html";
-    return;
-  }
-
-  const arquivo = imagemSelecionada || inputImagem?.files?.[0];
-  const erroImagem = validarImagem(arquivo);
-
-  if (erroImagem) {
-    mostrarStatus(erroImagem, "erro");
-    return;
-  }
-
-  const categoria = selectCategoria?.value || "Outros";
-
-  if (!categoriasValidas.includes(categoria)) {
-    mostrarStatus("Selecione uma categoria válida.", "erro");
-    return;
-  }
-
-  const legenda = (inputLegenda?.value || "").trim();
+  const textoOriginal = botaoPublicar?.textContent || "Publicar obra";
 
   if (botaoPublicar) {
     botaoPublicar.disabled = true;
     botaoPublicar.textContent = "Publicando...";
   }
 
-  mostrarStatus("Enviando sua obra...", "normal");
-
   try {
-    const extensao = arquivo.name.split(".").pop()?.toLowerCase() || "jpg";
-    const nomeArquivo = `${usuario.id}/${Date.now()}.${extensao}`;
+    mostrarStatus("Verificando sua conta...", "normal");
+
+    const usuario = await obterUsuario();
+
+    if (!usuario) {
+      mostrarStatus(
+        "Entre na sua conta para publicar uma obra.",
+        "erro"
+      );
+
+      window.location.href = "login.html";
+      return;
+    }
+
+    const arquivo = imagemSelecionada || inputImagem?.files?.[0];
+    const erroImagem = validarImagem(arquivo);
+
+    if (erroImagem) {
+      mostrarStatus(erroImagem, "erro");
+      return;
+    }
+
+    const categoria = selectCategoria?.value || "Outros";
+
+    if (!CATEGORIAS.includes(categoria)) {
+      mostrarStatus("Selecione uma categoria válida.", "erro");
+      return;
+    }
+
+    const legenda = (inputLegenda?.value || "").trim();
+
+    if (legenda.length > 2000) {
+      mostrarStatus(
+        "A legenda deve ter no máximo 2.000 caracteres.",
+        "erro"
+      );
+      return;
+    }
+
+    mostrarStatus("Enviando a imagem...", "normal");
+
+    const extensoesPermitidas = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp"
+    };
+
+    const extensao = extensoesPermitidas[arquivo.type];
+
+    const nomeArquivo =
+      `${usuario.id}/${Date.now()}-${crypto.randomUUID()}.${extensao}`;
 
     const { error: erroUpload } = await supabase.storage
       .from("artwork-images")
@@ -363,6 +502,12 @@ form?.addEventListener("submit", async (evento) => {
     const { data: urlPublica } = supabase.storage
       .from("artwork-images")
       .getPublicUrl(nomeArquivo);
+
+    if (!urlPublica?.publicUrl) {
+      throw new Error("Não foi possível obter o endereço da imagem.");
+    }
+
+    mostrarStatus("Salvando publicação...", "normal");
 
     const { error: erroPublicacao } = await supabase
       .from("atelie_posts")
@@ -379,7 +524,14 @@ form?.addEventListener("submit", async (evento) => {
     imagemSelecionada = null;
     limparPrevia();
 
-    mostrarStatus("Obra publicada com sucesso!", "sucesso");
+    mostrarStatus("Sua obra foi publicada com sucesso!", "sucesso");
+
+    categoriaAtiva = "Todas";
+    termoBusca = "";
+
+    if (campoBusca) campoBusca.value = "";
+
+    atualizarEstadoCategorias();
 
     await carregarObras();
 
@@ -388,64 +540,80 @@ form?.addEventListener("submit", async (evento) => {
       block: "start"
     });
   } catch (erro) {
-    console.error("Erro ao publicar:", erro);
+    console.error("Erro ao publicar obra:", erro);
 
     mostrarStatus(
-      "Não foi possível publicar. Confira se o Storage, a tabela e as permissões estão configurados.",
+      "Não foi possível publicar. Confira a conexão, o bucket artwork-images e as permissões do Supabase.",
       "erro"
     );
   } finally {
     if (botaoPublicar) {
       botaoPublicar.disabled = false;
-      botaoPublicar.innerHTML = 'Publicar obra <span>↗</span>';
+      botaoPublicar.textContent = textoOriginal;
     }
   }
 });
 
-// Filtros do painel esquerdo e dos chips.
+/* ---------- Eventos das categorias ---------- */
+
 document.querySelectorAll("[data-categoria]").forEach((elemento) => {
-  elemento.addEventListener("click", () => {
+  elemento.addEventListener("click", (evento) => {
+    // Evita que links usados como filtros recarreguem a página.
+    if (elemento.tagName === "A") {
+      evento.preventDefault();
+    }
+
     categoriaAtiva = elemento.dataset.categoria || "Todas";
 
-    document.querySelectorAll(".categoria-chip").forEach((chip) => {
-      const ativo = chip.dataset.categoria === categoriaAtiva;
-      chip.classList.toggle("selecionada", ativo);
-    });
-
-    document.querySelectorAll(".link-lateral[data-categoria]").forEach((link) => {
-      link.classList.toggle(
-        "ativo",
-        link.dataset.categoria === categoriaAtiva
-      );
-    });
-
-    carregarObras();
+    atualizarEstadoCategorias();
+    renderizarObras();
   });
 });
 
-// Pesquisa por legenda, categoria ou nome artístico.
+/* ---------- Pesquisa com atraso inteligente ---------- */
+
+function aplicarPesquisa() {
+  termoBusca = campoBusca?.value.trim() || "";
+  renderizarObras();
+}
+
 formBusca?.addEventListener("submit", (evento) => {
   evento.preventDefault();
-  termoBusca = campoBusca?.value.trim() || "";
-  carregarObras();
+
+  if (temporizadorBusca) {
+    clearTimeout(temporizadorBusca);
+  }
+
+  aplicarPesquisa();
 });
 
 campoBusca?.addEventListener("input", () => {
-  termoBusca = campoBusca.value.trim();
-  carregarObras();
+  if (temporizadorBusca) {
+    clearTimeout(temporizadorBusca);
+  }
+
+  temporizadorBusca = setTimeout(aplicarPesquisa, 250);
 });
 
-// Atualização manual do feed.
+/* ---------- Atualização manual ---------- */
+
 botaoAtualizar?.addEventListener("click", async () => {
+  if (carregamentoEmAndamento) return;
+
+  const textoOriginal = botaoAtualizar.textContent;
+
   botaoAtualizar.disabled = true;
+  botaoAtualizar.textContent = "Atualizando...";
 
   try {
     await carregarObras();
   } finally {
     botaoAtualizar.disabled = false;
+    botaoAtualizar.textContent = textoOriginal;
   }
 });
 
-// Carrega o feed ao abrir a página.
-carregarObras();
+/* ---------- Inicialização ---------- */
 
+atualizarEstadoCategorias();
+carregarObras();

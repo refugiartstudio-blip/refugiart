@@ -14,10 +14,10 @@ const area = document.getElementById('area');
 const bio = document.getElementById('bio');
 const foto = document.getElementById('foto');
 const photoPreview = document.getElementById('profile-photo');
-const botaoEscolherFoto =
-  document.getElementById('escolher-foto');
+const botaoEscolherFoto = document.getElementById('escolher-foto');
 const status = document.getElementById('status');
 const saveButton = document.getElementById('save-button');
+const iconeCamera = document.querySelector('.foto-editar');
 
 // Configurações
 const fotoPadrao =
@@ -37,9 +37,16 @@ let arquivoFoto = null;
 let urlPreviaLocal = null;
 let fotoAtualUrl = null;
 
-// Exibe mensagens na página
+// Exibe mensagens
 function mostrarStatus(mensagem) {
   status.textContent = mensagem;
+}
+
+// Controla a câmera decorativa
+function mostrarCamera(mostrar) {
+  if (iconeCamera) {
+    iconeCamera.style.display = mostrar ? '' : 'none';
+  }
 }
 
 // Abre a galeria ao tocar na moldura
@@ -54,20 +61,24 @@ foto.addEventListener('change', () => {
   if (!arquivo) return;
 
   if (!tiposPermitidos[arquivo.type]) {
-    mostrarStatus(
-      'Formato inválido. Escolha uma imagem JPG, PNG, WEBP ou GIF.'
-    );
     foto.value = '';
     arquivoFoto = null;
+
+    mostrarCamera(!fotoAtualUrl);
+    mostrarStatus(
+      'Formato inválido. Escolha JPG, PNG, WEBP ou GIF.'
+    );
     return;
   }
 
   if (arquivo.size > tamanhoMaximo) {
+    foto.value = '';
+    arquivoFoto = null;
+
+    mostrarCamera(!fotoAtualUrl);
     mostrarStatus(
       'A imagem ultrapassa 5 MB. Escolha uma imagem menor.'
     );
-    foto.value = '';
-    arquivoFoto = null;
     return;
   }
 
@@ -79,6 +90,9 @@ foto.addEventListener('change', () => {
 
   urlPreviaLocal = URL.createObjectURL(arquivo);
   photoPreview.src = urlPreviaLocal;
+
+  // Esconde a câmera imediatamente após escolher a foto
+  mostrarCamera(false);
 
   mostrarStatus(
     'Foto selecionada! Clique em "Salvar meu perfil" para confirmar.'
@@ -132,14 +146,16 @@ async function carregarPerfil() {
 
     const metadata = usuario.user_metadata || {};
 
-    nome.value =
-      data?.nome_artistico || metadata.nome || '';
-
+    nome.value = data?.nome_artistico || metadata.nome || '';
     area.value = data?.area_atuacao || '';
     bio.value = data?.biografia || '';
 
     fotoAtualUrl = data?.foto_url || null;
     photoPreview.src = fotoAtualUrl || fotoPadrao;
+
+    // Sem foto salva, mostra a câmera.
+    // Com foto salva, esconde a câmera.
+    mostrarCamera(!fotoAtualUrl);
 
     mostrarStatus(
       data
@@ -171,10 +187,9 @@ form.addEventListener('submit', async (evento) => {
   try {
     let fotoUrlSalva = fotoAtualUrl;
 
-    // Envia a foto somente quando uma nova imagem foi escolhida
+    // Envia a foto somente se uma nova foi escolhida
     if (arquivoFoto) {
       const extensao = tiposPermitidos[arquivoFoto.type];
-
       const caminho =
         `${userId}/perfil-${Date.now()}.${extensao}`;
 
@@ -199,7 +214,7 @@ form.addEventListener('submit', async (evento) => {
       fotoUrlSalva = urlPublica.publicUrl;
     }
 
-    // Monta os dados do perfil
+    // Dados do perfil
     const perfil = {
       id: userId,
       nome_artistico: nome.value.trim(),
@@ -231,11 +246,16 @@ form.addEventListener('submit', async (evento) => {
     }
 
     photoPreview.src = fotoAtualUrl || fotoPadrao;
+    mostrarCamera(!fotoAtualUrl);
 
-    mostrarStatus('Seu perfil artístico foi salvo com sucesso!');
+    mostrarStatus(
+      'Seu perfil artístico foi salvo com sucesso!'
+    );
   } catch (erro) {
     console.error(erro);
-    mostrarStatus('Ocorreu um erro inesperado ao salvar o perfil.');
+    mostrarStatus(
+      'Ocorreu um erro inesperado ao salvar o perfil.'
+    );
   } finally {
     saveButton.disabled = false;
   }

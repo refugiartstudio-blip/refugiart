@@ -1,1 +1,360 @@
-t
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#171717">
+  <title>Revista RefugiART — 1ª Edição</title>
+
+  <style>
+    :root {
+      --fundo: #111;
+      --painel: #1e1e1e;
+      --texto: #f5f5f5;
+      --destaque: #d5a34a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header {
+      padding: 20px 16px;
+      text-align: center;
+      background: #191919;
+      border-bottom: 1px solid #383838;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.35rem, 4vw, 2rem);
+    }
+
+    header p {
+      margin: 0;
+      color: #c7c7c7;
+      font-size: 0.95rem;
+    }
+
+    .voltar {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 16px;
+      border: 1px solid #555;
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+    }
+
+    .voltar:hover {
+      background: #333;
+    }
+
+    main {
+      width: min(100% - 24px, 900px);
+      margin: 24px auto;
+    }
+
+    .leitor {
+      padding: 14px;
+      background: var(--painel);
+      border: 1px solid #363636;
+      border-radius: 14px;
+    }
+
+    .pagina-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+      background: #090909;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    #paginaRevista {
+      display: block;
+      width: 100%;
+      max-height: 72vh;
+      object-fit: contain;
+      cursor: zoom-in;
+    }
+
+    .informacao {
+      text-align: center;
+      padding: 16px 0 10px;
+      color: #ddd;
+    }
+
+    #contador {
+      font-weight: bold;
+      color: var(--destaque);
+    }
+
+    .controles {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button {
+      min-height: 46px;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      background: var(--destaque);
+      color: #171717;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #555;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .dica {
+      margin: 16px 0 4px;
+      text-align: center;
+      color: #bbb;
+      font-size: 0.85rem;
+    }
+
+    .erro {
+      padding: 18px;
+      text-align: center;
+      color: #ffb3b3;
+    }
+
+    footer {
+      padding: 24px 12px;
+      text-align: center;
+      color: #999;
+      font-size: 0.85rem;
+    }
+
+    .ampliada {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.96);
+      cursor: zoom-out;
+    }
+
+    .ampliada img {
+      max-width: 100%;
+      max-height: 96vh;
+      object-fit: contain;
+    }
+
+    @media (max-width: 480px) {
+      main {
+        width: calc(100% - 16px);
+        margin: 14px auto;
+      }
+
+      .leitor {
+        padding: 8px;
+      }
+
+      .pagina-area {
+        min-height: 220px;
+      }
+
+      #paginaRevista {
+        max-height: 68vh;
+      }
+
+      .controles {
+        gap: 8px;
+      }
+
+      button {
+        flex: 1;
+        padding: 12px 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Revista RefugiART</h1>
+    <p>1ª edição · Arte, cultura e criatividade</p>
+    <a class="voltar" href="index.html">← Voltar ao início</a>
+  </header>
+
+  <main>
+    <section class="leitor" aria-label="Leitor digital da revista">
+      <div class="pagina-area">
+        <img
+          id="paginaRevista"
+          src="imagens/Revistas/1edicao/capa.png"
+          alt="Capa da Revista RefugiART"
+          title="Toque para ampliar"
+        >
+      </div>
+
+      <div id="erroImagem" class="erro" hidden>
+        Não foi possível carregar esta imagem.
+        Confira o nome do arquivo no GitHub.
+      </div>
+
+      <div class="informacao">
+        <div id="tituloPagina">Capa</div>
+        <p id="contador">Capa — 1 de 9</p>
+      </div>
+
+      <nav class="controles" aria-label="Navegação da revista">
+        <button id="anterior" type="button" disabled>
+          ← Página anterior
+        </button>
+        <button id="proxima" type="button">
+          Próxima página →
+        </button>
+      </nav>
+
+      <div class="controles">
+        <button id="ampliar" type="button">
+          ⛶ Ampliar página
+        </button>
+      </div>
+
+      <p class="dica">
+        Use os botões para navegar. Toque na imagem para ampliá-la.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    RefugiART — Arte, educação e cultura.
+  </footer>
+
+  <script>
+    const pasta = "imagens/Revistas/1edicao/";
+
+    const paginas = [
+      { arquivo: "capa.png", titulo: "Capa" },
+      { arquivo: "pagina2.png", titulo: "Página 2" },
+      { arquivo: "pagina3.png", titulo: "Página 3" },
+      { arquivo: "Pagina4.png", titulo: "Página 4" },
+      { arquivo: "Pagina5.png", titulo: "Página 5" },
+      { arquivo: "Pagina6.png", titulo: "Página 6" },
+      { arquivo: "Pagina7.png", titulo: "Página 7" },
+      { arquivo: "Pagina8.png", titulo: "Página 8" },
+      { arquivo: "pagina9.png", titulo: "Página 9" }
+    ];
+
+    let atual = 0;
+
+    const imagem = document.getElementById("paginaRevista");
+    const contador = document.getElementById("contador");
+    const titulo = document.getElementById("tituloPagina");
+    const anterior = document.getElementById("anterior");
+    const proxima = document.getElementById("proxima");
+    const erro = document.getElementById("erroImagem");
+
+    function mostrarPagina() {
+      const pagina = paginas[atual];
+
+      erro.hidden = true;
+      imagem.hidden = false;
+      imagem.alt = pagina.titulo + " da Revista RefugiART";
+      imagem.src = pasta + pagina.arquivo;
+
+      titulo.textContent = pagina.titulo;
+      contador.textContent = pagina.titulo + " — " +
+        (atual + 1) + " de " + paginas.length;
+
+      anterior.disabled = atual === 0;
+      proxima.disabled = atual === paginas.length - 1;
+    }
+
+    imagem.addEventListener("error", () => {
+      imagem.hidden = true;
+      erro.hidden = false;
+      erro.textContent =
+        "Não foi possível carregar " + paginas[atual].arquivo +
+        ". Confira o nome exato do arquivo no GitHub.";
+    });
+
+    anterior.addEventListener("click", () => {
+      if (atual > 0) {
+        atual--;
+        mostrarPagina();
+      }
+    });
+
+    proxima.addEventListener("click", () => {
+      if (atual < paginas.length - 1) {
+        atual++;
+        mostrarPagina();
+      }
+    });
+
+    function ampliarPagina() {
+      if (imagem.hidden) return;
+
+      const tela = document.createElement("div");
+      tela.className = "ampliada";
+      tela.setAttribute("role", "dialog");
+      tela.setAttribute("aria-label", "Imagem ampliada");
+
+      const imagemGrande = document.createElement("img");
+      imagemGrande.src = imagem.src;
+      imagemGrande.alt = imagem.alt;
+
+      tela.appendChild(imagemGrande);
+      document.body.appendChild(tela);
+
+      function fechar() {
+        tela.remove();
+        document.removeEventListener("keydown", teclaEsc);
+      }
+
+      function teclaEsc(evento) {
+        if (evento.key === "Escape") fechar();
+      }
+
+      tela.addEventListener("click", fechar);
+      document.addEventListener("keydown", teclaEsc);
+    }
+
+    document.getElementById("ampliar")
+      .addEventListener("click", ampliarPagina);
+
+    imagem.addEventListener("click", ampliarPagina);
+
+    document.addEventListener("keydown", (evento) => {
+      if (evento.key === "ArrowLeft" && atual > 0) {
+        atual--;
+        mostrarPagina();
+      }
+
+      if (evento.key === "ArrowRight" && atual < paginas.length - 1) {
+        atual++;
+        mostrarPagina();
+      }
+    });
+
+    mostrarPagina();
+  </script>
+</body>
+</html>

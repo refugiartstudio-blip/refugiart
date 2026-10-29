@@ -346,11 +346,23 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ==========================================
+  
+  // ==========================================
   // 7. ESTADO INICIAL
   // ==========================================
 
+  // O perfil do artista e seu botão de retorno
+  // começam ocultos ao carregar a página.
+  if (perfil) {
+    perfil.hidden = true;
+  }
+
+  // A lista começa visível.
+  if (listaArtistas) {
+    listaArtistas.hidden = false;
+  }
+
+  // A galeria abre na Visão geral.
   if (visaoGeral && acervo && salao) {
     mostrarArea("visaoGeral");
   }
-
-});

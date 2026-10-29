@@ -56,17 +56,35 @@
         <p>Preencha os campos abaixo para personalizar seu perfil.</p>
       </div>
 
-      <div class="perfil-foto-area">
-        <img
-          id="profile-photo"
-          class="perfil-foto"
-          alt="Prévia da foto de perfil"
-          src="https://placehold.co/160x160/e8dfca/40543c?text=Arte">
+      
+<div class="seletor-foto">
+  <input
+    id="foto"
+    type="file"
+    accept="image/*"
+    hidden
+  >
 
-        <p class="perfil-foto-legenda">
-          Sua imagem de apresentação
-        </p>
-      </div>
+  <button
+    type="button"
+    class="botao-foto"
+    id="escolher-foto"
+    aria-label="Escolher foto de perfil"
+    title="Toque para escolher uma foto"
+  >
+    <img
+      id="profile-photo"
+      class="perfil-foto"
+      src="https://placehold.co/160x160/e8dfca/40543c?text=Arte"
+      alt="Foto de perfil"
+    >
+
+    <span class="foto-editar" aria-hidden="true">📷</span>
+  </button>
+
+  <p>Toque na foto para alterá-la</p>
+</div>
+
 
       <form id="profile-form">
         <div class="perfil-campo">

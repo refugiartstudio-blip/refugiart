@@ -4,80 +4,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#171717">
+  <meta name="theme-color" content="#243e35">
   <title>Revista RefugiART — 1ª Edição</title>
+  <link rel="stylesheet" href="style.css">
 
   <style>
-    :root {
-      --fundo: #111;
-      --painel: #1e1e1e;
-      --texto: #f5f5f5;
-      --destaque: #d5a34a;
+    .pagina-revista {
+      width: min(100% - 28px, 1000px);
+      margin: 30px auto;
     }
 
-    * {
-      box-sizing: border-box;
+    .apresentacao-revista {
+      background: #fff;
+      border: 1px solid #dce8dc;
+      border-radius: 16px;
+      padding: 26px;
+      margin-bottom: 22px;
     }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--fundo);
-      color: var(--texto);
-      font-family: Arial, Helvetica, sans-serif;
+    .etiqueta-revista {
+      color: #557a63;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1.5px;
     }
 
-    header {
-      padding: 20px 16px;
-      text-align: center;
-      background: #191919;
-      border-bottom: 1px solid #383838;
+    .apresentacao-revista h2 {
+      color: #243e35;
+      font-family: Georgia, serif;
+      font-size: clamp(26px, 5vw, 38px);
+      line-height: 1.2;
+      margin: 10px 0;
     }
 
-    header h1 {
-      margin: 0 0 8px;
-      font-size: clamp(1.35rem, 4vw, 2rem);
+    .apresentacao-revista p {
+      color: #626b62;
+      margin-bottom: 0;
     }
 
-    header p {
-      margin: 0;
-      color: #c7c7c7;
-      font-size: 0.95rem;
+    .leitor-revista {
+      background: #fff;
+      border: 1px solid #dce8dc;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 14px rgba(36, 62, 53, 0.06);
     }
 
-    .voltar {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 16px;
-      border: 1px solid #555;
-      border-radius: 8px;
-      color: white;
-      text-decoration: none;
-    }
-
-    .voltar:hover {
-      background: #333;
-    }
-
-    main {
-      width: min(100% - 24px, 900px);
-      margin: 24px auto;
-    }
-
-    .leitor {
-      padding: 14px;
-      background: var(--painel);
-      border: 1px solid #363636;
-      border-radius: 14px;
-    }
-
-    .pagina-area {
+    .area-pagina-revista {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 300px;
-      background: #090909;
-      border-radius: 8px;
+      padding: 10px;
+      background: #f4f1e9;
+      border-radius: 10px;
       overflow: hidden;
     }
 
@@ -89,272 +69,497 @@
       cursor: zoom-in;
     }
 
-    .informacao {
+    #paginaRevista[hidden] {
+      display: none;
+    }
+
+    .erro-revista {
+      padding: 20px;
+      color: #8b3027;
       text-align: center;
-      padding: 16px 0 10px;
-      color: #ddd;
     }
 
-    #contador {
+    .erro-revista[hidden] {
+      display: none;
+    }
+
+    .info-revista {
+      text-align: center;
+      padding: 18px 8px 8px;
+    }
+
+    .info-revista h3 {
+      color: #243e35;
+      margin: 0 0 5px;
+    }
+
+    #contadorRevista {
+      color: #557a63;
+      font-size: 14px;
       font-weight: bold;
-      color: var(--destaque);
+      margin: 0;
     }
 
-    .controles {
+    .controles-revista {
       display: flex;
       justify-content: center;
-      gap: 12px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      gap: 10px;
+      margin-top: 14px;
     }
 
-    button {
+    .controles-revista button {
       min-height: 46px;
-      padding: 12px 18px;
-      border: none;
+      padding: 12px 16px;
+      background: #243e35;
+      color: #fff;
+      border: 0;
       border-radius: 8px;
-      background: var(--destaque);
-      color: #171717;
       font-weight: bold;
-      font-size: 0.95rem;
       cursor: pointer;
     }
 
-    button:disabled {
-      background: #555;
-      color: #aaa;
+    .controles-revista button:hover {
+      background: #365b4d;
+    }
+
+    .controles-revista button:disabled {
+      background: #d8ded5;
+      color: #737b72;
       cursor: not-allowed;
     }
 
-    .dica {
-      margin: 16px 0 4px;
-      text-align: center;
-      color: #bbb;
-      font-size: 0.85rem;
+    .controles-revista .botao-ampliar {
+      background: #d6a45d;
+      color: #28251f;
     }
 
-    .erro {
-      padding: 18px;
-      text-align: center;
-      color: #ffb3b3;
+    .controles-revista .botao-ampliar:hover {
+      background: #c4944e;
     }
 
-    footer {
-      padding: 24px 12px;
+    .dica-revista {
+      margin: 15px 0 2px;
       text-align: center;
-      color: #999;
-      font-size: 0.85rem;
+      color: #6c746d;
+      font-size: 13px;
     }
 
-    .ampliada {
+    .tela-ampliada-revista {
       position: fixed;
       inset: 0;
-      z-index: 10;
+      z-index: 2000;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 12px;
-      background: rgba(0, 0, 0, 0.96);
+      background: rgba(18, 29, 23, 0.96);
       cursor: zoom-out;
     }
 
-    .ampliada img {
+    .tela-ampliada-revista img {
       max-width: 100%;
       max-height: 96vh;
       object-fit: contain;
     }
 
     @media (max-width: 480px) {
-      main {
-        width: calc(100% - 16px);
-        margin: 14px auto;
+      .pagina-revista {
+        width: calc(100% - 20px);
+        margin: 18px auto;
       }
 
-      .leitor {
-        padding: 8px;
+      .apresentacao-revista {
+        padding: 21px 18px;
       }
 
-      .pagina-area {
+      .leitor-revista {
+        padding: 9px;
+      }
+
+      .area-pagina-revista {
         min-height: 220px;
+        padding: 5px;
       }
 
       #paginaRevista {
-        max-height: 68vh;
+        max-height: 65vh;
       }
 
-      .controles {
+      .controles-revista {
         gap: 8px;
       }
 
-      button {
+      .controles-revista button {
         flex: 1;
-        padding: 12px 10px;
+        padding: 12px 9px;
+        font-size: 13px;
       }
     }
   </style>
 </head>
 
-<body>
-  <header>
-    <h1>Revista RefugiART</h1>
-    <p>1ª edição · Arte, cultura e criatividade</p>
-    <a class="voltar" href="index.html">← Voltar ao início</a>
+<body data-logado="false">
+
+  <header class="cabecalho">
+    <img
+      src="imagens/logo.png"
+      alt="Símbolo da RefugiART"
+      class="logo">
+
+    <div class="identidade">
+      <h1>RefugiART</h1>
+      <p>A arte nos aproxima.</p>
+    </div>
+
+    <button
+      class="botao-menu"
+      id="abrirMenu"
+      type="button"
+      aria-label="Abrir menu"
+      aria-controls="menuLateral"
+      aria-expanded="false">
+      ☰
+    </button>
   </header>
 
-  <main>
-    <section class="leitor" aria-label="Leitor digital da revista">
-      <div class="pagina-area">
+  <nav class="navegacao-principal">
+    <a href="inicio.html">Início</a>
+    <a href="mercado.html">Mercado</a>
+    <a href="comunidades.html">Comunidades</a>
+    <a href="galeria.html">Galeria</a>
+    <a href="login.html" id="linkLogin">Login</a>
+  </nav>
+
+  <main class="pagina-revista">
+
+    <section class="apresentacao-revista">
+      <span class="etiqueta-revista">PUBLICAÇÕES REFUGIART</span>
+      <h2>Revista RefugiART</h2>
+      <p>
+        Primeira edição. Um espaço dedicado à arte,
+        à cultura, à criatividade e às expressões
+        artísticas da nossa comunidade.
+      </p>
+    </section>
+
+    <section class="leitor-revista" aria-label="Leitor digital da revista">
+
+      <div class="area-pagina-revista">
         <img
           id="paginaRevista"
           src="imagens/Revistas/1edicao/capa.png"
           alt="Capa da Revista RefugiART"
-          title="Toque para ampliar"
-        >
+          title="Toque para ampliar">
+
+        <div id="erroRevista" class="erro-revista" hidden>
+          Não foi possível carregar esta página.
+          Confira o nome do arquivo.
+        </div>
       </div>
 
-      <div id="erroImagem" class="erro" hidden>
-        Não foi possível carregar esta imagem.
-        Confira o nome do arquivo no GitHub.
+      <div class="info-revista">
+        <h3 id="tituloPaginaRevista">Capa</h3>
+        <p id="contadorRevista">Capa — 1 de 9</p>
       </div>
 
-      <div class="informacao">
-        <div id="tituloPagina">Capa</div>
-        <p id="contador">Capa — 1 de 9</p>
-      </div>
-
-      <nav class="controles" aria-label="Navegação da revista">
-        <button id="anterior" type="button" disabled>
-          ← Página anterior
+      <nav class="controles-revista" aria-label="Navegação da revista">
+        <button id="paginaAnterior" type="button" disabled>
+          ← Anterior
         </button>
-        <button id="proxima" type="button">
-          Próxima página →
+
+        <button id="proximaPagina" type="button">
+          Próxima →
         </button>
       </nav>
 
-      <div class="controles">
-        <button id="ampliar" type="button">
+      <div class="controles-revista">
+        <button
+          id="ampliarRevista"
+          class="botao-ampliar"
+          type="button">
           ⛶ Ampliar página
         </button>
       </div>
 
-      <p class="dica">
-        Use os botões para navegar. Toque na imagem para ampliá-la.
+      <p class="dica-revista">
+        Avance pelas páginas ou toque na imagem para ampliá-la.
       </p>
+
     </section>
   </main>
 
   <footer>
-    RefugiART — Arte, educação e cultura.
+    <p>RefugiART © 2026 — Criar é Sentir.</p>
   </footer>
 
+  <div class="fundo-menu" id="fundoMenu"></div>
+
+  <aside
+    class="menu-lateral"
+    id="menuLateral"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tituloMenu"
+    aria-hidden="true"
+    inert>
+
+    <div class="cabecalho-menu">
+      <div>
+        <h2 id="tituloMenu">RefugiART</h2>
+        <p>Explore nossas iniciativas</p>
+      </div>
+
+      <button
+        class="botao-fechar"
+        id="fecharMenu"
+        type="button"
+        aria-label="Fechar menu">
+        ×
+      </button>
+    </div>
+
+    <div class="introducao-menu">
+      <span>✦</span>
+      <div>
+        <h3>Conheça nosso universo</h3>
+        <p>Arte, cultura e transformação social.</p>
+      </div>
+    </div>
+
+    <nav class="opcoes-menu" aria-label="Menu lateral">
+
+      <a href="revista.html" class="item-menu" aria-current="page">
+        <span class="icone-menu">▤</span>
+        <span class="texto-menu">
+          <strong>Revista RefugiART</strong>
+          <small>Publicações e entrevistas</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="eventos.html" class="item-menu">
+        <span class="icone-menu">▦</span>
+        <span class="texto-menu">
+          <strong>Eventos</strong>
+          <small>Encontros e programações</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="exposicoes.html" class="item-menu">
+        <span class="icone-menu">▧</span>
+        <span class="texto-menu">
+          <strong>Exposições</strong>
+          <small>Mostras e trabalhos artísticos</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="palestras.html" class="item-menu">
+        <span class="icone-menu">◉</span>
+        <span class="texto-menu">
+          <strong>Palestras e encontros</strong>
+          <small>Ideias e experiências</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="acoes-sociais.html" class="item-menu">
+        <span class="icone-menu">♡</span>
+        <span class="texto-menu">
+          <strong>Ações sociais</strong>
+          <small>Arte junto à comunidade</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="projetos-educativos.html" class="item-menu">
+        <span class="icone-menu">✎</span>
+        <span class="texto-menu">
+          <strong>Projetos educativos</strong>
+          <small>Oficinas, cursos e formação</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="perfil.html" class="item-menu" id="itemPerfil" hidden>
+        <span class="icone-menu">♙</span>
+        <span class="texto-menu">
+          <strong>Meu perfil</strong>
+          <small>Seu espaço artístico</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+    </nav>
+
+    <div class="rodape-menu">
+      <p>RefugiART — Criar é Sentir.</p>
+    </div>
+  </aside>
+
   <script>
-    const pasta = "imagens/Revistas/1edicao/";
+    document.addEventListener("DOMContentLoaded", function () {
+      const paginas = [
+        { arquivo: "capa.png", titulo: "Capa" },
+        { arquivo: "pagina2.png", titulo: "Página 2" },
+        { arquivo: "pagina3.png", titulo: "Página 3" },
+        { arquivo: "Pagina4.png", titulo: "Página 4" },
+        { arquivo: "Pagina5.png", titulo: "Página 5" },
+        { arquivo: "Pagina6.png", titulo: "Página 6" },
+        { arquivo: "Pagina7.png", titulo: "Página 7" },
+        { arquivo: "Pagina8.png", titulo: "Página 8" },
+        { arquivo: "pagina9.png", titulo: "Página 9" }
+      ];
 
-    const paginas = [
-      { arquivo: "capa.png", titulo: "Capa" },
-      { arquivo: "pagina2.png", titulo: "Página 2" },
-      { arquivo: "pagina3.png", titulo: "Página 3" },
-      { arquivo: "Pagina4.png", titulo: "Página 4" },
-      { arquivo: "Pagina5.png", titulo: "Página 5" },
-      { arquivo: "Pagina6.png", titulo: "Página 6" },
-      { arquivo: "Pagina7.png", titulo: "Página 7" },
-      { arquivo: "Pagina8.png", titulo: "Página 8" },
-      { arquivo: "pagina9.png", titulo: "Página 9" }
-    ];
+      const pasta = "imagens/Revistas/1edicao/";
+      let atual = 0;
 
-    let atual = 0;
+      const imagem = document.getElementById("paginaRevista");
+      const contador = document.getElementById("contadorRevista");
+      const titulo = document.getElementById("tituloPaginaRevista");
+      const anterior = document.getElementById("paginaAnterior");
+      const proxima = document.getElementById("proximaPagina");
+      const erro = document.getElementById("erroRevista");
 
-    const imagem = document.getElementById("paginaRevista");
-    const contador = document.getElementById("contador");
-    const titulo = document.getElementById("tituloPagina");
-    const anterior = document.getElementById("anterior");
-    const proxima = document.getElementById("proxima");
-    const erro = document.getElementById("erroImagem");
+      function mostrarPagina() {
+        const pagina = paginas[atual];
 
-    function mostrarPagina() {
-      const pagina = paginas[atual];
+        erro.hidden = true;
+        imagem.hidden = false;
+        imagem.alt = pagina.titulo + " da Revista RefugiART";
+        imagem.src = pasta + pagina.arquivo;
 
-      erro.hidden = true;
-      imagem.hidden = false;
-      imagem.alt = pagina.titulo + " da Revista RefugiART";
-      imagem.src = pasta + pagina.arquivo;
+        titulo.textContent = pagina.titulo;
+        contador.textContent =
+          pagina.titulo + " — " + (atual + 1) + " de " + paginas.length;
 
-      titulo.textContent = pagina.titulo;
-      contador.textContent = pagina.titulo + " — " +
-        (atual + 1) + " de " + paginas.length;
+        anterior.disabled = atual === 0;
+        proxima.disabled = atual === paginas.length - 1;
+      }
 
-      anterior.disabled = atual === 0;
-      proxima.disabled = atual === paginas.length - 1;
-    }
+      imagem.addEventListener("error", function () {
+        imagem.hidden = true;
+        erro.hidden = false;
+        erro.textContent =
+          "Não foi possível carregar " + paginas[atual].arquivo +
+          ". Confira o nome exato do arquivo no GitHub.";
+      });
 
-    imagem.addEventListener("error", () => {
-      imagem.hidden = true;
-      erro.hidden = false;
-      erro.textContent =
-        "Não foi possível carregar " + paginas[atual].arquivo +
-        ". Confira o nome exato do arquivo no GitHub.";
+      anterior.addEventListener("click", function () {
+        if (atual > 0) {
+          atual--;
+          mostrarPagina();
+        }
+      });
+
+      proxima.addEventListener("click", function () {
+        if (atual < paginas.length - 1) {
+          atual++;
+          mostrarPagina();
+        }
+      });
+
+      function ampliarPagina() {
+        if (imagem.hidden) return;
+
+        const tela = document.createElement("div");
+        tela.className = "tela-ampliada-revista";
+        tela.setAttribute("role", "dialog");
+        tela.setAttribute("aria-label", "Página ampliada");
+
+        const imagemGrande = document.createElement("img");
+        imagemGrande.src = imagem.src;
+        imagemGrande.alt = imagem.alt;
+        tela.appendChild(imagemGrande);
+        document.body.appendChild(tela);
+
+        function fechar() {
+          tela.remove();
+          document.removeEventListener("keydown", fecharEsc);
+        }
+
+        function fecharEsc(evento) {
+          if (evento.key === "Escape") fechar();
+        }
+
+        tela.addEventListener("click", fechar);
+        document.addEventListener("keydown", fecharEsc);
+      }
+
+      document.getElementById("ampliarRevista")
+        .addEventListener("click", ampliarPagina);
+
+      imagem.addEventListener("click", ampliarPagina);
+
+      document.addEventListener("keydown", function (evento) {
+        if (evento.key === "ArrowLeft" && atual > 0) {
+          atual--;
+          mostrarPagina();
+        }
+
+        if (evento.key === "ArrowRight" && atual < paginas.length - 1) {
+          atual++;
+          mostrarPagina();
+        }
+      });
+
+      const abrirMenu = document.getElementById("abrirMenu");
+      const fecharMenu = document.getElementById("fecharMenu");
+      const menu = document.getElementById("menuLateral");
+      const fundo = document.getElementById("fundoMenu");
+      const itemPerfil = document.getElementById("itemPerfil");
+      const linkLogin = document.getElementById("linkLogin");
+
+      const estaLogado = document.body.dataset.logado === "true";
+
+      if (itemPerfil) {
+        itemPerfil.hidden = !estaLogado;
+        itemPerfil.style.display = estaLogado ? "" : "none";
+      }
+
+      if (linkLogin && estaLogado) {
+        linkLogin.textContent = "Minha conta";
+        linkLogin.href = "perfil.html";
+      }
+
+      function abrirPainel() {
+        menu.inert = false;
+        menu.setAttribute("aria-hidden", "false");
+        menu.classList.add("menu-aberto");
+        fundo.classList.add("fundo-visivel");
+        document.body.classList.add("menu-bloqueio");
+        abrirMenu.setAttribute("aria-expanded", "true");
+        fecharMenu.focus();
+      }
+
+      function fecharPainel() {
+        menu.classList.remove("menu-aberto");
+        fundo.classList.remove("fundo-visivel");
+        document.body.classList.remove("menu-bloqueio");
+        menu.setAttribute("aria-hidden", "true");
+        menu.inert = true;
+        abrirMenu.setAttribute("aria-expanded", "false");
+        abrirMenu.focus();
+      }
+
+      abrirMenu.addEventListener("click", abrirPainel);
+      fecharMenu.addEventListener("click", fecharPainel);
+      fundo.addEventListener("click", fecharPainel);
+
+      document.addEventListener("keydown", function (evento) {
+        if (
+          evento.key === "Escape" &&
+          menu.classList.contains("menu-aberto")
+        ) {
+          fecharPainel();
+        }
+      });
+
+      mostrarPagina();
     });
-
-    anterior.addEventListener("click", () => {
-      if (atual > 0) {
-        atual--;
-        mostrarPagina();
-      }
-    });
-
-    proxima.addEventListener("click", () => {
-      if (atual < paginas.length - 1) {
-        atual++;
-        mostrarPagina();
-      }
-    });
-
-    function ampliarPagina() {
-      if (imagem.hidden) return;
-
-      const tela = document.createElement("div");
-      tela.className = "ampliada";
-      tela.setAttribute("role", "dialog");
-      tela.setAttribute("aria-label", "Imagem ampliada");
-
-      const imagemGrande = document.createElement("img");
-      imagemGrande.src = imagem.src;
-      imagemGrande.alt = imagem.alt;
-
-      tela.appendChild(imagemGrande);
-      document.body.appendChild(tela);
-
-      function fechar() {
-        tela.remove();
-        document.removeEventListener("keydown", teclaEsc);
-      }
-
-      function teclaEsc(evento) {
-        if (evento.key === "Escape") fechar();
-      }
-
-      tela.addEventListener("click", fechar);
-      document.addEventListener("keydown", teclaEsc);
-    }
-
-    document.getElementById("ampliar")
-      .addEventListener("click", ampliarPagina);
-
-    imagem.addEventListener("click", ampliarPagina);
-
-    document.addEventListener("keydown", (evento) => {
-      if (evento.key === "ArrowLeft" && atual > 0) {
-        atual--;
-        mostrarPagina();
-      }
-
-      if (evento.key === "ArrowRight" && atual < paginas.length - 1) {
-        atual++;
-        mostrarPagina();
-      }
-    });
-
-    mostrarPagina();
   </script>
+
 </body>
 </html>

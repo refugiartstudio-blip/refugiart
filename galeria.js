@@ -220,6 +220,11 @@ document.addEventListener("DOMContentLoaded", function () {
   imagem: "",
   descricao: "Técnica: Aquarela sobre papel."
 },
+      {
+        titulo: "Perplexa",
+        imagem: "/refugiart/galeria/acervo/artistas/Henrique/obras/IMG_20260703_115744.jpg",
+        descricao: "Técnica: Acrílica e aquarela."
+},
       
       
       ] /*fecha a lista de obras*/

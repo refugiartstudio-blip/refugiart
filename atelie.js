@@ -474,10 +474,7 @@ function criarCartaoObra(obra) {
     artigo.appendChild(aviso);
   }
 
-  if (obra.content_sensitive) {
-    artigo.appendChild(criarElemento("div", "aviso-sensivel-obra",
-      "⚠ Conteúdo sensível — pode conter nudez artística, violência, terror ou imagens perturbadoras."));
-  }
+  
 
   const imagem = document.createElement("img");
 
@@ -491,6 +488,15 @@ function criarCartaoObra(obra) {
     imagem.alt = "Não foi possível carregar a imagem desta obra.";
     imagem.classList.add("imagem-com-erro");
   }, { once: true });
+
+  const areaImagem = criarElemento("div", "obra-imagem-area");
+  areaImagem.appendChild(imagem);
+  if (obra.content_sensitive) {
+    const cobertura = criarElemento("button", "cobertura-conteudo-sensivel", "⚠ Conteúdo sensível — toque para visualizar");
+    cobertura.type = "button";
+    cobertura.addEventListener("click", () => { areaImagem.classList.add("conteudo-sensivel-revelado"); cobertura.remove(); });
+    areaImagem.appendChild(cobertura);
+  }
 
   const conteudo = criarElemento("div", "obra-conteudo");
 
@@ -538,7 +544,7 @@ function criarCartaoObra(obra) {
     artigo.appendChild(acoes);
   });
 
-  artigo.append(cabecalho, imagem, conteudo);
+  artigo.append(cabecalho, areaImagem, conteudo);
 
   return artigo;
 }

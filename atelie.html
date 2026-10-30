@@ -159,64 +159,86 @@
         <button type="button" class="categoria-chip" data-categoria="Outros">Outras artes</button>
       </section>
 
-      <!-- Formulário de publicação -->
-      <section class="criar-obra" id="nova-publicacao">
-        <div class="criar-obra-topo">
-          <div class="mini-avatar-criar">✎</div>
-          <div>
-            <h2>Compartilhe seu processo</h2>
-            <p>Que obra você gostaria de mostrar ao mundo?</p>
+      <!-- Aba lateral de publicação: exibida apenas ao dono logado -->
+      <button
+        type="button"
+        class="aba-publicar-atelie"
+        id="abrir-publicacao-atelie"
+        aria-controls="painel-publicacao-atelie"
+        aria-expanded="false"
+        hidden
+      >
+        <span aria-hidden="true">＋</span>
+        <span>Publicar</span>
+      </button>
+
+      <div class="publicacao-atelie-overlay" id="overlay-publicacao-atelie" hidden></div>
+      <aside
+        class="painel-publicacao-atelie"
+        id="painel-publicacao-atelie"
+        aria-label="Publicar uma obra"
+        aria-hidden="true"
+        inert
+      >
+        <button type="button" class="fechar-publicacao-atelie" id="fechar-publicacao-atelie" aria-label="Fechar publicação">×</button>
+        <section class="criar-obra" id="nova-publicacao">
+          <div class="criar-obra-topo">
+            <div class="mini-avatar-criar">✎</div>
+            <div>
+              <h2>Compartilhe seu processo</h2>
+              <p>Que obra você gostaria de mostrar ao mundo?</p>
+            </div>
           </div>
-        </div>
-
-        <form id="form-obra">
-          <label for="imagem-obra" class="seletor-imagem-obra">
-            <span class="simbolo-upload">＋</span>
-            <strong>Adicionar imagem da obra</strong>
-            <small>JPG, PNG ou WEBP</small>
-          </label>
-
-          <input
-            id="imagem-obra"
-            name="imagem-obra"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            required
-          >
-
-          <img id="previa-obra" class="previa-obra" alt="Prévia da obra selecionada" hidden>
-
-          <label for="legenda-obra">A história por trás da obra</label>
-          <textarea
-            id="legenda-obra"
-            name="legenda-obra"
-            maxlength="1500"
-            placeholder="Fale sobre sua inspiração, seu processo ou sua ideia..."
-            rows="3"
-          ></textarea>
-
-          <div class="linha-categoria">
-            <label for="categoria-obra">Expressão artística</label>
-            <select id="categoria-obra" name="categoria-obra" required>
-              <option value="Desenho">Desenho</option>
-              <option value="Pintura">Pintura</option>
-              <option value="Fotografia">Fotografia</option>
-              <option value="Escultura">Escultura</option>
-              <option value="Tatuagem">Tatuagem</option>
-              <option value="Outros">Outras artes</option>
-            </select>
-          </div>
-
-          <div class="rodape-formulario">
-            <span class="nota-publicacao">✦ Sua criatividade merece espaço.</span>
-            <button type="submit" id="botao-enviar-obra" class="botao-publicar">
-              Publicar obra <span>↗</span>
-            </button>
-          </div>
-
-          <p id="status-atelie" class="status-atelie" role="status" aria-live="polite"></p>
-        </form>
-      </section>
+        
+          <form id="form-obra">
+            <label for="imagem-obra" class="seletor-imagem-obra">
+              <span class="simbolo-upload">＋</span>
+              <strong>Adicionar imagem da obra</strong>
+              <small>JPG, PNG ou WEBP</small>
+            </label>
+        
+            <input
+              id="imagem-obra"
+              name="imagem-obra"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              required
+            >
+        
+            <img id="previa-obra" class="previa-obra" alt="Prévia da obra selecionada" hidden>
+        
+            <label for="legenda-obra">A história por trás da obra</label>
+            <textarea
+              id="legenda-obra"
+              name="legenda-obra"
+              maxlength="1500"
+              placeholder="Fale sobre sua inspiração, seu processo ou sua ideia..."
+              rows="3"
+            ></textarea>
+        
+            <div class="linha-categoria">
+              <label for="categoria-obra">Expressão artística</label>
+              <select id="categoria-obra" name="categoria-obra" required>
+                <option value="Desenho">Desenho</option>
+                <option value="Pintura">Pintura</option>
+                <option value="Fotografia">Fotografia</option>
+                <option value="Escultura">Escultura</option>
+                <option value="Tatuagem">Tatuagem</option>
+                <option value="Outros">Outras artes</option>
+              </select>
+            </div>
+        
+            <div class="rodape-formulario">
+              <span class="nota-publicacao">✦ Sua criatividade merece espaço.</span>
+              <button type="submit" id="botao-enviar-obra" class="botao-publicar">
+                Publicar obra <span>↗</span>
+              </button>
+            </div>
+        
+            <p id="status-atelie" class="status-atelie" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </aside>
 
       <!-- Feed vertical -->
       <section class="feed-atelie" id="feed">
@@ -251,7 +273,6 @@
         <span class="mini-etiqueta">SEU PRÓXIMO PASSO</span>
         <h2>Mostre ao mundo o que você cria.</h2>
         <p>Uma obra pode inspirar alguém que você ainda nem conhece.</p>
-        <a href="#nova-publicacao" class="botao-lateral-publicar">Publicar minha obra <span>↗</span></a>
       </section>
 
       <section class="artistas-em-alta">
@@ -298,7 +319,6 @@
   <nav class="navegacao-inferior" aria-label="Navegação rápida">
     <a href="index.html"><span>⌂</span>Início</a>
     <a href="atelie.html" aria-current="page"><span>▦</span>Ateliê</a>
-    <a href="#nova-publicacao"><span class="icone-mais">＋</span>Publicar</a>
     <a href="comunidades.html"><span>♧</span>Comunidade</a>
     <a href="perfil.html"><span>♙</span>Perfil</a>
   </nav>

@@ -316,6 +316,58 @@ function criarCartaoObra(obra) {
   informacoesArtista.append(nomeArtista, data);
   cabecalho.append(avatar, informacoesArtista);
 
+  // A edição só aparece para quem publicou esta obra.
+  obterUsuario().then(usuario => {
+    if (!usuario || usuario.id !== obra.user_id) return;
+
+    const editar = criarElemento("button", "botao-editar-obra", "✏️");
+    editar.type = "button";
+    editar.title = "Editar publicação";
+    editar.setAttribute("aria-label", "Editar sua publicação");
+    editar.addEventListener("click", async () => {
+      const novaLegenda = window.prompt("Edite a legenda da publicação:", obra.caption || "");
+      if (novaLegenda === null) return;
+
+      const categoriaAtual = obra.category || "Outros";
+      const novaCategoria = window.prompt(
+        "Categoria atual: " + categoriaAtual + "\nDigite uma categoria: " + CATEGORIAS.join(", "),
+        categoriaAtual
+      );
+      if (novaCategoria === null) return;
+      if (!CATEGORIAS.includes(novaCategoria.trim())) {
+        window.alert("Categoria inválida. Use: " + CATEGORIAS.join(", "));
+        return;
+      }
+      if (novaLegenda.trim().length > 2000) {
+        window.alert("A legenda deve ter no máximo 2.000 caracteres.");
+        return;
+      }
+
+      editar.disabled = true;
+      try {
+        const { error } = await supabase
+          .from("atelie_posts")
+          .update({
+            caption: novaLegenda.trim(),
+            category: novaCategoria.trim()
+          })
+          .eq("id", obra.id)
+          .eq("user_id", usuario.id);
+
+        if (error) throw error;
+        obra.caption = novaLegenda.trim();
+        obra.category = novaCategoria.trim();
+        renderizarObras();
+      } catch (erro) {
+        console.error("Erro ao editar publicação:", erro);
+        window.alert("Não foi possível editar: " + (erro.message || "tente novamente."));
+      } finally {
+        editar.disabled = false;
+      }
+    });
+    cabecalho.appendChild(editar);
+  });
+
   const categoria = criarElemento(
     "span",
     "obra-categoria",

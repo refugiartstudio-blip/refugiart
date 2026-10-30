@@ -609,7 +609,7 @@ function configurarMensagem(mensagem) {
   // =====================================
 
   menu?.querySelectorAll("[data-acao]").forEach(botao => {
-    botao.addEventListener("click", () => {
+    botao.addEventListener("click", async () => {
       if (!mensagemSelecionada) return;
 
       const autor = mensagemSelecionada.dataset.autor;

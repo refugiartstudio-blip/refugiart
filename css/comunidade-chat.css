@@ -55,10 +55,21 @@ body {
 }
 
 .logo-chat {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   color: var(--verde);
   font-size: 23px;
   font-weight: 800;
   letter-spacing: 1px;
+  text-decoration: none;
+}
+
+.logo-chat-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .usuario-atual {

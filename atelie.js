@@ -525,6 +525,7 @@ form?.addEventListener("submit", async (evento) => {
     limparPrevia();
 
     mostrarStatus("Sua obra foi publicada com sucesso!", "sucesso");
+    fecharPainelPublicacao();
 
     categoriaAtiva = "Todas";
     termoBusca = "";
@@ -617,3 +618,48 @@ botaoAtualizar?.addEventListener("click", async () => {
 
 atualizarEstadoCategorias();
 carregarObras();
+
+
+/* ---------- Aba de publicação exclusiva do próprio artista logado ---------- */
+const botaoAbrirPublicacao = document.getElementById("abrir-publicacao-atelie");
+const botaoFecharPublicacao = document.getElementById("fechar-publicacao-atelie");
+const painelPublicacao = document.getElementById("painel-publicacao-atelie");
+const overlayPublicacao = document.getElementById("overlay-publicacao-atelie");
+
+function fecharPainelPublicacao() {
+  painelPublicacao?.classList.remove("aberto");
+  painelPublicacao?.setAttribute("aria-hidden", "true");
+  painelPublicacao?.setAttribute("inert", "");
+  botaoAbrirPublicacao?.setAttribute("aria-expanded", "false");
+  if (overlayPublicacao) overlayPublicacao.hidden = true;
+}
+
+function abrirPainelPublicacao() {
+  if (!botaoAbrirPublicacao || botaoAbrirPublicacao.hidden) return;
+  painelPublicacao?.classList.add("aberto");
+  painelPublicacao?.setAttribute("aria-hidden", "false");
+  painelPublicacao?.removeAttribute("inert");
+  botaoAbrirPublicacao.setAttribute("aria-expanded", "true");
+  if (overlayPublicacao) overlayPublicacao.hidden = false;
+}
+
+botaoAbrirPublicacao?.addEventListener("click", abrirPainelPublicacao);
+botaoFecharPublicacao?.addEventListener("click", fecharPainelPublicacao);
+overlayPublicacao?.addEventListener("click", fecharPainelPublicacao);
+document.addEventListener("keydown", (evento) => {
+  if (evento.key === "Escape") fecharPainelPublicacao();
+});
+
+async function controlarAcessoPublicacao() {
+  const usuario = await obterUsuario();
+  // O Ateliê exibido nesta página representa o espaço do próprio usuário.
+  // Sem sessão autenticada, a aba e o formulário permanecem indisponíveis.
+  if (usuario && botaoAbrirPublicacao) {
+    botaoAbrirPublicacao.hidden = false;
+  } else {
+    if (botaoAbrirPublicacao) botaoAbrirPublicacao.hidden = true;
+    fecharPainelPublicacao();
+  }
+}
+
+controlarAcessoPublicacao();

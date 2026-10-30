@@ -1,5 +1,32 @@
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  const SUPABASE_URL = "https://nlqalpiksbqflzxzsgoa.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP";
+  let supabase = null;
+  let usuarioAtual = null;
+  let nomeAtual = "Artista";
+  let canalChat = null;
+
+  try {
+    const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) {
+      alert("Entre na sua conta RefugiART para usar o chat.");
+      window.location.href = "login.html";
+      return;
+    }
+    usuarioAtual = user;
+    const { data: perfil } = await supabase.from("profiles")
+      .select("nome_artistico").eq("id", user.id).maybeSingle();
+    nomeAtual = perfil?.nome_artistico || user.user_metadata?.nome || user.email?.split("@")[0] || "Artista";
+    const nomeTopo = document.getElementById("nomeUsuario");
+    if (nomeTopo) nomeTopo.textContent = nomeAtual;
+  } catch (erro) {
+    console.error("Falha ao iniciar o chat:", erro);
+    alert("Não foi possível conectar ao chat. Tente novamente.");
+    return;
+  }
   const abas = document.querySelectorAll(".aba-chat");
   const paineis = document.querySelectorAll(".painel-chat");
   const menu = document.getElementById("menuMensagem");
@@ -18,6 +45,82 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const historicoPrivado = {};
+
+  function mostrarVazio(area, texto) {
+    area.innerHTML = "";
+    const estado = document.createElement("div");
+    estado.className = "estado-vazio";
+    const paragrafo = document.createElement("p");
+    paragrafo.textContent = texto;
+    estado.appendChild(paragrafo);
+    area.appendChild(estado);
+  }
+
+  async function carregarMensagens(tipo, chave, area) {
+    if (!supabase || !area) return;
+    const { data, error } = await supabase.from("chat_messages")
+      .select("id, user_id, content, created_at, room_type, room_key")
+      .eq("room_type", tipo).eq("room_key", chave)
+      .order("created_at", { ascending: true }).limit(200);
+    if (error) {
+      console.error("Erro ao carregar mensagens:", error);
+      mostrarVazio(area, "Não foi possível carregar as mensagens.");
+      return;
+    }
+    const ids = [...new Set((data || []).map(m => m.user_id))];
+    let perfis = {};
+    if (ids.length) {
+      const { data: listaPerfis } = await supabase.from("profiles")
+        .select("id, nome_artistico").in("id", ids);
+      (listaPerfis || []).forEach(p => perfis[p.id] = p.nome_artistico || "Artista");
+    }
+    area.innerHTML = "";
+    if (!data?.length) {
+      mostrarVazio(area, tipo === "global" ? "Ainda não há mensagens no chat global." : "Ainda não há mensagens nesta comunidade.");
+      return;
+    }
+    data.forEach(m => {
+      const autor = m.user_id === usuarioAtual.id ? nomeAtual : (perfis[m.user_id] || "Artista");
+      criarMensagem(area, autor, m.content, m.user_id === usuarioAtual.id);
+      const elemento = area.lastElementChild;
+      elemento.dataset.messageId = m.id;
+      const horario = elemento.querySelector(".identificacao span");
+      if (horario) horario.textContent = new Date(m.created_at).toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"});
+    });
+    area.scrollTop = area.scrollHeight;
+  }
+
+  async function enviarMensagem(tipo, chave, texto) {
+    const registro = {
+      user_id: usuarioAtual.id,
+      content: texto,
+      room_type: tipo,
+      room_key: chave,
+      recipient_id: null
+    };
+    const { error } = await supabase.from("chat_messages").insert(registro);
+    if (error) {
+      console.error("Erro ao enviar mensagem:", error);
+      alert("Não foi possível enviar: " + error.message);
+      return false;
+    }
+    return true;
+  }
+
+  async function atualizarSalas() {
+    await carregarMensagens("global", "global", document.getElementById("mensagensGlobal"));
+    await carregarMensagens("comunidade", salaAtual, document.getElementById("mensagensComunidade"));
+    if (canalChat) await supabase.removeChannel(canalChat);
+    canalChat = supabase.channel("refugiart-chat-publico")
+      .on("postgres_changes", {event:"INSERT",schema:"public",table:"chat_messages"}, async payload => {
+        const m = payload.new;
+        if (m.room_type === "global") {
+          await carregarMensagens("global", "global", document.getElementById("mensagensGlobal"));
+        } else if (m.room_type === "comunidade" && m.room_key === salaAtual) {
+          await carregarMensagens("comunidade", salaAtual, document.getElementById("mensagensComunidade"));
+        }
+      }).subscribe();
+  }
 
   // =====================================
   // ABAS PRINCIPAIS
@@ -108,36 +211,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!form || !campo || !area) return;
 
-    form.addEventListener("submit", evento => {
+    form.addEventListener("submit", async evento => {
       evento.preventDefault();
-
       const texto = campo.value.trim();
       if (!texto) return;
-
-      if (tipo === "privado" && !contatoAtual) {
-        alert("Selecione uma conversa primeiro.");
+      if (tipo === "privado") {
+        alert("As conversas privadas serão conectadas na próxima etapa.");
         return;
       }
-
-      let citada = null;
-
+      const chave = tipo === "global" ? "global" : salaAtual;
+      const enviado = await enviarMensagem(tipo, chave, texto);
+      if (!enviado) return;
+      campo.value = "";
       if (tipo === "global") {
-        citada = respostaGlobal;
         respostaGlobal = null;
         atualizarResposta("global");
-      }
-
-      if (tipo === "comunidade") {
-        citada = respostaComunidade;
+      } else {
         respostaComunidade = null;
         atualizarResposta("comunidade");
-      }
-
-      criarMensagem(area, "Você", texto, true, citada);
-      campo.value = "";
-
-      if (tipo === "privado" && contatoAtual) {
-        historicoPrivado[contatoAtual] = area.innerHTML;
       }
     });
   }
@@ -171,21 +262,16 @@ document.addEventListener("DOMContentLoaded", () => {
         campoComunidade.placeholder = `Mensagem em ${zona}...`;
       }
 
-      const area = document.getElementById("mensagensComunidade");
-
-      if (area) {
-        mensagensPorZona[salaAtual] = area.innerHTML;
-        area.innerHTML = mensagensPorZona[zona] || "";
-        configurarMensagensExistentes(area);
-      }
-
       salaAtual = zona;
+      const area = document.getElementById("mensagensComunidade");
+      carregarMensagens("comunidade", salaAtual, area);
       respostaComunidade = null;
       atualizarResposta("comunidade");
     });
   });
 
   let salaAtual = "desenho";
+  atualizarSalas();
 
   // =====================================
   // RESPOSTAS

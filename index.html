@@ -7,6 +7,27 @@
   <meta name="theme-color" content="#243e35">
   <title>RefugiART — Comunidade Artística</title>
   <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    #comunidades > h2 { font-family:'Caveat',cursive; font-size:2.5rem; color:#243e35; }
+    #comunidades > p { display:none; }
+    #comunidades .grade-comunidades { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:18px; }
+    #comunidades .cartao-imagem-comunidade { position:relative; display:flex; align-items:flex-end; min-height:145px; overflow:hidden; border-radius:12px; background-size:cover; background-position:center; text-decoration:none; }
+    #comunidades .cartao-imagem-comunidade::after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(8,16,12,.88),transparent 72%); }
+    #comunidades .cartao-imagem-comunidade span { position:relative; z-index:1; display:flex; justify-content:space-between; align-items:center; width:100%; padding:12px; color:#fff; font-family:'Caveat',cursive; font-size:1.65rem; font-weight:700; text-shadow:0 2px 5px #000; }
+    #comunidades .cartao-imagem-comunidade b { font-family:Arial,sans-serif; font-size:1.5rem; font-weight:400; }
+    #comunidades .foto-desenho { background-image:url('https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80'); }
+    #comunidades .foto-pintura { background-image:url('https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=900&q=80'); }
+    #comunidades .foto-tatuagem { background-image:url('https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&w=900&q=80'); }
+    #comunidades .foto-digital { background-image:url('https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=900&q=80'); }
+    #comunidades .foto-fotografia { background-image:url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80'); }
+    #comunidades .foto-leitura { background-image:url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=900&q=80'); }
+    @media(max-width:600px) { #comunidades .grade-comunidades { gap:8px; } #comunidades .cartao-imagem-comunidade { min-height:105px; } #comunidades .cartao-imagem-comunidade span { font-size:1.25rem; padding:8px; } }
+  </style>
+
 </head>
 
 <body>
@@ -67,41 +88,12 @@
       </p>
 
       <div class="grade-comunidades">
-        <article>
-          <h3>Desenho</h3>
-          <p>Esboço, anatomia, perspectiva, ilustração e técnicas tradicionais.</p>
-          <a href="comunidade-postagens.html?comunidade=desenho">Explorar comunidade</a>
-        </article>
-
-        <article>
-          <h3>Pintura</h3>
-          <p>Aquarela, acrílica, óleo, guache e processos de criação.</p>
-          <a href="comunidade-postagens.html?comunidade=pintura">Explorar comunidade</a>
-        </article>
-
-        <article>
-          <h3>Tatuagem</h3>
-          <p>Blackwork, fine line, tradições, referências e experiências.</p>
-          <a href="comunidade-postagens.html?comunidade=tatuagem">Explorar comunidade</a>
-        </article>
-
-        <article>
-          <h3>Arte Digital</h3>
-          <p>Ilustração digital, concept art, 3D, fotografia e criação com tecnologia.</p>
-          <a href="comunidade-postagens.html?comunidade=digital">Explorar comunidade</a>
-        </article>
-
-        <article>
-          <h3>Fotografia</h3>
-          <p>Composição, luz, retratos, paisagens e fotografia documental.</p>
-          <a href="comunidade-postagens.html?comunidade=fotografia">Explorar comunidade</a>
-        </article>
-
-        <article>
-          <h3>Leitura</h3>
-          <p>Livros, literatura, poesia, ficção e conversas sobre narrativas.</p>
-          <a href="comunidade-postagens.html?comunidade=leitura">Explorar comunidade</a>
-        </article>
+        <a class="cartao-imagem-comunidade foto-desenho" href="comunidade-postagens.html?comunidade=desenho" aria-label="Comunidade Desenho"><span>Desenho <b>›</b></span></a>
+        <a class="cartao-imagem-comunidade foto-pintura" href="comunidade-postagens.html?comunidade=pintura" aria-label="Comunidade Pintura"><span>Pintura <b>›</b></span></a>
+        <a class="cartao-imagem-comunidade foto-tatuagem" href="comunidade-postagens.html?comunidade=tatuagem" aria-label="Comunidade Tatuagem"><span>Tatuagem <b>›</b></span></a>
+        <a class="cartao-imagem-comunidade foto-digital" href="comunidade-postagens.html?comunidade=digital" aria-label="Comunidade Arte Digital"><span>Arte Digital <b>›</b></span></a>
+        <a class="cartao-imagem-comunidade foto-fotografia" href="comunidade-postagens.html?comunidade=fotografia" aria-label="Comunidade Fotografia"><span>Fotografia <b>›</b></span></a>
+        <a class="cartao-imagem-comunidade foto-leitura" href="comunidade-postagens.html?comunidade=leitura" aria-label="Comunidade Leitura"><span>Leitura <b>›</b></span></a>
       </div>
     </section>
 

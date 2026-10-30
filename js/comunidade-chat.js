@@ -354,7 +354,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  let salaAtual = "desenho";
+  const comunidadeInicial = new URLSearchParams(window.location.search).get("comunidade");
+  const comunidadesDisponiveis = ["desenho", "pintura", "leitura", "digital", "tatuagem"];
+  let salaAtual = comunidadesDisponiveis.includes(comunidadeInicial) ? comunidadeInicial : "desenho";
+
+  if (comunidadeInicial && comunidadesDisponiveis.includes(comunidadeInicial)) {
+    document.querySelector('[data-aba="comunidade"]')?.click();
+    document.querySelector(`.zona-interesse[data-zona="${salaAtual}"]`)?.click();
+  }
+
   atualizarSalas();
 
   // =====================================

@@ -331,6 +331,8 @@ function criarCartaoObra(obra) {
     editar.title = "Editar publicação";
     editar.setAttribute("aria-label", "Editar sua publicação");
     editar.addEventListener("click", () => {
+      // Evita abrir duas janelas se houver toque duplo ou modal anterior.
+      document.querySelectorAll(".modal-obra-overlay").forEach(item => item.remove());
       const overlay = criarElemento("div", "modal-obra-overlay");
       overlay.setAttribute("role", "presentation");
       const janela = criarElemento("section", "modal-obra");

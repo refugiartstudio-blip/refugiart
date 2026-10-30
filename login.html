@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Entrar ou cadastrar | RefugiART</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    #form-recuperar-senha[hidden], #form-recuperar-senha .login-botao[hidden], .login-abas[hidden] { display: none !important; }
+  </style>
 </head>
 <body class="pagina-login">
 
@@ -125,6 +128,18 @@
         </p>
       </form>
 
+      <form id="form-recuperar-senha" class="login-formulario" hidden>
+        <h2>Redefinir senha</h2>
+        <p class="login-subtitulo">Escolha uma nova senha para sua conta RefugiART.</p>
+        <label for="nova-senha">Nova senha</label>
+        <input type="password" id="nova-senha" placeholder="Mínimo de 8 caracteres" autocomplete="new-password" minlength="8" required>
+        <label for="confirmar-nova-senha">Confirme a nova senha</label>
+        <input type="password" id="confirmar-nova-senha" placeholder="Digite a senha novamente" autocomplete="new-password" minlength="8" required>
+        <button type="submit" class="login-botao" id="botao-salvar-senha">Salvar nova senha</button>
+        <p class="login-aviso" id="aviso-recuperar" role="status" aria-live="polite" hidden></p>
+        <button type="button" class="login-botao" id="voltar-login" hidden>Voltar para entrar</button>
+      </form>
+
       <p class="login-rodape">RefugiART · Criar é Sentir.</p>
     </section>
   </main>
@@ -143,11 +158,17 @@
     );
 
     const destino = 'atelie.html';
+    const urlAtual = new URL(window.location.href);
+    const hashParams = new URLSearchParams(urlAtual.hash.replace(/^#/, ''));
+    let modoRecuperacao = hashParams.get('type') === 'recovery' || urlAtual.searchParams.has('code');
 
     const formEntrar = document.getElementById('form-entrar');
     const formCadastro = document.getElementById('form-cadastro');
     const botaoEntrar = document.getElementById('botao-entrar');
     const botaoCadastro = document.getElementById('botao-cadastro');
+    const formRecuperar = document.getElementById('form-recuperar-senha');
+    const abasLogin = document.querySelector('.login-abas');
+    const botaoSalvarSenha = document.getElementById('botao-salvar-senha');
 
     function aviso(tipo, mensagem, erro = false) {
       const elemento = document.getElementById(
@@ -162,6 +183,15 @@
     function carregando(botao, ativo, texto) {
       botao.disabled = ativo;
       botao.textContent = ativo ? 'Aguarde...' : texto;
+    }
+
+    function mostrarRecuperacao() {
+      modoRecuperacao = true;
+      formEntrar.hidden = true;
+      formCadastro.hidden = true;
+      formRecuperar.hidden = false;
+      abasLogin.hidden = true;
+      document.getElementById('nova-senha').focus();
     }
 
     function mostrarFormulario(tipo) {
@@ -188,6 +218,12 @@
       e.preventDefault();
       mostrarFormulario('entrar');
     });
+
+    supabase.auth.onAuthStateChange((evento) => {
+      if (evento === 'PASSWORD_RECOVERY') mostrarRecuperacao();
+    });
+
+    if (modoRecuperacao) mostrarRecuperacao();
 
     // Se já estiver conectado, não precisa fazer login novamente.
     async function verificarSessao() {
@@ -227,7 +263,7 @@
           password: senha,
           options: {
             emailRedirectTo:
-              'https://refugiartstudio-blip.github.io/refugiart/login.html',
+              'https://www.refugiart.com.br/login.html',
             data: {
               nome,
               tipo_conta: tipoConta
@@ -282,6 +318,54 @@
       }
     });
 
+    // Redefinição da senha após validação do link enviado por e-mail.
+    formRecuperar.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const senha = document.getElementById('nova-senha').value;
+      const confirmacao = document.getElementById('confirmar-nova-senha').value;
+      const avisoRecuperar = document.getElementById('aviso-recuperar');
+      avisoRecuperar.hidden = true;
+
+      if (senha.length < 8 || senha !== confirmacao) {
+        avisoRecuperar.textContent = senha.length < 8
+          ? 'A senha deve ter pelo menos 8 caracteres.'
+          : 'As senhas não coincidem. Confira os dois campos.';
+        avisoRecuperar.style.color = '#a12626';
+        avisoRecuperar.hidden = false;
+        return;
+      }
+
+      carregando(botaoSalvarSenha, true, 'Salvar nova senha');
+      try {
+        const { error } = await supabase.auth.updateUser({ password: senha });
+        if (error) throw error;
+        avisoRecuperar.textContent = 'Senha alterada com sucesso! Agora você já pode entrar com sua nova senha.';
+        avisoRecuperar.style.color = '';
+        avisoRecuperar.hidden = false;
+        formRecuperar.reset();
+        botaoSalvarSenha.hidden = true;
+        document.getElementById('voltar-login').hidden = false;
+      } catch (error) {
+        avisoRecuperar.textContent = error.message || 'Não foi possível alterar a senha. Solicite um novo link de recuperação.';
+        avisoRecuperar.style.color = '#a12626';
+        avisoRecuperar.hidden = false;
+      } finally {
+        carregando(botaoSalvarSenha, false, 'Salvar nova senha');
+      }
+    });
+
+    document.getElementById('voltar-login').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      modoRecuperacao = false;
+      formRecuperar.hidden = true;
+      abasLogin.hidden = false;
+      formEntrar.hidden = false;
+      botaoSalvarSenha.hidden = false;
+      document.getElementById('aviso-recuperar').hidden = true;
+      history.replaceState(null, '', 'login.html');
+      document.getElementById('email-entrar').focus();
+    });
+
     // Recuperação de senha
     document.getElementById('link-recuperar')
       .addEventListener('click', async (e) => {
@@ -298,7 +382,7 @@
         try {
           const { error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo:
-              'https://refugiartstudio-blip.github.io/refugiart/login.html'
+              'https://www.refugiart.com.br/login.html'
           });
 
           if (error) throw error;

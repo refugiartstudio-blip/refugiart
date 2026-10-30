@@ -2136,3 +2136,17 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
 @media (max-width: 420px) {
   body.pagina-atelie .modal-obra { padding: 19px 16px; }
 }
+
+
+/* Moderação comunitária RefugiART */
+.aviso-moderacao-obra,.aviso-sensivel-obra{
+  margin:10px 14px;padding:11px 13px;border-radius:9px;
+  font-size:12px;line-height:1.5;font-weight:600;
+}
+.aviso-moderacao-obra{background:#fff0d9;color:#80521a;border:1px solid #efd09d}
+.aviso-sensivel-obra{background:#fff7e7;color:#76551f;border:1px solid #ead7ae}
+.obra-acoes-moderacao{display:flex;justify-content:flex-end;padding:0 16px 14px}
+.botao-denunciar-obra{border:1px solid #d9ded6;border-radius:20px;background:#fff;padding:7px 12px;color:#6b5540;font-size:12px;cursor:pointer}
+.botao-denunciar-obra:disabled{opacity:.55;cursor:wait}
+.opcao-conteudo-sensivel{display:flex!important;align-items:flex-start;gap:9px;padding:11px 12px;border:1px solid #ead7ae;border-radius:9px;background:#fff9ed;color:#76551f;font-size:12px!important;line-height:1.5}
+.opcao-conteudo-sensivel input{width:17px;height:17px;flex-shrink:0;margin-top:1px;accent-color:#8a6529}

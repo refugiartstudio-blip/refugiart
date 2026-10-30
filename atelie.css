@@ -1369,3 +1369,336 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* =========================================================
+   ATELIÊ — PERFIL E FEED INSPIRADOS NA ORGANIZAÇÃO DO INSTAGRAM
+   Mantém a paleta original RefugiART.
+========================================================= */
+
+.pagina-atelie .atelie-layout {
+  width: min(100%, 1120px);
+  grid-template-columns: minmax(0, 760px);
+  justify-content: center;
+  padding: 28px 24px 70px;
+}
+
+.pagina-atelie .painel-esquerdo,
+.pagina-atelie .painel-direito {
+  display: none;
+}
+
+.pagina-atelie .conteudo-atelie {
+  width: 100%;
+  gap: 22px;
+}
+
+.pagina-atelie .perfil-publico-atelie {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 34px;
+  row-gap: 14px;
+  padding: 26px 30px;
+  border: 1px solid var(--atelie-borda);
+  border-radius: 18px;
+  background: var(--atelie-branco);
+  box-shadow: 0 4px 18px rgba(36, 62, 53, 0.045);
+}
+
+.pagina-atelie .perfil-publico-cabecalho {
+  display: contents;
+}
+
+.pagina-atelie .perfil-publico-foto {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 142px;
+  height: 142px;
+  margin: 0 auto;
+  border: 4px solid var(--atelie-verde-claro);
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e9e7dd;
+}
+
+.pagina-atelie .perfil-publico-info {
+  min-width: 0;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.pagina-atelie .perfil-publico-info h2 {
+  margin: 0 0 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(20px, 3vw, 25px);
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.pagina-atelie .perfil-publico-area {
+  margin: 0 0 15px;
+  color: var(--atelie-texto-suave);
+  font-size: 13px;
+}
+
+.pagina-atelie .perfil-publico-estatisticas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 28px;
+  padding-top: 11px;
+  border-top: 1px solid var(--atelie-borda);
+}
+
+.pagina-atelie .perfil-publico-estatisticas span {
+  color: var(--atelie-texto);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.pagina-atelie .perfil-publico-estatisticas strong {
+  color: var(--atelie-verde);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pagina-atelie .perfil-publico-bio {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  color: #505a51;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.pagina-atelie .perfil-publico-atelie .link-galeria {
+  grid-column: 2;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  border-radius: 22px;
+  background: var(--atelie-verde);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pagina-atelie .categorias-atelie {
+  gap: 8px;
+  padding: 2px 0 8px;
+  border-bottom: 1px solid var(--atelie-borda);
+}
+
+.pagina-atelie .categoria-chip {
+  min-height: 34px;
+  padding: 7px 13px;
+  font-size: 12px;
+}
+
+.pagina-atelie .criar-obra,
+.pagina-atelie .obra-card {
+  border-radius: 15px;
+  box-shadow: 0 3px 14px rgba(36, 62, 53, 0.035);
+}
+
+.pagina-atelie .criar-obra {
+  padding: 19px 21px;
+}
+
+.pagina-atelie .criar-obra-topo h2 {
+  font-size: 18px;
+}
+
+.pagina-atelie .criar-obra-topo p,
+.pagina-atelie #form-obra label {
+  font-size: 12px;
+}
+
+.pagina-atelie .titulo-feed h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.pagina-atelie .titulo-feed p {
+  font-size: 12px;
+}
+
+.pagina-atelie #lista-obras {
+  gap: 18px;
+}
+
+.pagina-atelie .obra-cabecalho {
+  padding: 13px 16px;
+}
+
+.pagina-atelie .obra-avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.pagina-atelie .obra-nome-artista {
+  font-size: 13px;
+}
+
+.pagina-atelie .obra-imagem {
+  width: 100%;
+  max-height: 720px;
+  object-fit: contain;
+  background: #eeece4;
+}
+
+.pagina-atelie .obra-conteudo {
+  padding: 13px 16px 17px;
+}
+
+.pagina-atelie .obra-legenda {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 650px) {
+  .pagina-atelie .atelie-layout {
+    display: block;
+    padding: 12px 0 78px;
+  }
+
+  .pagina-atelie .conteudo-atelie {
+    gap: 15px;
+  }
+
+  .pagina-atelie .perfil-publico-atelie {
+    grid-template-columns: 92px minmax(0, 1fr);
+    column-gap: 15px;
+    row-gap: 10px;
+    margin: 0 12px;
+    padding: 18px 14px;
+    border-radius: 13px;
+  }
+
+  .pagina-atelie .perfil-publico-foto {
+    width: 86px;
+    height: 86px;
+    border-width: 3px;
+  }
+
+  .pagina-atelie .perfil-publico-info h2 {
+    margin-bottom: 3px;
+    font-size: 18px;
+  }
+
+  .pagina-atelie .perfil-publico-area {
+    margin-bottom: 9px;
+    font-size: 11px;
+  }
+
+  .pagina-atelie .perfil-publico-estatisticas {
+    gap: 6px 14px;
+    padding-top: 8px;
+  }
+
+  .pagina-atelie .perfil-publico-estatisticas span {
+    font-size: 11px;
+  }
+
+  .pagina-atelie .perfil-publico-estatisticas strong {
+    font-size: 14px;
+  }
+
+  .pagina-atelie .perfil-publico-bio {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    font-size: 12px;
+  }
+
+  .pagina-atelie .perfil-publico-atelie .link-galeria {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    justify-self: stretch;
+    justify-content: center;
+    min-height: 36px;
+  }
+
+  .pagina-atelie .categorias-atelie {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 0 12px;
+    padding: 0 0 9px;
+    scrollbar-width: none;
+  }
+
+  .pagina-atelie .categorias-atelie::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pagina-atelie .categoria-chip {
+    flex: 0 0 auto;
+    min-height: 32px;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .pagina-atelie .criar-obra,
+  .pagina-atelie .titulo-feed,
+  .pagina-atelie #lista-obras,
+  .pagina-atelie .frase-final-atelie {
+    margin-right: 12px;
+    margin-left: 12px;
+  }
+
+  .pagina-atelie .criar-obra {
+    padding: 15px;
+  }
+
+  .pagina-atelie .titulo-feed h2 {
+    font-size: 19px;
+  }
+
+  .pagina-atelie .obra-card {
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+  }
+
+  .pagina-atelie .obra-cabecalho {
+    padding: 11px 14px;
+  }
+
+  .pagina-atelie .obra-imagem {
+    max-height: 620px;
+  }
+
+  .pagina-atelie .obra-conteudo {
+    padding: 12px 14px 15px;
+  }
+
+  .pagina-atelie .obra-legenda {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .pagina-atelie .perfil-publico-atelie {
+    grid-template-columns: 76px minmax(0, 1fr);
+    column-gap: 11px;
+    padding: 15px 11px;
+  }
+
+  .pagina-atelie .perfil-publico-foto {
+    width: 72px;
+    height: 72px;
+  }
+
+  .pagina-atelie .perfil-publico-estatisticas {
+    gap: 5px 9px;
+  }
+
+  .pagina-atelie .perfil-publico-estatisticas span {
+    font-size: 10px;
+  }
+}

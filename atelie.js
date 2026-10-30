@@ -315,8 +315,8 @@ function renderizarObras() {
     if (existemObras) {
       mensagem = "Nenhuma obra encontrada com esses filtros.";
     } else {
-      mensagem =
-        "Ainda não há publicações. Seja o primeiro artista a compartilhar uma obra!";
+      // Feed vazio: não exibe balão ou mensagem de convite.
+      return;
     }
 
     mostrarMensagemFeed(mensagem);

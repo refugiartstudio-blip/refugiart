@@ -32,17 +32,14 @@ async function verificarAcessoModeracao() {
 
     const usuario = sessao.session.user;
     const { data, error } = await supabase
-      .from('refugiart_admins')
-      .select('user_id')
-      .eq('user_id', usuario.id)
-      .maybeSingle();
+      .rpc('refugiart_is_admin');
 
     if (error) {
       console.warn('Não foi possível verificar a permissão administrativa:', error.message);
       return;
     }
 
-    if (data) {
+    if (data === true) {
       window.location.replace('moderacao.html');
       return;
     }

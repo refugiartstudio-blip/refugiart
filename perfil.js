@@ -21,6 +21,34 @@ const botaoSair = document.getElementById('botao-sair');
 const seletorFoto = document.querySelector('.seletor-foto');
 const iconeCamera = seletorFoto?.querySelector('.foto-editar');
 
+// Exibe o atalho de moderação somente para contas cadastradas como administradoras.
+async function verificarAcessoModeracao() {
+  const linkModeracao = document.getElementById('link-moderacao-perfil');
+  if (!linkModeracao) return;
+
+  try {
+    const { data: sessao } = await supabase.auth.getSession();
+    const usuario = sessao?.session?.user;
+    if (!usuario) return;
+
+    const { data, error } = await supabase
+      .from('refugiart_admins')
+      .select('user_id')
+      .eq('user_id', usuario.id)
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Não foi possível verificar a permissão administrativa:', error.message);
+      return;
+    }
+
+    linkModeracao.hidden = !data;
+  } catch (erro) {
+    console.warn('Falha ao verificar acesso à moderação:', erro);
+  }
+}
+
+
 // Configurações
 const fotoPadrao =
   'https://placehold.co/160x160/e8dfca/40543c?text=Arte';
@@ -286,3 +314,4 @@ botaoSair?.addEventListener('click', async () => {
 // Inicia a página
 mostrarCamera(true);
 carregarPerfil();
+verificarAcessoModeracao();

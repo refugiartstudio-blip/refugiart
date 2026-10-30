@@ -1,0 +1,527 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Comunidade | RefugiART</title>
+
+  <link rel="stylesheet" href="css/comunidade-chat.css">
+</head>
+
+<body>
+
+  <!-- CABEÇALHO -->
+  <header class="chat-header">
+
+    <a href="index.html" class="logo-chat">
+      REFUGIART
+    </a>
+
+    <div class="usuario-atual">
+      <span class="status-online"></span>
+      <span id="nomeUsuario">Visitante</span>
+    </div>
+
+  </header>
+
+
+  <!-- ÁREA PRINCIPAL -->
+  <main class="chat-container">
+
+    <!-- ABAS -->
+    <nav class="abas-chat" aria-label="Navegação do chat">
+
+      <button
+        class="aba-chat ativa"
+        data-aba="global">
+        Global
+      </button>
+
+      <button
+        class="aba-chat"
+        data-aba="comunidade">
+        Comunidade
+      </button>
+
+      <button
+        class="aba-chat"
+        data-aba="privado">
+        Chat
+      </button>
+
+    </nav>
+
+
+    <!-- CONTEÚDO DAS ABAS -->
+    <section class="conteudo-chat">
+
+
+      <!-- ==================================
+           ABA GLOBAL
+      =================================== -->
+
+      <section
+        class="painel-chat ativo"
+        id="painel-global">
+
+        <div class="titulo-conversa">
+          <div>
+            <h2>Chat Global</h2>
+            <p>Converse com a comunidade RefugiART</p>
+          </div>
+
+          <span class="indicador-online">
+            ● Online
+          </span>
+        </div>
+
+
+        <!-- MENSAGENS -->
+        <div
+          class="lista-mensagens"
+          id="mensagensGlobal"
+          aria-live="polite">
+
+          <article class="mensagem" data-id="global-1">
+
+            <div class="avatar">
+              A
+            </div>
+
+            <div class="corpo-mensagem">
+
+              <div class="identificacao">
+                <strong>Artista Amazônico</strong>
+                <span>10:32</span>
+              </div>
+
+              <div class="balao-mensagem">
+                Olá, pessoal! Como estão os projetos artísticos?
+              </div>
+
+              <div class="reacoes-mensagem"></div>
+
+            </div>
+          </article>
+
+
+          <article class="mensagem" data-id="global-2">
+
+            <div class="avatar">
+              M
+            </div>
+
+            <div class="corpo-mensagem">
+
+              <div class="identificacao">
+                <strong>Maria Arte</strong>
+                <span>10:35</span>
+              </div>
+
+              <div class="balao-mensagem">
+                Estou trabalhando em uma pintura inspirada na Amazônia!
+              </div>
+
+              <div class="reacoes-mensagem"></div>
+
+            </div>
+          </article>
+
+        </div>
+
+
+        <!-- RESPOSTA / CITAÇÃO -->
+        <div
+          class="resposta-selecionada"
+          id="respostaSelecionada"
+          hidden>
+
+          <div>
+            <strong id="respostaAutor"></strong>
+            <p id="respostaTexto"></p>
+          </div>
+
+          <button
+            type="button"
+            id="cancelarResposta"
+            aria-label="Cancelar resposta">
+            ×
+          </button>
+
+        </div>
+
+
+        <!-- CAMPO DE MENSAGEM -->
+        <form class="formulario-mensagem" id="formGlobal">
+
+          <button
+            type="button"
+            class="botao-anexo"
+            aria-label="Anexar arquivo">
+            +
+          </button>
+
+          <input
+            type="text"
+            id="campoGlobal"
+            placeholder="Digite sua mensagem..."
+            autocomplete="off">
+
+          <button
+            type="submit"
+            class="botao-enviar">
+            ➤
+          </button>
+
+        </form>
+
+      </section>
+
+
+      <!-- ==================================
+           ABA COMUNIDADE
+      =================================== -->
+
+      <section
+        class="painel-chat"
+        id="painel-comunidade"
+        hidden>
+
+        <div class="titulo-conversa">
+
+          <div>
+            <h2>Comunidade</h2>
+            <p>Conecte-se por interesses artísticos</p>
+          </div>
+
+        </div>
+
+
+        <!-- ZONAS DE INTERESSE -->
+        <div class="zonas-interesse">
+
+          <button
+            class="zona-interesse ativa"
+            data-zona="desenho">
+
+            ✏️ Desenho
+
+          </button>
+
+          <button
+            class="zona-interesse"
+            data-zona="pintura">
+
+            🎨 Pintura
+
+          </button>
+
+          <button
+            class="zona-interesse"
+            data-zona="aquarela">
+
+            🖌️ Aquarela
+
+          </button>
+
+          <button
+            class="zona-interesse"
+            data-zona="grafite">
+
+            🧱 Grafite
+
+          </button>
+
+          <button
+            class="zona-interesse"
+            data-zona="tatuagem">
+
+            ✒️ Tatuagem
+
+          </button>
+
+        </div>
+
+
+        <!-- CHAT DA ZONA -->
+        <div class="titulo-zona">
+          <h3 id="nomeZona">✏️ Desenho</h3>
+          <span>Conversa pública</span>
+        </div>
+
+
+        <div
+          class="lista-mensagens"
+          id="mensagensComunidade"
+          aria-live="polite">
+
+          <article class="mensagem" data-id="desenho-1">
+
+            <div class="avatar">
+              R
+            </div>
+
+            <div class="corpo-mensagem">
+
+              <div class="identificacao">
+                <strong>Rafael</strong>
+                <span>11:20</span>
+              </div>
+
+              <div class="balao-mensagem">
+                Alguém aqui pratica desenho de observação?
+              </div>
+
+              <div class="reacoes-mensagem"></div>
+
+            </div>
+          </article>
+
+
+          <article class="mensagem" data-id="desenho-2">
+
+            <div class="avatar">
+              L
+            </div>
+
+            <div class="corpo-mensagem">
+
+              <div class="identificacao">
+                <strong>Lucas</strong>
+                <span>11:24</span>
+              </div>
+
+              <div class="balao-mensagem">
+                Sim! Estou estudando anatomia e perspectiva.
+              </div>
+
+              <div class="reacoes-mensagem"></div>
+
+            </div>
+          </article>
+
+        </div>
+
+
+        <div
+          class="resposta-selecionada"
+          id="respostaComunidade"
+          hidden>
+
+          <div>
+            <strong id="autorRespostaComunidade"></strong>
+            <p id="textoRespostaComunidade"></p>
+          </div>
+
+          <button
+            type="button"
+            id="cancelarRespostaComunidade">
+            ×
+          </button>
+
+        </div>
+
+
+        <form
+          class="formulario-mensagem"
+          id="formComunidade">
+
+          <button
+            type="button"
+            class="botao-anexo">
+            +
+          </button>
+
+          <input
+            type="text"
+            id="campoComunidade"
+            placeholder="Mensagem em Desenho..."
+            autocomplete="off">
+
+          <button
+            type="submit"
+            class="botao-enviar">
+            ➤
+          </button>
+
+        </form>
+
+      </section>
+
+
+      <!-- ==================================
+           ABA CHAT PRIVADO
+      =================================== -->
+
+      <section
+        class="painel-chat"
+        id="painel-privado"
+        hidden>
+
+        <div class="titulo-conversa">
+          <div>
+            <h2>Mensagens privadas</h2>
+            <p>Suas conversas individuais</p>
+          </div>
+        </div>
+
+
+        <div class="area-privada">
+
+          <!-- LISTA DE CONVERSAS -->
+          <aside class="lista-conversas">
+
+            <h3>Conversas</h3>
+
+            <div
+              id="listaConversas"
+              class="itens-conversas">
+
+              <button
+                class="item-conversa"
+                data-usuario="Maria Arte">
+
+                <div class="avatar">
+                  M
+                </div>
+
+                <div>
+                  <strong>Maria Arte</strong>
+                  <p>Olá! Tudo bem?</p>
+                </div>
+
+              </button>
+
+            </div>
+
+          </aside>
+
+
+          <!-- JANELA PRIVADA -->
+          <div class="janela-privada">
+
+            <div
+              class="cabecalho-privado"
+              id="cabecalhoPrivado">
+
+              <div class="avatar">
+                ?
+              </div>
+
+              <div>
+                <strong id="nomeContato">
+                  Selecione uma conversa
+                </strong>
+
+                <p id="statusContato">
+                  Mensagens privadas
+                </p>
+              </div>
+
+            </div>
+
+
+            <div
+              class="lista-mensagens"
+              id="mensagensPrivadas"
+              aria-live="polite">
+
+              <div class="estado-vazio">
+                <p>Escolha uma conversa para começar.</p>
+              </div>
+
+            </div>
+
+
+            <form
+              class="formulario-mensagem"
+              id="formPrivado">
+
+              <button
+                type="button"
+                class="botao-anexo">
+                +
+              </button>
+
+              <input
+                type="text"
+                id="campoPrivado"
+                placeholder="Escreva uma mensagem..."
+                autocomplete="off"
+                disabled>
+
+              <button
+                type="submit"
+                class="botao-enviar"
+                disabled>
+                ➤
+              </button>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </section>
+
+  </main>
+
+
+  <!-- ==================================
+       MENU DE INTERAÇÃO DAS MENSAGENS
+  =================================== -->
+
+  <div
+    class="menu-mensagem"
+    id="menuMensagem"
+    hidden>
+
+    <div class="opcoes-reacao">
+
+      <button type="button" data-reacao="❤️">❤️</button>
+      <button type="button" data-reacao="👍">👍</button>
+      <button type="button" data-reacao="😂">😂</button>
+      <button type="button" data-reacao="👏">👏</button>
+      <button type="button" data-reacao="🔥">🔥</button>
+
+    </div>
+
+    <div class="acoes-mensagem">
+
+      <button type="button" data-acao="responder">
+        ↩ Responder
+      </button>
+
+      <button type="button" data-acao="mencionar">
+        @ Mencionar / citar
+      </button>
+
+      <button type="button" data-acao="privado">
+        🔒 Mensagem privada
+      </button>
+
+      <button type="button" data-acao="copiar">
+        ▢ Copiar mensagem
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- RODAPÉ -->
+  <footer class="rodape-chat">
+    <p>RefugiART — Arte, cultura e conexão.</p>
+  </footer>
+
+
+  <script src="js/comunidade-chat.js"></script>
+
+</body>
+</html>

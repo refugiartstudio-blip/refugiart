@@ -7,7 +7,9 @@
 <title>Comunidade | RefugiART</title>
 <link rel="stylesheet" href="style.css">
 <style>
-body{background:#f4f1e9}.pagina-postagens{max-width:1000px;margin:30px auto;padding:0 16px 50px}.topo-comunidade{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e4e5dc;border-radius:12px;padding:11px 14px;margin-bottom:16px}.topo-comunidade a{display:inline-flex;align-items:center;justify-content:center;flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:#edf1e9;color:#243e35;text-decoration:none;font-size:1.25rem;font-weight:700}.topo-comunidade h1{color:#243e35;margin:0;font-size:1.2rem;line-height:1.3}.grade-postagens{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}.post-comunidade{background:#fff;border:1px solid #e2e3d9;border-radius:14px;overflow:hidden}.post-comunidade img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#e6eadf}.post-info{padding:13px}.post-autor{display:flex;align-items:center;gap:9px;margin-bottom:9px;color:#243e35;font-weight:700;font-size:.9rem}.post-autor img{width:34px;height:34px;aspect-ratio:1;border-radius:50%;object-fit:cover}.post-legenda{white-space:pre-wrap;overflow-wrap:anywhere;color:#4d574f;line-height:1.5}.post-data{font-size:.78rem;color:#879087;margin-top:12px}.estado-postagens{text-align:center;padding:35px 15px;color:#687168;background:#fff;border-radius:14px}.acao-publicar{display:inline-block;margin-top:14px;padding:10px 15px;background:#243e35;color:#fff;text-decoration:none;border-radius:9px;font-weight:700}
+body{background:#f4f1e9}.pagina-postagens{max-width:1000px;margin:30px auto;padding:0 16px 50px}.topo-comunidade{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e4e5dc;border-radius:12px;padding:11px 14px;margin-bottom:16px}.topo-comunidade a{display:inline-flex;align-items:center;justify-content:center;flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:#edf1e9;color:#243e35;text-decoration:none;font-size:1.25rem;font-weight:700}.topo-comunidade h1{color:#243e35;margin:0;font-size:1.2rem;line-height:1.3}.grade-postagens{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}.post-comunidade{background:#fff;border:1px solid #e2e3d9;border-radius:14px;overflow:hidden}.post-comunidade>img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#e6eadf}.post-info{padding:13px}.post-autor{display:flex;align-items:center;gap:9px;margin-bottom:9px;color:#243e35;font-weight:700;font-size:.9rem}.post-autor img{width:34px;height:34px;aspect-ratio:1;border-radius:50%;object-fit:cover}.post-legenda{white-space:pre-wrap;overflow-wrap:anywhere;color:#4d574f;line-height:1.5}.post-data{font-size:.78rem;color:#879087;margin-top:12px}.estado-postagens{text-align:center;padding:35px 15px;color:#687168;background:#fff;border-radius:14px}.acao-publicar{display:inline-block;margin-top:14px;padding:10px 15px;background:#243e35;color:#fff;text-decoration:none;border-radius:9px;font-weight:700}
+.acoes-post{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 13px 13px}.acao-post{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:7px 10px;border:1px solid #e4e5dc;border-radius:22px;background:#fff;color:#34483c;font-size:.88rem;font-weight:600;cursor:pointer}.acao-post.ativo{background:#fcecef;border-color:#efc4ce;color:#b52d4b}.acao-post.interesse-ativo{background:#fff4df;border-color:#edcf9b;color:#80551a}.post-modal[hidden]{display:none}.post-modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(20,31,25,.58)}.janela-comentarios{width:min(520px,100%);max-height:min(80vh,680px);display:flex;flex-direction:column;background:#fffefa;border-radius:16px;box-shadow:0 15px 50px #0003;overflow:hidden}.janela-topo{display:flex;align-items:center;justify-content:space-between;padding:15px 17px;border-bottom:1px solid #e8e5dc}.janela-topo h2{margin:0;color:#243e35;font-size:1.05rem}.fechar-comentarios{border:0;background:transparent;font-size:1.7rem;color:#526157;cursor:pointer}.lista-comentarios{min-height:100px;overflow-y:auto;padding:14px 17px;display:flex;flex-direction:column;gap:12px}.comentario-item{padding:10px 12px;border-radius:11px;background:#f2f3ed;overflow-wrap:anywhere}.comentario-autor{display:block;margin-bottom:4px;color:#243e35;font-size:.83rem}.comentario-texto{margin:0;color:#4d574f;white-space:pre-wrap}.comentario-data{display:block;margin-top:5px;color:#899087;font-size:.72rem}.form-comentario{display:flex;gap:8px;padding:13px 15px;border-top:1px solid #e8e5dc}.form-comentario textarea{flex:1;min-width:0;min-height:42px;max-height:110px;resize:vertical;padding:10px;border:1px solid #d9ddd4;border-radius:10px;font:inherit}.form-comentario button{border:0;border-radius:10px;padding:0 14px;background:#243e35;color:#fff;font-weight:700}.aviso-comentario{padding:10px 15px;color:#687168;font-size:.85rem}
+@media(max-width:480px){.acoes-post{gap:5px}.acao-post{padding:7px 8px;font-size:.8rem}.grade-postagens{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -31,39 +33,67 @@ body{background:#f4f1e9}.pagina-postagens{max-width:1000px;margin:30px auto;padd
 <script src="script.js"></script>
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-const supabase=createClient("https://nlqalpiksbqflzxzsgoa.supabase.co","sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
+const supabase=createClient("https://nlqalpiksbqflzxzsgoa.supabase.co","sb_publishable_BpJHFuq0WQaH5HGOuC20Q_grO6loaP");
 const comunidades={desenho:{titulo:"Desenho",categoria:"Desenho"},pintura:{titulo:"Pintura",categoria:"Pintura"},tatuagem:{titulo:"Tatuagem",categoria:"Tatuagem"},digital:{titulo:"Arte Digital",categoria:"Digital"},leitura:{titulo:"Leitura",categoria:"Leitura"}};
 const slug=new URLSearchParams(location.search).get("comunidade")||"desenho";
-const comunidade=comunidades[slug];
-const titulo=document.getElementById("titulo-comunidade");
-const lista=document.getElementById("lista-postagens");
+const comunidade=comunidades[slug],titulo=document.getElementById("titulo-comunidade"),lista=document.getElementById("lista-postagens");
 titulo.textContent=comunidade?comunidade.titulo:"Comunidade não encontrada";
-function estado(msg){const p=document.createElement("p");p.className="estado-postagens";p.textContent=msg;lista.replaceChildren(p);}
 function elemento(tag,classe,texto){const el=document.createElement(tag);if(classe)el.className=classe;if(texto!==undefined)el.textContent=texto;return el;}
+function estado(msg){const p=elemento("p","estado-postagens",msg);lista.replaceChildren(p);}
+function modalComentarios(postId){
+ let modal=document.getElementById("modal-comentarios");
+ if(!modal){modal=elemento("div","post-modal");modal.id="modal-comentarios";modal.hidden=true;modal.innerHTML='<section class="janela-comentarios" role="dialog" aria-modal="true" aria-labelledby="titulo-comentarios"><header class="janela-topo"><h2 id="titulo-comentarios">Comentários</h2><button class="fechar-comentarios" type="button" aria-label="Fechar">×</button></header><div class="lista-comentarios" id="lista-comentarios"></div><form class="form-comentario" id="form-comentario"><textarea id="texto-comentario" maxlength="1000" placeholder="Escreva um comentário..." required></textarea><button type="submit">Enviar</button></form></section>';document.body.append(modal);
+  modal.querySelector(".fechar-comentarios").addEventListener("click",()=>modal.hidden=true);
+  modal.addEventListener("click",e=>{if(e.target===modal)modal.hidden=true;});
+  modal.querySelector("#form-comentario").addEventListener("submit",async e=>{e.preventDefault();const {data:{user}}=await supabase.auth.getUser();if(!user){alert("Entre na sua conta para comentar.");return;}const campo=modal.querySelector("#texto-comentario"),texto=campo.value.trim();if(!texto)return;const botao=e.submitter;botao.disabled=true;const {error}=await supabase.from("community_post_comments").insert({post_id:modal.dataset.postId,user_id:user.id,content:texto});botao.disabled=false;if(error){alert("Não foi possível enviar: "+error.message);return;}campo.value="";await carregarComentarios(modal.dataset.postId);});
+ }
+ modal.dataset.postId=postId;modal.hidden=false;carregarComentarios(postId);
+}
+async function carregarComentarios(postId){
+ const box=document.getElementById("lista-comentarios");box.replaceChildren(elemento("p","aviso-comentario","Carregando comentários..."));
+ const {data:comentarios,error}=await supabase.from("community_post_comments").select("id,user_id,content,created_at").eq("post_id",String(postId)).order("created_at",{ascending:true}).limit(100);
+ if(error){box.replaceChildren(elemento("p","aviso-comentario","Não foi possível carregar os comentários."));return;}
+ if(!comentarios?.length){box.replaceChildren(elemento("p","aviso-comentario","Seja a primeira pessoa a comentar esta obra."));return;}
+ const ids=[...new Set(comentarios.map(c=>c.user_id).filter(Boolean))];let perfis=[];
+ if(ids.length){const r=await supabase.from("profiles").select("id,nome_artistico").in("id",ids);perfis=r.data||[];}
+ const nomes=new Map(perfis.map(p=>[p.id,p.nome_artistico||"Artista RefugiART"]));box.replaceChildren();
+ comentarios.forEach(c=>{const item=elemento("article","comentario-item");item.append(elemento("strong","comentario-autor",nomes.get(c.user_id)||"Artista RefugiART"),elemento("p","comentario-texto",c.content));if(c.created_at)item.append(elemento("small","comentario-data",new Date(c.created_at).toLocaleString("pt-BR")));box.append(item);});
+}
 async function carregar(){
  if(!comunidade){estado("Esta comunidade não foi encontrada.");return;}
- const {data:obras,error}=await supabase.from("atelie_posts").select("user_id,image_url,caption,category,created_at").eq("category",comunidade.categoria).order("created_at",{ascending:false});
+ const {data:obras,error}=await supabase.from("atelie_posts").select("id,user_id,image_url,caption,category,created_at").eq("category",comunidade.categoria).order("created_at",{ascending:false});
  if(error){estado("Não foi possível carregar as publicações agora.");return;}
- if(!obras||!obras.length){estado("Ainda não há publicações nesta comunidade. Seja a primeira pessoa a compartilhar uma obra!");return;}
- const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];
- let perfis=[];
- if(ids.length){const resposta=await supabase.from("profiles").select("id,nome_artistico,foto_url").in("id",ids);perfis=resposta.data||[];}
- const mapa=new Map(perfis.map(p=>[p.id,p]));
- lista.replaceChildren();
- obras.forEach(obra=>{
-  const card=elemento("article","post-comunidade");
-  const img=elemento("img");img.src=obra.image_url;img.alt="Obra publicada na comunidade "+comunidade.titulo;img.loading="lazy";card.append(img);
-  const info=elemento("div","post-info");
-  const perfil=mapa.get(obra.user_id);
-  const autor=elemento("div","post-autor");
+ if(!obras?.length){estado("Ainda não há publicações nesta comunidade. Seja a primeira pessoa a compartilhar uma obra!");return;}
+ const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];let perfis=[];
+ if(ids.length){const r=await supabase.from("profiles").select("id,nome_artistico,foto_url").in("id",ids);perfis=r.data||[];}
+ const mapa=new Map(perfis.map(p=>[p.id,p]));lista.replaceChildren();
+ for(const obra of obras){
+  const postId=String(obra.id),perfil=mapa.get(obra.user_id),card=elemento("article","post-comunidade"),img=elemento("img");
+  img.src=obra.image_url;img.alt="Obra publicada na comunidade "+comunidade.titulo;img.loading="lazy";card.append(img);
+  const info=elemento("div","post-info"),autor=elemento("div","post-autor");
   if(perfil?.foto_url){const avatar=elemento("img");avatar.src=perfil.foto_url;avatar.alt="";autor.append(avatar);}
-  autor.append(elemento("span","",perfil?.nome_artistico||"Artista RefugiART"));
-  info.append(autor);
+  autor.append(elemento("span","",perfil?.nome_artistico||"Artista RefugiART"));info.append(autor);
   if(obra.caption)info.append(elemento("p","post-legenda",obra.caption));
   const data=obra.created_at?new Date(obra.created_at).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}):"";
-  if(data)info.append(elemento("p","post-data",data));
-  card.append(info);lista.append(card);
- });
+  if(data)info.append(elemento("p","post-data",data));card.append(info);
+  const acoes=elemento("div","acoes-post");
+  const like=elemento("button","acao-post","♡ 0");like.type="button";like.setAttribute("aria-label","Curtir publicação");
+  const comentar=elemento("button","acao-post","💬 Comentar");comentar.type="button";
+  const interesse=elemento("button","acao-post","🎈 0");interesse.type="button";interesse.setAttribute("aria-label","Tenho interesse de compra");
+  const [curtidas,interesses]=await Promise.all([
+   supabase.from("community_post_likes").select("user_id").eq("post_id",postId),
+   supabase.from("community_post_interest").select("user_id").eq("post_id",postId)
+  ]);
+  const {data:{user}}=await supabase.auth.getUser();
+  const listaLikes=curtidas.data||[],listaInteresses=interesses.data||[];
+  like.textContent=(listaLikes.some(x=>x.user_id===user?.id)?"♥ ":"♡ ")+listaLikes.length;
+  interesse.textContent="🎈 "+listaInteresses.length;
+  if(listaLikes.some(x=>x.user_id===user?.id))like.classList.add("ativo");
+  if(listaInteresses.some(x=>x.user_id===user?.id))interesse.classList.add("interesse-ativo");
+  like.addEventListener("click",async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user){alert("Entre na sua conta para curtir.");return;}const ja=like.classList.contains("ativo");const res=ja?await supabase.from("community_post_likes").delete().eq("post_id",postId).eq("user_id",user.id):await supabase.from("community_post_likes").insert({post_id:postId,user_id:user.id});if(res.error){alert("Não foi possível registrar a curtida. Verifique a configuração do Supabase.");return;}like.classList.toggle("ativo",!ja);like.textContent=(ja?"♡ ":"♥ ")+(Number(like.textContent.replace(/\D/g,""))+(ja?-1:1));});
+  interesse.addEventListener("click",async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user){alert("Entre na sua conta para demonstrar interesse.");return;}const ja=interesse.classList.contains("interesse-ativo");const res=ja?await supabase.from("community_post_interest").delete().eq("post_id",postId).eq("user_id",user.id):await supabase.from("community_post_interest").insert({post_id:postId,user_id:user.id});if(res.error){alert("Não foi possível registrar o interesse. Verifique a configuração do Supabase.");return;}interesse.classList.toggle("interesse-ativo",!ja);interesse.textContent="🎈 "+(Number(interesse.textContent.replace(/\D/g,""))+(ja?-1:1));});
+  comentar.addEventListener("click",()=>modalComentarios(postId));acoes.append(like,comentar,interesse);card.append(acoes);lista.append(card);
+ }
 }
 carregar();
 </script>

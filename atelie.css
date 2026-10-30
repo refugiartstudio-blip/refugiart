@@ -1952,6 +1952,11 @@
 
 
 /* Correção reforçada: impedir que estilos globais empilhem os botões */
+/* O atributo hidden deve prevalecer sobre qualquer regra de layout. */
+body.pagina-atelie #acoes-relacionamento-atelie[hidden] {
+  display: none !important;
+}
+
 body.pagina-atelie #acoes-relacionamento-atelie {
   display: flex !important;
   flex-flow: row nowrap !important;

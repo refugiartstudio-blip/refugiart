@@ -64,6 +64,112 @@ let arquivoFoto = null;
 let urlPreviaLocal = null;
 let fotoAtualUrl = null;
 
+// Solicitações de amizade recebidas: aparecem no próprio perfil do destinatário.
+const areaPedidosAmizade = document.getElementById('solicitacoes-recebidas-perfil');
+const listaPedidosAmizade = document.getElementById('lista-solicitacoes-recebidas');
+
+async function carregarSolicitacoesAmizadeRecebidas() {
+  if (!userId || !areaPedidosAmizade || !listaPedidosAmizade) return;
+  listaPedidosAmizade.replaceChildren();
+
+  const { data: pedidos, error } = await supabase
+    .from('atelie_friend_requests')
+    .select('id, requester_id, created_at')
+    .eq('recipient_id', userId)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.warn('Não foi possível carregar solicitações de amizade:', error.message);
+    areaPedidosAmizade.hidden = true;
+    return;
+  }
+
+  if (!pedidos?.length) {
+    areaPedidosAmizade.hidden = true;
+    return;
+  }
+
+  const ids = [...new Set(pedidos.map(p => p.requester_id))];
+  const { data: perfis, error: erroPerfis } = await supabase
+    .from('profiles')
+    .select('id, nome_artistico, nome_atelie, biografia, area_atuacao, foto_url')
+    .in('id', ids);
+
+  if (erroPerfis) {
+    console.warn('Não foi possível carregar os perfis dos solicitantes:', erroPerfis.message);
+  }
+
+  const mapaPerfis = new Map((perfis || []).map(p => [p.id, p]));
+
+  pedidos.forEach(pedido => {
+    const perfil = mapaPerfis.get(pedido.requester_id) || {};
+    const cartao = document.createElement('article');
+    cartao.className = 'pedido-amizade-perfil';
+
+    const fotoSolicitante = document.createElement('img');
+    fotoSolicitante.className = 'pedido-amizade-foto';
+    fotoSolicitante.src = perfil.foto_url || fotoPadrao;
+    fotoSolicitante.alt = 'Foto de ' + (perfil.nome_artistico || 'artista');
+    fotoSolicitante.addEventListener('error', () => { fotoSolicitante.src = fotoPadrao; }, { once: true });
+
+    const conteudo = document.createElement('div');
+    conteudo.className = 'pedido-amizade-conteudo';
+    const nomeSolicitante = document.createElement('strong');
+    nomeSolicitante.textContent = perfil.nome_artistico || 'Artista RefugiART';
+    const nomeAtelieSolicitante = document.createElement('span');
+    nomeAtelieSolicitante.className = 'pedido-amizade-atelie';
+    nomeAtelieSolicitante.textContent = perfil.nome_atelie || 'Ateliê';
+    const bioSolicitante = document.createElement('p');
+    bioSolicitante.textContent = perfil.biografia || perfil.area_atuacao || 'Este artista deseja se conectar com você na comunidade RefugiART.';
+    const linkPerfil = document.createElement('a');
+    linkPerfil.href = 'atelie.html?id=' + encodeURIComponent(pedido.requester_id);
+    linkPerfil.textContent = 'Ver perfil';
+    conteudo.append(nomeSolicitante, nomeAtelieSolicitante, bioSolicitante, linkPerfil);
+
+    const acoes = document.createElement('div');
+    acoes.className = 'pedido-amizade-acoes';
+    const aceitar = document.createElement('button');
+    aceitar.type = 'button';
+    aceitar.textContent = 'Aceitar';
+    const recusar = document.createElement('button');
+    recusar.type = 'button';
+    recusar.className = 'recusar';
+    recusar.textContent = 'Recusar';
+
+    aceitar.addEventListener('click', () => responderPedidoAmizade(pedido.id, 'accepted', cartao, aceitar, recusar));
+    recusar.addEventListener('click', () => responderPedidoAmizade(pedido.id, 'rejected', cartao, aceitar, recusar));
+
+    acoes.append(aceitar, recusar);
+    cartao.append(fotoSolicitante, conteudo, acoes);
+    listaPedidosAmizade.appendChild(cartao);
+  });
+
+  areaPedidosAmizade.hidden = false;
+}
+
+async function responderPedidoAmizade(id, novoStatus, cartao, aceitar, recusar) {
+  aceitar.disabled = true;
+  recusar.disabled = true;
+  const { error } = await supabase
+    .from('atelie_friend_requests')
+    .update({ status: novoStatus, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .eq('recipient_id', userId)
+    .eq('status', 'pending');
+
+  if (error) {
+    mostrarStatus('Não foi possível responder à solicitação: ' + error.message);
+    aceitar.disabled = false;
+    recusar.disabled = false;
+    return;
+  }
+
+  cartao.remove();
+  if (!listaPedidosAmizade.children.length) areaPedidosAmizade.hidden = true;
+  mostrarStatus(novoStatus === 'accepted' ? 'Amizade confirmada!' : 'Solicitação recusada.');
+}
+
 // Exibe mensagens
 function mostrarStatus(mensagem) {
   if (status) status.textContent = mensagem;
@@ -161,6 +267,7 @@ async function carregarPerfil() {
 
     const usuario = sessao.session.user;
     userId = usuario.id;
+    await carregarSolicitacoesAmizadeRecebidas();
 
     mostrarStatus('Carregando seu perfil...');
 

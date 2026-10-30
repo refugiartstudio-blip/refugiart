@@ -2053,3 +2053,52 @@ footer {
     font-size: 10px;
   }
 }
+
+
+/* ReflexiART: seleção da área ao lado do botão */
+.controles-publicacao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.controles-publicacao select {
+  flex: 1 1 170px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #d9ded6;
+  border-radius: 8px;
+  background: #fff;
+  color: #344b3d;
+  font: inherit;
+}
+
+.controles-publicacao button {
+  margin-top: 0;
+}
+
+.categoria-reflexiart {
+  display: inline-block;
+  margin: 10px 0 2px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #eaf0e8;
+  color: #365b4d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  .controles-publicacao {
+    align-items: stretch;
+  }
+
+  .controles-publicacao select,
+  .controles-publicacao button {
+    width: 100%;
+    flex-basis: 100%;
+    box-sizing: border-box;
+  }
+}

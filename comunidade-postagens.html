@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#243e35">
+<title>Comunidade | RefugiART</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:#f4f1e9}.pagina-postagens{max-width:1000px;margin:30px auto;padding:0 16px 50px}.topo-comunidade{background:#fff;border:1px solid #e4e5dc;border-radius:16px;padding:22px;margin-bottom:20px}.topo-comunidade a{color:#526456;text-decoration:none;font-weight:700}.topo-comunidade h1{color:#243e35;margin:15px 0 5px}.topo-comunidade p{color:#687168;margin:0}.grade-postagens{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}.post-comunidade{background:#fff;border:1px solid #e2e3d9;border-radius:14px;overflow:hidden}.post-comunidade img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#e6eadf}.post-info{padding:13px}.post-autor{display:flex;align-items:center;gap:9px;margin-bottom:9px;color:#243e35;font-weight:700;font-size:.9rem}.post-autor img{width:34px;height:34px;aspect-ratio:1;border-radius:50%;object-fit:cover}.post-legenda{white-space:pre-wrap;overflow-wrap:anywhere;color:#4d574f;line-height:1.5}.post-data{font-size:.78rem;color:#879087;margin-top:12px}.estado-postagens{text-align:center;padding:35px 15px;color:#687168;background:#fff;border-radius:14px}.acao-publicar{display:inline-block;margin-top:14px;padding:10px 15px;background:#243e35;color:#fff;text-decoration:none;border-radius:9px;font-weight:700}
+</style>
+</head>
+<body>
+<header class="cabecalho">
+<img src="imagens/logo.png" alt="RefugiART" class="logo">
+<div class="identidade"><h1>RefugiART</h1><p>A arte nos aproxima.</p></div>
+</header>
+<nav class="navegacao-principal" aria-label="Navegação principal">
+<a href="index.html">Início</a><a href="atelie.html">Ateliê</a><a href="comunidades.html" aria-current="page">Comunidades</a><a href="galeria.html">Galeria</a>
+</nav>
+<main class="pagina-postagens">
+<section class="topo-comunidade">
+<a href="comunidades.html">← Voltar às comunidades</a>
+<h1 id="titulo-comunidade">Comunidade</h1>
+<p>Publicações e trabalhos compartilhados nesta comunidade.</p>
+</section>
+<section id="lista-postagens" class="grade-postagens" aria-live="polite">
+<p class="estado-postagens">Carregando publicações...</p>
+</section>
+</main>
+<footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const supabase=createClient("https://nlqalpiksbqflzxzsgoa.supabase.co","sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
+const comunidades={desenho:{titulo:"Desenho",categoria:"Desenho"},pintura:{titulo:"Pintura",categoria:"Pintura"},tatuagem:{titulo:"Tatuagem",categoria:"Tatuagem"},digital:{titulo:"Arte Digital",categoria:"Digital"},leitura:{titulo:"Leitura",categoria:"Leitura"}};
+const slug=new URLSearchParams(location.search).get("comunidade")||"desenho";
+const comunidade=comunidades[slug];
+const titulo=document.getElementById("titulo-comunidade");
+const lista=document.getElementById("lista-postagens");
+titulo.textContent=comunidade?comunidade.titulo:"Comunidade não encontrada";
+function estado(msg){const p=document.createElement("p");p.className="estado-postagens";p.textContent=msg;lista.replaceChildren(p);}
+function elemento(tag,classe,texto){const el=document.createElement(tag);if(classe)el.className=classe;if(texto!==undefined)el.textContent=texto;return el;}
+async function carregar(){
+ if(!comunidade){estado("Esta comunidade não foi encontrada.");return;}
+ const {data:obras,error}=await supabase.from("atelie_posts").select("user_id,image_url,caption,category,created_at").eq("category",comunidade.categoria).order("created_at",{ascending:false});
+ if(error){estado("Não foi possível carregar as publicações agora.");return;}
+ if(!obras||!obras.length){estado("Ainda não há publicações nesta comunidade. Seja a primeira pessoa a compartilhar uma obra!");return;}
+ const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];
+ let perfis=[];
+ if(ids.length){const resposta=await supabase.from("profiles").select("id,nome_artistico,foto_url").in("id",ids);perfis=resposta.data||[];}
+ const mapa=new Map(perfis.map(p=>[p.id,p]));
+ lista.replaceChildren();
+ obras.forEach(obra=>{
+  const card=elemento("article","post-comunidade");
+  const img=elemento("img");img.src=obra.image_url;img.alt="Obra publicada na comunidade "+comunidade.titulo;img.loading="lazy";card.append(img);
+  const info=elemento("div","post-info");
+  const perfil=mapa.get(obra.user_id);
+  const autor=elemento("div","post-autor");
+  if(perfil?.foto_url){const avatar=elemento("img");avatar.src=perfil.foto_url;avatar.alt="";autor.append(avatar);}
+  autor.append(elemento("span","",perfil?.nome_artistico||"Artista RefugiART"));
+  info.append(autor);
+  if(obra.caption)info.append(elemento("p","post-legenda",obra.caption));
+  const data=obra.created_at?new Date(obra.created_at).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}):"";
+  if(data)info.append(elemento("p","post-data",data));
+  card.append(info);lista.append(card);
+ });
+}
+carregar();
+</script>
+</body>
+</html>

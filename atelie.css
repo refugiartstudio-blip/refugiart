@@ -2178,3 +2178,33 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
   position:absolute;left:10px;right:10px;bottom:10px;z-index:3;
   margin:0;background:rgba(255,240,217,.96);box-shadow:0 2px 12px rgba(0,0,0,.18)
 }
+
+
+/* Selo de verificação das contas administradoras */
+.pagina-atelie .obra-nome-com-selo {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.pagina-atelie .selo-verificado-admin {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  border-radius: 50%;
+  background: #2877d7;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  vertical-align: middle;
+  box-shadow: 0 0 0 2px #fff;
+}
+.pagina-atelie #artista-responsavel-atelie .selo-verificado-admin {
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+}

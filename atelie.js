@@ -465,17 +465,6 @@ function criarCartaoObra(obra) {
     obra.category || "Outros"
   );
 
-  if (souDonoDoAtelie && obra.moderation_status && obra.moderation_status !== "published") {
-    const aviso = criarElemento("div", "aviso-moderacao-obra",
-      obra.moderation_status === "under_review"
-        ? "⚠ Publicação denunciada — em análise administrativa. Visível somente para você."
-        : "⛔ Publicação removida da visualização pública após revisão administrativa.");
-    aviso.setAttribute("role", "status");
-    artigo.appendChild(aviso);
-  }
-
-  
-
   const imagem = document.createElement("img");
 
   imagem.className = "obra-imagem";
@@ -491,6 +480,14 @@ function criarCartaoObra(obra) {
 
   const areaImagem = criarElemento("div", "obra-imagem-area");
   areaImagem.appendChild(imagem);
+  if (souDonoDoAtelie && obra.moderation_status && obra.moderation_status !== "published") {
+    const aviso = criarElemento("div", "aviso-moderacao-obra",
+      obra.moderation_status === "under_review"
+        ? "⚠ Publicação denunciada — em análise administrativa. Visível somente para você."
+        : "⛔ Publicação removida da visualização pública após revisão administrativa.");
+    aviso.setAttribute("role", "status");
+    areaImagem.appendChild(aviso);
+  }
   if (obra.content_sensitive) {
     const cobertura = criarElemento("button", "cobertura-conteudo-sensivel", "⚠ Conteúdo sensível — toque para visualizar");
     cobertura.type = "button";

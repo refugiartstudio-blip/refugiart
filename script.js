@@ -294,15 +294,14 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   function tempoRelativo(data) {
-    const instante = new Date(data).getTime();
-    if (!Number.isFinite(instante)) return "";
-    const minutos = Math.max(0, Math.floor((Date.now() - instante) / 60000));
-    if (minutos < 1) return "Agora mesmo";
-    if (minutos < 60) return "Há " + minutos + (minutos === 1 ? " minuto" : " minutos");
-    const horas = Math.floor(minutos / 60);
-    if (horas < 24) return "Há " + horas + (horas === 1 ? " hora" : " horas");
-    const dias = Math.floor(horas / 24);
-    return "Há " + dias + (dias === 1 ? " dia" : " dias");
+    const instante = new Date(data);
+    if (Number.isNaN(instante.getTime())) return "";
+    return instante.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
   }
 
   function renderizarReflexiart() {

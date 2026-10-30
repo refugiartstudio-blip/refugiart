@@ -54,6 +54,22 @@ create policy "Users update own moderation notifications"
   on public.refugiart_notifications for update to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+-- Verificação segura de administrador para o navegador.
+-- A tabela refugiart_admins permanece inacessível por SELECT direto.
+create or replace function public.refugiart_is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $
+  select exists (
+    select 1 from public.refugiart_admins where user_id = auth.uid()
+  );
+$;
+revoke all on function public.refugiart_is_admin() from public, anon;
+grant execute on function public.refugiart_is_admin() to authenticated;
+
 -- Remove políticas SELECT permissivas anteriores para que o status seja respeitado.
 do $$
 declare p record;

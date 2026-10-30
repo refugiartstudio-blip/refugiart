@@ -33,10 +33,10 @@
       >
     </form>
 
-    <div class="acoes-cabecalho">
-      <a href="comunidades.html" class="atalho-cabecalho" aria-label="Comunidades" title="Comunidades">♧</a>
-      <a href="perfil.html" class="avatar-cabecalho" aria-label="Meu perfil">♙</a>
-    </div>
+    <button class="botao-menu" id="abrirMenu" type="button"
+            aria-label="Abrir menu" aria-controls="menuLateral" aria-expanded="false">
+      ☰
+    </button>
   </header>
 
   <nav class="navegacao-principal atelie-nav" aria-label="Navegação principal">
@@ -330,13 +330,112 @@
     </aside>
   </main>
 
-  <!-- Navegação inferior para celulares -->
-  <nav class="navegacao-inferior" aria-label="Navegação rápida">
-    <a href="index.html"><span>⌂</span>Início</a>
-    <a href="atelie.html" aria-current="page"><span>▦</span>Ateliê</a>
-    <a href="comunidades.html"><span>♧</span>Comunidade</a>
-    <a href="perfil.html"><span>♙</span>Perfil</a>
-  </nav>
+  <!-- Fundo escurecido -->
+  <div class="fundo-menu" id="fundoMenu"></div>
+
+  <!-- Menu lateral direito -->
+  <aside class="menu-lateral"
+         id="menuLateral"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="tituloMenu"
+         aria-hidden="true"
+         inert>
+
+    <div class="cabecalho-menu">
+      <div>
+        <h2 id="tituloMenu">RefugiART</h2>
+        <p>Explore nossas iniciativas</p>
+      </div>
+
+      <button class="botao-fechar"
+              id="fecharMenu"
+              aria-label="Fechar menu">
+        ×
+      </button>
+    </div>
+
+    <div class="introducao-menu">
+      <span>✦</span>
+      <div>
+        <h3>Conheça nosso universo</h3>
+        <p>Arte, cultura e transformação social.</p>
+      </div>
+    </div>
+
+    <nav class="opcoes-menu" aria-label="Áreas da RefugiART">
+
+      <a href="revista.html" class="item-menu">
+        <span class="icone-menu">▤</span>
+        <span class="texto-menu">
+          <strong>Revista RefugiART</strong>
+          <small>Publicações e entrevistas</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="eventos.html" class="item-menu">
+        <span class="icone-menu">▦</span>
+        <span class="texto-menu">
+          <strong>Eventos</strong>
+          <small>Encontros e programações</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="exposicoes.html" class="item-menu">
+        <span class="icone-menu">▧</span>
+        <span class="texto-menu">
+          <strong>Exposições</strong>
+          <small>Mostras e trabalhos artísticos</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="palestras.html" class="item-menu">
+        <span class="icone-menu">◉</span>
+        <span class="texto-menu">
+          <strong>Palestras e encontros</strong>
+          <small>Ideias e experiências</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="acoes-sociais.html" class="item-menu">
+        <span class="icone-menu">♡</span>
+        <span class="texto-menu">
+          <strong>Ações sociais</strong>
+          <small>Arte junto à comunidade</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="projetos-educativos.html" class="item-menu">
+        <span class="icone-menu">✎</span>
+        <span class="texto-menu">
+          <strong>Projetos educativos</strong>
+          <small>Oficinas, cursos e formação</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="perfil.html" class="item-menu">
+        <span class="icone-menu">♙</span>
+        <span class="texto-menu">
+          <strong>Meu perfil</strong>
+          <small>Editar meus dados e informações</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+    </nav>
+
+    <div class="rodape-menu">
+      <p>RefugiART — Criar é Sentir.</p>
+    </div>
+
+  </aside>
+
 
   <footer class="rodape-atelie">
     <p>RefugiART © 2026 — Criar é Sentir.</p>

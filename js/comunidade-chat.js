@@ -1,184 +1,291 @@
 
 document.addEventListener("DOMContentLoaded", () => {
-  // ELEMENTOS PRINCIPAIS
-  const abas = document.querySelectorAll(".navegacao-chat button");
+  const abas = document.querySelectorAll(".aba-chat");
   const paineis = document.querySelectorAll(".painel-chat");
+  const menu = document.getElementById("menuMensagem");
 
-  const mensagensGlobal = document.getElementById("mensagensGlobal");
-  const mensagensComunidade = document.getElementById("mensagensComunidade");
-  const mensagensPrivadas = document.getElementById("mensagensPrivadas");
-
-  const menuMensagem = document.getElementById("menuMensagem");
-
-  let salaAtual = "desenho";
   let mensagemSelecionada = null;
   let respostaGlobal = null;
   let respostaComunidade = null;
+  let contatoAtual = null;
 
-  // TROCAR ENTRE AS ABAS GLOBAL, COMUNIDADE E CHAT
-  abas.forEach((aba) => {
-    aba.addEventListener("click", () => {
-      const destino = aba.dataset.aba;
+  const nomesZonas = {
+    desenho: "✏️ Desenho",
+    pintura: "🎨 Pintura",
+    aquarela: "🖌️ Aquarela",
+    grafite: "🧱 Grafite",
+    tatuagem: "✒️ Tatuagem"
+  };
 
-      abas.forEach((item) => item.classList.remove("ativo"));
-      aba.classList.add("ativo");
+  const historicoPrivado = {};
 
-      paineis.forEach((painel) => {
+  // =====================================
+  // ABAS PRINCIPAIS
+  // =====================================
+
+  abas.forEach(botao => {
+    botao.addEventListener("click", () => {
+      const destino = botao.dataset.aba;
+
+      abas.forEach(aba => aba.classList.remove("ativa"));
+      botao.classList.add("ativa");
+
+      paineis.forEach(painel => {
         painel.hidden = painel.id !== `painel-${destino}`;
+        painel.classList.toggle("ativo", !painel.hidden);
       });
 
       fecharMenu();
     });
   });
 
-  // ENVIAR MENSAGENS
-  function configurarFormulario(formId, campoId, areaId, tipo) {
-    const formulario = document.getElementById(formId);
-    const campo = document.getElementById(campoId);
-    const area = document.getElementById(areaId);
+  // =====================================
+  // CRIAR MENSAGENS
+  // =====================================
 
-    if (!formulario || !campo || !area) return;
-
-    formulario.addEventListener("submit", (evento) => {
-      evento.preventDefault();
-
-      const texto = campo.value.trim();
-      if (!texto) return;
-
-      adicionarMensagem(area, {
-        autor: "Você",
-        texto,
-        propria: true
-      });
-
-      campo.value = "";
-
-      if (tipo === "global") respostaGlobal = null;
-      if (tipo === "comunidade") respostaComunidade = null;
-
-      atualizarResposta(tipo);
-    });
-  }
-
-  function adicionarMensagem(area, dados) {
-    const mensagem = document.createElement("div");
+  function criarMensagem(area, autor, texto, propria = false, citada = null) {
+    const mensagem = document.createElement("article");
     mensagem.className = "mensagem";
+    mensagem.dataset.autor = autor;
+    mensagem.dataset.texto = texto;
 
-    if (dados.propria) {
-      mensagem.classList.add("propria");
-    }
+    if (propria) mensagem.classList.add("propria");
 
-    mensagem.dataset.autor = dados.autor;
-    mensagem.dataset.texto = dados.texto;
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = autor.charAt(0).toUpperCase();
 
-    if (dados.citada) {
+    const corpo = document.createElement("div");
+    corpo.className = "corpo-mensagem";
+
+    if (citada) {
       const citacao = document.createElement("div");
       citacao.className = "mensagem-citada";
-      citacao.textContent = `${dados.citada.autor}: ${dados.citada.texto}`;
-      mensagem.appendChild(citacao);
+      citacao.textContent = `${citada.autor}: ${citada.texto}`;
+      corpo.appendChild(citacao);
     }
 
-    const autor = document.createElement("span");
-    autor.className = "autor";
-    autor.textContent = dados.autor;
+    const identificacao = document.createElement("div");
+    identificacao.className = "identificacao";
 
-    const conteudo = document.createElement("div");
-    conteudo.className = "conteudo";
-    conteudo.textContent = dados.texto;
+    const nome = document.createElement("strong");
+    nome.textContent = autor;
 
     const horario = document.createElement("span");
-    horario.className = "horario";
     horario.textContent = new Date().toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit"
     });
 
-    mensagem.append(autor, conteudo, horario);
-    area.appendChild(mensagem);
+    identificacao.append(nome, horario);
 
+    const balao = document.createElement("div");
+    balao.className = "balao-mensagem";
+    balao.textContent = texto;
+
+    const reacoes = document.createElement("div");
+    reacoes.className = "reacoes-mensagem";
+
+    corpo.append(identificacao, balao, reacoes);
+    mensagem.append(avatar, corpo);
+
+    area.appendChild(mensagem);
     area.scrollTop = area.scrollHeight;
 
-    configurarMenuDaMensagem(mensagem);
+    configurarMensagem(mensagem);
+
     return mensagem;
   }
 
-  configurarFormulario(
-    "formGlobal",
-    "campoGlobal",
-    "mensagensGlobal",
-    "global"
-  );
+  // =====================================
+  // ENVIO DE MENSAGENS
+  // =====================================
 
-  configurarFormulario(
-    "formComunidade",
-    "campoComunidade",
-    "mensagensComunidade",
-    "comunidade"
-  );
+  function configurarEnvio(formId, campoId, areaId, tipo) {
+    const form = document.getElementById(formId);
+    const campo = document.getElementById(campoId);
+    const area = document.getElementById(areaId);
 
-  configurarFormulario(
-    "formPrivado",
-    "campoPrivado",
-    "mensagensPrivadas",
-    "privado"
-  );
+    if (!form || !campo || !area) return;
 
-  // TROCAR ENTRE AS SALAS DA COMUNIDADE
-  const botoesZonas = document.querySelectorAll("[data-zona]");
+    form.addEventListener("submit", evento => {
+      evento.preventDefault();
+
+      const texto = campo.value.trim();
+      if (!texto) return;
+
+      if (tipo === "privado" && !contatoAtual) {
+        alert("Selecione uma conversa primeiro.");
+        return;
+      }
+
+      let citada = null;
+
+      if (tipo === "global") {
+        citada = respostaGlobal;
+        respostaGlobal = null;
+        atualizarResposta("global");
+      }
+
+      if (tipo === "comunidade") {
+        citada = respostaComunidade;
+        respostaComunidade = null;
+        atualizarResposta("comunidade");
+      }
+
+      criarMensagem(area, "Você", texto, true, citada);
+      campo.value = "";
+
+      if (tipo === "privado" && contatoAtual) {
+        historicoPrivado[contatoAtual] = area.innerHTML;
+      }
+    });
+  }
+
+  configurarEnvio("formGlobal", "campoGlobal", "mensagensGlobal", "global");
+  configurarEnvio("formComunidade", "campoComunidade", "mensagensComunidade", "comunidade");
+  configurarEnvio("formPrivado", "campoPrivado", "mensagensPrivadas", "privado");
+
+  // =====================================
+  // TROCA DE SALAS
+  // =====================================
+
+  const botoesZonas = document.querySelectorAll(".zona-interesse");
   const nomeZona = document.getElementById("nomeZona");
+  const campoComunidade = document.getElementById("campoComunidade");
 
-  const nomesZonas = {
-    desenho: "Desenho",
-    pintura: "Pintura",
-    aquarela: "Aquarela",
-    grafite: "Grafite",
-    tatuagem: "Tatuagem"
-  };
+  const mensagensPorZona = {};
 
-  botoesZonas.forEach((botao) => {
+  botoesZonas.forEach(botao => {
     botao.addEventListener("click", () => {
-      salaAtual = botao.dataset.zona;
+      const zona = botao.dataset.zona;
 
-      botoesZonas.forEach((item) => item.classList.remove("ativo"));
-      botao.classList.add("ativo");
+      botoesZonas.forEach(item => item.classList.remove("ativa"));
+      botao.classList.add("ativa");
 
       if (nomeZona) {
-        nomeZona.textContent = nomesZonas[salaAtual] || salaAtual;
+        nomeZona.textContent = nomesZonas[zona] || zona;
       }
 
-      // Por enquanto, cada sala começa vazia.
-      if (mensagensComunidade) {
-        mensagensComunidade.replaceChildren();
+      if (campoComunidade) {
+        campoComunidade.placeholder = `Mensagem em ${zona}...`;
       }
 
+      const area = document.getElementById("mensagensComunidade");
+
+      if (area) {
+        mensagensPorZona[salaAtual] = area.innerHTML;
+        area.innerHTML = mensagensPorZona[zona] || "";
+        configurarMensagensExistentes(area);
+      }
+
+      salaAtual = zona;
       respostaComunidade = null;
       atualizarResposta("comunidade");
     });
   });
 
-  // MENU DE AÇÕES: CLIQUE DIREITO E TOQUE PROLONGADO
-  function configurarMenuDaMensagem(mensagem) {
-    mensagem.addEventListener("contextmenu", (evento) => {
+  let salaAtual = "desenho";
+
+  // =====================================
+  // RESPOSTAS
+  // =====================================
+
+  function atualizarResposta(tipo) {
+    const dados = tipo === "global" ? respostaGlobal : respostaComunidade;
+
+    const elemento = document.getElementById(
+      tipo === "global" ? "respostaSelecionada" : "respostaComunidade"
+    );
+
+    const autor = document.getElementById(
+      tipo === "global" ? "respostaAutor" : "autorRespostaComunidade"
+    );
+
+    const texto = document.getElementById(
+      tipo === "global" ? "respostaTexto" : "textoRespostaComunidade"
+    );
+
+    if (!elemento) return;
+
+    elemento.hidden = !dados;
+
+    if (dados) {
+      if (autor) autor.textContent = dados.autor;
+      if (texto) texto.textContent = dados.texto;
+    }
+  }
+
+  document.getElementById("cancelarResposta")?.addEventListener("click", () => {
+    respostaGlobal = null;
+    atualizarResposta("global");
+  });
+
+  document.getElementById("cancelarRespostaComunidade")?.addEventListener("click", () => {
+    respostaComunidade = null;
+    atualizarResposta("comunidade");
+  });
+
+  // =====================================
+  // CONVERSAS PRIVADAS
+  // =====================================
+
+  const conversas = document.querySelectorAll(".item-conversa");
+
+  conversas.forEach(botao => {
+    botao.addEventListener("click", () => selecionarContato(botao.dataset.usuario));
+  });
+
+  function selecionarContato(nome) {
+    contatoAtual = nome;
+
+    const nomeContato = document.getElementById("nomeContato");
+    const statusContato = document.getElementById("statusContato");
+    const campo = document.getElementById("campoPrivado");
+    const enviar = document.querySelector("#formPrivado .botao-enviar");
+    const area = document.getElementById("mensagensPrivadas");
+
+    if (nomeContato) nomeContato.textContent = nome;
+    if (statusContato) statusContato.textContent = "Conversa privada";
+    if (campo) campo.disabled = false;
+    if (enviar) enviar.disabled = false;
+
+    document.querySelectorAll(".item-conversa").forEach(item => {
+      item.classList.toggle("ativa", item.dataset.usuario === nome);
+    });
+
+    if (area) {
+      area.innerHTML = historicoPrivado[nome] || "";
+      configurarMensagensExistentes(area);
+    }
+  }
+
+  // =====================================
+  // MENU DE MENSAGENS
+  // =====================================
+
+  function configurarMensagem(mensagem) {
+    mensagem.addEventListener("contextmenu", evento => {
       evento.preventDefault();
       abrirMenu(evento.clientX, evento.clientY, mensagem);
     });
 
-    let temporizador = null;
-    let toqueMovido = false;
+    let temporizador;
+    let movimento = false;
 
-    mensagem.addEventListener("touchstart", (evento) => {
-      toqueMovido = false;
+    mensagem.addEventListener("touchstart", evento => {
+      movimento = false;
       const toque = evento.touches[0];
 
       temporizador = setTimeout(() => {
-        if (!toqueMovido) {
+        if (!movimento) {
           abrirMenu(toque.clientX, toque.clientY, mensagem);
         }
       }, 550);
     }, { passive: true });
 
     mensagem.addEventListener("touchmove", () => {
-      toqueMovido = true;
+      movimento = true;
       clearTimeout(temporizador);
     }, { passive: true });
 
@@ -187,175 +294,159 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function configurarMensagensExistentes(area) {
+    area.querySelectorAll(".mensagem").forEach(mensagem => {
+      if (mensagem.dataset.menuConfigurado) return;
+
+      const nome = mensagem.querySelector(".identificacao strong")?.textContent || "Usuário";
+      const texto = mensagem.querySelector(".balao-mensagem")?.textContent || "";
+
+      mensagem.dataset.autor = mensagem.dataset.autor || nome;
+      mensagem.dataset.texto = mensagem.dataset.texto || texto;
+      mensagem.dataset.menuConfigurado = "true";
+
+      configurarMensagem(mensagem);
+    });
+  }
+
   function abrirMenu(x, y, mensagem) {
-    if (!menuMensagem) return;
+    if (!menu) return;
 
     mensagemSelecionada = mensagem;
-    menuMensagem.hidden = false;
+    menu.hidden = false;
 
-    const largura = 210;
-    const altura = menuMensagem.offsetHeight || 230;
+    const largura = menu.offsetWidth || 210;
+    const altura = menu.offsetHeight || 230;
 
-    menuMensagem.style.left =
-      `${Math.min(x, window.innerWidth - largura - 10)}px`;
-
-    menuMensagem.style.top =
-      `${Math.min(y, window.innerHeight - altura - 10)}px`;
+    menu.style.left = `${Math.max(8, Math.min(x, innerWidth - largura - 8))}px`;
+    menu.style.top = `${Math.max(8, Math.min(y, innerHeight - altura - 8))}px`;
   }
 
   function fecharMenu() {
-    if (menuMensagem) menuMensagem.hidden = true;
+    if (menu) menu.hidden = true;
     mensagemSelecionada = null;
   }
 
-  document.addEventListener("click", (evento) => {
+  document.addEventListener("click", evento => {
     if (
-      menuMensagem &&
-      !menuMensagem.contains(evento.target) &&
+      menu &&
+      !menu.contains(evento.target) &&
       !evento.target.closest(".mensagem")
     ) {
       fecharMenu();
     }
   });
 
+  // =====================================
   // AÇÕES DO MENU
-  if (menuMensagem) {
-    menuMensagem.querySelectorAll("[data-acao]").forEach((botao) => {
-      botao.addEventListener("click", () => {
-        if (!mensagemSelecionada) return;
+  // =====================================
 
-        const acao = botao.dataset.acao;
-        const autor = mensagemSelecionada.dataset.autor;
-        const texto = mensagemSelecionada.dataset.texto;
+  menu?.querySelectorAll("[data-acao]").forEach(botao => {
+    botao.addEventListener("click", () => {
+      if (!mensagemSelecionada) return;
 
-        if (acao === "responder") {
-          const painel = mensagemSelecionada.closest("#mensagensGlobal")
-            ? "global"
-            : "comunidade";
+      const autor = mensagemSelecionada.dataset.autor;
+      const texto = mensagemSelecionada.dataset.texto;
+      const acao = botao.dataset.acao;
 
-          const dados = { autor, texto };
+      if (acao === "responder") {
+        const global = mensagemSelecionada.closest("#mensagensGlobal");
 
-          if (painel === "global") {
-            respostaGlobal = dados;
-          } else {
-            respostaComunidade = dados;
-          }
-
-          atualizarResposta(painel);
+        if (global) {
+          respostaGlobal = { autor, texto };
+          abas[0]?.click();
+          atualizarResposta("global");
+        } else if (mensagemSelecionada.closest("#mensagensComunidade")) {
+          respostaComunidade = { autor, texto };
+          abas[1]?.click();
+          atualizarResposta("comunidade");
         }
-
-        if (acao === "mencionar") {
-          const painel = mensagemSelecionada.closest("#mensagensGlobal")
-            ? "campoGlobal"
-            : "campoComunidade";
-
-          const campo = document.getElementById(painel);
-          if (campo) {
-            campo.value = `@${autor} `;
-            campo.focus();
-          }
-        }
-
-        if (acao === "privado") {
-          const abaPrivado = document.querySelector(
-            '[data-aba="privado"]'
-          );
-
-          if (abaPrivado) abaPrivado.click();
-
-          const contato = document.getElementById("nomeContato");
-          if (contato) contato.textContent = autor;
-        }
-
-        if (acao === "copiar") {
-          if (navigator.clipboard?.writeText) {
-            navigator.clipboard.writeText(texto).catch(() => {
-              alert("Não foi possível copiar a mensagem.");
-            });
-          } else {
-            alert("A cópia não está disponível neste navegador.");
-          }
-        }
-
-        fecharMenu();
-      });
-    });
-
-    menuMensagem.querySelectorAll("[data-reacao]").forEach((botao) => {
-      botao.addEventListener("click", () => {
-        if (!mensagemSelecionada) return;
-
-        const emoji = botao.dataset.reacao;
-        const reacoes = mensagemSelecionada.querySelector(".reacoes-aplicadas")
-          || document.createElement("div");
-
-        reacoes.className = "reacoes-aplicadas";
-        reacoes.textContent += ` ${emoji}`;
-
-        if (!reacoes.parentElement) {
-          mensagemSelecionada.appendChild(reacoes);
-        }
-
-        fecharMenu();
-      });
-    });
-  }
-
-  // MOSTRAR A MENSAGEM QUE ESTÁ SENDO RESPONDIDA
-  function atualizarResposta(tipo) {
-    const elemento = document.getElementById(
-      tipo === "global" ? "respostaSelecionada" : "respostaComunidade"
-    );
-
-    const dados = tipo === "global" ? respostaGlobal : respostaComunidade;
-
-    if (!elemento) return;
-
-    elemento.replaceChildren();
-
-    if (!dados) {
-      elemento.hidden = true;
-      return;
-    }
-
-    elemento.hidden = false;
-    elemento.textContent = `Respondendo a ${dados.autor}: ${dados.texto}`;
-  }
-
-  // MENSAGEM DE EXEMPLO PARA A CONVERSA PRIVADA
-  const conversas = document.querySelectorAll(".conversa");
-
-  conversas.forEach((conversa) => {
-    conversa.addEventListener("click", () => {
-      conversas.forEach((item) => item.classList.remove("ativa"));
-      conversa.classList.add("ativa");
-
-      const nome = conversa.querySelector("strong")?.textContent
-        || conversa.textContent.trim();
-
-      const contato = document.getElementById("nomeContato");
-      if (contato) contato.textContent = nome;
-
-      if (mensagensPrivadas) {
-        mensagensPrivadas.replaceChildren();
       }
+
+      if (acao === "mencionar") {
+        const global = mensagemSelecionada.closest("#mensagensGlobal");
+        const campo = document.getElementById(
+          global ? "campoGlobal" : "campoComunidade"
+        );
+
+        if (campo) {
+          campo.value = `@${autor} `;
+          campo.focus();
+        }
+      }
+
+      if (acao === "privado") {
+        const abaPrivado = document.querySelector('[data-aba="privado"]');
+        abaPrivado?.click();
+
+        let conversa = document.querySelector(
+          `.item-conversa[data-usuario="${CSS.escape(autor)}"]`
+        );
+
+        if (!conversa) {
+          const lista = document.getElementById("listaConversas");
+
+          if (lista) {
+            conversa = document.createElement("button");
+            conversa.type = "button";
+            conversa.className = "item-conversa";
+            conversa.dataset.usuario = autor;
+
+            const avatar = document.createElement("div");
+            avatar.className = "avatar";
+            avatar.textContent = autor.charAt(0).toUpperCase();
+
+            const dados = document.createElement("div");
+            const nome = document.createElement("strong");
+            nome.textContent = autor;
+            const previa = document.createElement("p");
+            previa.textContent = "Nova conversa";
+
+            dados.append(nome, previa);
+            conversa.append(avatar, dados);
+            lista.appendChild(conversa);
+            conversa.addEventListener("click", () => selecionarContato(autor));
+          }
+        }
+
+        selecionarContato(autor);
+      }
+
+      if (acao === "copiar") {
+        navigator.clipboard?.writeText(texto)
+          .then(() => alert("Mensagem copiada!"))
+          .catch(() => alert("Não foi possível copiar a mensagem."));
+      }
+
+      fecharMenu();
     });
   });
 
-  // CONFIGURAR MENU NAS MENSAGENS QUE JÁ VIERAM NO HTML
-  document.querySelectorAll(".mensagens-chat .mensagem").forEach((mensagem) => {
-    if (!mensagem.dataset.autor) {
-      const autor = mensagem.querySelector(".autor")?.textContent || "Usuário";
-      const conteudo = mensagem.querySelector(".conteudo")?.textContent || "";
+  menu?.querySelectorAll("[data-reacao]").forEach(botao => {
+    botao.addEventListener("click", () => {
+      if (!mensagemSelecionada) return;
 
-      mensagem.dataset.autor = autor;
-      mensagem.dataset.texto = conteudo;
-    }
+      const area = mensagemSelecionada.querySelector(".reacoes-mensagem");
+      const emoji = botao.dataset.reacao;
 
-    configurarMenuDaMensagem(mensagem);
+      if (area) {
+        const reacao = document.createElement("span");
+        reacao.textContent = emoji;
+        area.appendChild(reacao);
+      }
+
+      fecharMenu();
+    });
   });
 
-  // INÍCIO
+  // =====================================
+  // INICIALIZAÇÃO
+  // =====================================
+
+  document.querySelectorAll(".lista-mensagens").forEach(area => {
+    configurarMensagensExistentes(area);
+  });
+
   atualizarResposta("global");
   atualizarResposta("comunidade");
 });

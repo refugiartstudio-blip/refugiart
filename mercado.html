@@ -7,6 +7,13 @@
   <meta name="theme-color" content="#243e35">
   <title>Mercado | RefugiART</title>
   <link rel="stylesheet" href="style.css">
+<style>
+#lista-obras-mercado .cartao-obra{overflow:hidden}
+#lista-obras-mercado .imagem-obra{height:auto;aspect-ratio:4/3;background:#e8e8df}
+#lista-obras-mercado .imagem-obra img{width:100%;height:100%;object-fit:cover;display:block}
+#lista-obras-mercado .preco-mercado{font-size:1.15rem;font-weight:800;color:#243e35;margin:12px 0}
+#lista-obras-mercado .link-artista-mercado{display:inline-block;color:#243e35;font-weight:700;text-decoration:none;margin-top:8px}
+</style>
 </head>
 
 <body>
@@ -199,6 +206,13 @@
 
     </section>
 
+    <section class="secao-mercado" id="obras-anunciadas">
+      <div class="titulo-secao-mercado">
+        <div><span class="etiqueta-mercado">ANÚNCIOS DOS ARTISTAS</span><h2>Obras disponíveis</h2><p>Criações anunciadas pelos artistas da RefugiART.</p></div>
+      </div>
+      <div id="lista-obras-mercado" class="grade-obras" aria-live="polite"><p>Carregando obras...</p></div>
+    </section>
+
     <!-- LEILÕES -->
 
     <section class="painel-leiloes">
@@ -363,6 +377,36 @@
       <p>RefugiART — Criar é Sentir.</p>
     </div>
   </aside>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+    const supabase = createClient("https://nlqalpiksbqflzxzsgoa.supabase.co", "sb_publishable_BpJHFuq0WQaH5HGOuC20Q_grO6loaP");
+    const lista = document.getElementById("lista-obras-mercado");
+    const el = (tag, cls, text) => { const n=document.createElement(tag); if(cls)n.className=cls; if(text!==undefined)n.textContent=text; return n; };
+    async function carregarMercado() {
+      const {data:obras,error}=await supabase.from("atelie_posts")
+        .select("id,user_id,image_url,caption,category,preco,created_at")
+        .eq("publicar_mercado",true).not("preco","is",null).order("created_at",{ascending:false});
+      if(error){lista.replaceChildren(el("p","","Não foi possível carregar os anúncios neste momento."));return;}
+      if(!obras?.length){lista.replaceChildren(el("p","","Ainda não há obras anunciadas. Quando um artista publicar no Mercado, elas aparecerão aqui."));return;}
+      const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];
+      const {data:perfis}=await supabase.from("profiles").select("id,nome_artistico").in("id",ids);
+      const nomes=new Map((perfis||[]).map(p=>[p.id,p.nome_artistico||"Artista RefugiART"]));
+      lista.replaceChildren();
+      obras.forEach(obra=>{
+        const card=el("article","cartao-obra"),foto=el("div","imagem-obra"),img=el("img");
+        img.src=obra.image_url;img.alt="Obra "+(obra.category||"artística");img.loading="lazy";foto.append(img);
+        const dados=el("div","dados-obra");
+        dados.append(el("span","categoria-obra",(obra.category||"ARTE").toUpperCase()));
+        dados.append(el("h3","","Obra de "+(nomes.get(obra.user_id)||"Artista RefugiART")));
+        if(obra.caption)dados.append(el("p","",obra.caption));
+        dados.append(el("p","preco-mercado",Number(obra.preco).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})));
+        const link=el("a","link-artista-mercado","Conhecer Ateliê →");link.href="atelie.html?id="+encodeURIComponent(obra.user_id);dados.append(link);
+        card.append(foto,dados);lista.append(card);
+      });
+    }
+    carregarMercado();
+  </script>
 
   <!-- Script compartilhado do site -->
   <script src="script.js"></script>

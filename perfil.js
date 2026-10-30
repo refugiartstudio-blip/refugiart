@@ -21,16 +21,16 @@ const botaoSair = document.getElementById('botao-sair');
 const seletorFoto = document.querySelector('.seletor-foto');
 const iconeCamera = seletorFoto?.querySelector('.foto-editar');
 
-// Exibe o atalho de moderação somente para contas cadastradas como administradoras.
+// Verifica a permissão administrativa e encaminha administradores ao painel.
 async function verificarAcessoModeracao() {
   const linkModeracao = document.getElementById('link-moderacao-perfil');
-  if (!linkModeracao) return;
 
   try {
-    const { data: sessao } = await supabase.auth.getSession();
-    const usuario = sessao?.session?.user;
-    if (!usuario) return;
+    const { data: sessao, error: erroSessao } = await supabase.auth.getSession();
 
+    if (erroSessao || !sessao?.session?.user) return;
+
+    const usuario = sessao.session.user;
     const { data, error } = await supabase
       .from('refugiart_admins')
       .select('user_id')
@@ -42,7 +42,12 @@ async function verificarAcessoModeracao() {
       return;
     }
 
-    linkModeracao.hidden = !data;
+    if (data) {
+      window.location.replace('moderacao.html');
+      return;
+    }
+
+    if (linkModeracao) linkModeracao.hidden = true;
   } catch (erro) {
     console.warn('Falha ao verificar acesso à moderação:', erro);
   }

@@ -366,3 +366,46 @@
 .perfil-botao-sair:hover { background:#fff3f1; }
 .perfil-botao-sair:disabled { opacity:.6; cursor:wait; }
 .perfil-publico-artista { margin:4px 0 0; color:#68756b; font-size:.92rem; }
+
+
+/* Solicitações de amizade recebidas no perfil do usuário */
+.solicitacoes-recebidas-perfil {
+  margin: 0 0 22px;
+  padding: 18px;
+  border: 1px solid #d6a45d;
+  border-radius: 16px;
+  background: #fffdf6;
+  box-shadow: 0 8px 24px rgba(36, 62, 53, .07);
+}
+.solicitacoes-recebidas-perfil[hidden] { display: none !important; }
+.solicitacoes-recebidas-perfil h2 { margin: 0 0 6px; color: #243e35; font-size: 1.2rem; }
+.solicitacoes-recebidas-perfil > p { margin: 0 0 14px; color: #68756b; line-height: 1.5; }
+.pedido-amizade-perfil {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 0;
+  border-top: 1px solid #e9e2d5;
+}
+.pedido-amizade-foto {
+  width: 64px; height: 64px; flex: 0 0 64px;
+  border-radius: 50%; object-fit: cover; background: #e8dfca;
+}
+.pedido-amizade-conteudo { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.pedido-amizade-conteudo strong { color: #243e35; }
+.pedido-amizade-atelie { color: #8b704b; font-size: .82rem; }
+.pedido-amizade-conteudo p { margin: 3px 0; color: #626b60; font-size: .88rem; line-height: 1.45; overflow-wrap: anywhere; }
+.pedido-amizade-conteudo a { color: #34594b; font-size: .85rem; font-weight: 700; }
+.pedido-amizade-acoes { display: flex; flex-direction: column; gap: 7px; }
+.pedido-amizade-acoes button {
+  min-width: 88px; min-height: 38px; padding: 8px 12px;
+  border: 1px solid #243e35; border-radius: 20px;
+  background: #243e35; color: #fff; font: inherit; font-size: .85rem; font-weight: 700;
+}
+.pedido-amizade-acoes button.recusar { background: #fff; color: #8b433b; border-color: #c88b83; }
+.pedido-amizade-acoes button:disabled { opacity: .6; }
+@media (max-width: 520px) {
+  .pedido-amizade-perfil { align-items: flex-start; flex-wrap: wrap; }
+  .pedido-amizade-conteudo { flex-basis: calc(100% - 80px); }
+  .pedido-amizade-acoes { width: 100%; flex-direction: row; padding-left: 77px; }
+}

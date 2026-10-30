@@ -32,7 +32,7 @@ create table if not exists public.refugiart_admins (
 create table if not exists public.refugiart_notifications (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
-  post_id uuid references public.atelie_posts(id) on delete set null,
+  post_id bigint references public.atelie_posts(id) on delete set null,
   kind text not null,
   message text not null,
   read_at timestamptz,

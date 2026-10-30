@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const autor = m.user_id === usuarioAtual.id ? nomeAtual : (perfis[m.user_id] || "Artista");
       criarMensagem(area, autor, m.content, m.user_id === usuarioAtual.id);
       const elemento = area.lastElementChild;
+      elemento.dataset.userId = m.user_id;
       elemento.dataset.messageId = m.id;
       const horario = elemento.querySelector(".identificacao span");
       if (horario) horario.textContent = new Date(m.created_at).toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"});
@@ -642,40 +643,21 @@ function configurarMensagem(mensagem) {
       }
 
       if (acao === "privado") {
-        const abaPrivado = document.querySelector('[data-aba="privado"]');
-        abaPrivado?.click();
-
-        let conversa = document.querySelector(
-          `.item-conversa[data-usuario="${CSS.escape(autor)}"]`
-        );
-
-        if (!conversa) {
-          const lista = document.getElementById("listaConversas");
-
-          if (lista) {
-            conversa = document.createElement("button");
-            conversa.type = "button";
-            conversa.className = "item-conversa";
-            conversa.dataset.usuario = autor;
-
-            const avatar = document.createElement("div");
-            avatar.className = "avatar";
-            avatar.textContent = autor.charAt(0).toUpperCase();
-
-            const dados = document.createElement("div");
-            const nome = document.createElement("strong");
-            nome.textContent = autor;
-            const previa = document.createElement("p");
-            previa.textContent = "Nova conversa";
-
-            dados.append(nome, previa);
-            conversa.append(avatar, dados);
-            lista.appendChild(conversa);
-            conversa.addEventListener("click", () => selecionarContato(autor));
+        const idContato = mensagemSelecionada.dataset.userId;
+        if (idContato && idContato !== usuarioAtual.id) {
+          const { data: perfilContato, error } = await supabase.from("profiles")
+            .select("id, nome_artistico, nome_atelie, foto_url")
+            .eq("id", idContato).maybeSingle();
+          if (error || !perfilContato) {
+            alert("Não foi possível abrir o perfil deste artista.");
+          } else {
+            document.querySelector('[data-aba="privado"]')?.click();
+            selecionarContato(perfilContato);
+            await carregarListaConversas();
           }
+        } else {
+          alert("Não é possível iniciar uma conversa privada com este perfil.");
         }
-
-        selecionarContato(autor);
       }
 
       if (acao === "copiar") {

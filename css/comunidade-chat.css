@@ -585,3 +585,14 @@ input::placeholder {
 }
 .grade-emojis button:hover { background: #40513b !important; }
 @media (max-width: 420px) { .seletor-emojis { width: min(310px, calc(100vw - 28px)); } }
+
+
+/* PESQUISA DE ARTISTAS PARA CONVERSAS PRIVADAS */
+.busca-artistas-label { display:block; margin:8px 0 6px; color:var(--texto-suave); font-size:12px; }
+.busca-artistas { width:100%; min-width:0; padding:11px 12px; border:1px solid var(--borda); border-radius:9px; outline:none; background:#202820; color:var(--texto); font-size:13px; }
+.busca-artistas:focus { border-color:var(--verde); }
+.resultados-artistas { display:flex; flex-direction:column; gap:5px; margin:8px 0 12px; }
+.resultado-artista { width:100%; padding:10px; border:1px solid var(--borda); border-radius:8px; background:#202820; color:var(--texto); text-align:left; cursor:pointer; }
+.resultado-artista:hover { border-color:var(--verde); background:#34442a; }
+.resultado-artista small { display:block; margin-top:3px; color:var(--texto-suave); }
+.resultados-artistas:empty { display:none; }

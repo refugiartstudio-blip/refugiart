@@ -1702,3 +1702,78 @@
     font-size: 10px;
   }
 }
+
+
+/* ---------- Painel lateral de publicação, exclusivo do proprietário logado ---------- */
+.pagina-atelie .aba-publicar-atelie {
+  position: fixed;
+  z-index: 1200;
+  left: 0;
+  top: 42%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 15px 12px;
+  border: 0;
+  border-radius: 0 12px 12px 0;
+  background: var(--atelie-verde, #243e35);
+  color: #fff;
+  font: 700 13px Arial, sans-serif;
+  box-shadow: 3px 5px 16px rgba(20, 40, 30, .2);
+  cursor: pointer;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.pagina-atelie .aba-publicar-atelie[hidden],
+.pagina-atelie .publicacao-atelie-overlay[hidden] { display: none; }
+.pagina-atelie .aba-publicar-atelie span:first-child {
+  font-size: 20px;
+  line-height: 1;
+}
+.pagina-atelie .painel-publicacao-atelie {
+  position: fixed;
+  z-index: 1300;
+  inset: 0 auto 0 0;
+  width: min(440px, 92vw);
+  height: 100dvh;
+  overflow-y: auto;
+  padding: 58px 20px 28px;
+  background: var(--atelie-fundo, #fffefa);
+  box-shadow: 12px 0 35px rgba(20, 35, 27, .2);
+  transform: translateX(-105%);
+  visibility: hidden;
+  transition: transform .32s ease, visibility .32s ease;
+}
+.pagina-atelie .painel-publicacao-atelie.aberto {
+  transform: translateX(0);
+  visibility: visible;
+}
+.pagina-atelie .painel-publicacao-atelie .criar-obra {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.pagina-atelie .fechar-publicacao-atelie {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: #e9ece6;
+  color: #243e35;
+  font-size: 27px;
+  cursor: pointer;
+}
+.pagina-atelie .publicacao-atelie-overlay {
+  position: fixed;
+  z-index: 1250;
+  inset: 0;
+  background: rgba(14, 25, 19, .38);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pagina-atelie .painel-publicacao-atelie { transition: none; }
+}

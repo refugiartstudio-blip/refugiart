@@ -1857,3 +1857,44 @@
   opacity: .45;
   cursor: wait;
 }
+
+
+/* ---------- Ações de amizade e fãs ---------- */
+.acoes-relacionamento-atelie {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.acoes-relacionamento-atelie[hidden],
+.solicitacoes-amizade-atelie[hidden] { display: none !important; }
+.acoes-relacionamento-atelie button,
+.solicitacoes-amizade-atelie button {
+  min-height: 40px;
+  padding: 9px 16px;
+  border: 1px solid var(--atelie-verde);
+  border-radius: 24px;
+  background: var(--atelie-verde);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+.acoes-relacionamento-atelie button + button,
+.solicitacoes-amizade-atelie button.secundario {
+  background: transparent;
+  color: var(--atelie-verde);
+}
+.acoes-relacionamento-atelie button:disabled { opacity: .65; cursor: default; }
+.solicitacoes-amizade-atelie {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--atelie-borda);
+  border-radius: 14px;
+  background: var(--atelie-branco);
+}
+.solicitacoes-amizade-atelie h3 { margin-bottom: 8px; font-size: 16px; }
+.solicitacoes-amizade-atelie p { margin-bottom: 10px; font-size: 13px; }
+.solicitacoes-amizade-atelie button { margin-right: 8px; }
+.status-relacionamento-atelie { margin: 8px 0 0; font-size: 12px; }
+.status-relacionamento-atelie[data-tipo="erro"] { color: #963d30; }
+.status-relacionamento-atelie[data-tipo="sucesso"] { color: #285a35; }

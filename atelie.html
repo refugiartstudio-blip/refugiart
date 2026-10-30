@@ -144,9 +144,16 @@
     A arte aproxima pessoas, histórias e diferentes formas de expressão.
   </p>
 
-  <a href="galeria.html" class="link-galeria">
-    Explorar galeria <span>↗</span>
-  </a>
+  <button
+    type="button"
+    class="link-galeria botao-publicar-perfil"
+    id="abrir-publicacao-atelie"
+    aria-controls="painel-publicacao-atelie"
+    aria-expanded="false"
+    hidden
+  >
+    Publicar <span>＋</span>
+  </button>
 </section>
 
       <section class="categorias-atelie" aria-label="Filtrar por expressão artística">
@@ -158,19 +165,6 @@
         <button type="button" class="categoria-chip" data-categoria="Tatuagem">Tatuagem</button>
         <button type="button" class="categoria-chip" data-categoria="Outros">Outras artes</button>
       </section>
-
-      <!-- Aba lateral de publicação: exibida apenas ao dono logado -->
-      <button
-        type="button"
-        class="aba-publicar-atelie"
-        id="abrir-publicacao-atelie"
-        aria-controls="painel-publicacao-atelie"
-        aria-expanded="false"
-        hidden
-      >
-        <span aria-hidden="true">＋</span>
-        <span>Publicar</span>
-      </button>
 
       <div class="publicacao-atelie-overlay" id="overlay-publicacao-atelie" hidden></div>
       <aside

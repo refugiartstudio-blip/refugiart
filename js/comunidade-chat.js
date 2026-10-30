@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const nomesZonas = {
     desenho: "✏️ Desenho",
     pintura: "🎨 Pintura",
-    aquarela: "🖌️ Aquarela",
-    grafite: "🧱 Grafite",
+    leitura: "📚 Leitura",
+    digital: "💻 Digital",
     tatuagem: "✒️ Tatuagem"
   };
 

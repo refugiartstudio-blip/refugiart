@@ -103,8 +103,6 @@
       <p>Ideias, experiências e reflexões compartilhadas por artistas.</p>
 
       <div class="criar-publicacao">
-        <h3>Tem uma ReflexiART para compartilhar?</h3>
-
         <p>
           Compartilhe seus pensamentos, experiências e ideias sobre arte.
         </p>
@@ -118,7 +116,20 @@
             required
           ></textarea>
 
-          <button type="submit">Compartilhar ReflexiART</button>
+          <div class="controles-publicacao">
+            <select id="categoria-publicacao" aria-label="Selecione a área da ReflexiART" required>
+              <option value="" selected disabled>Selecione a área</option>
+              <option value="Desenho">Desenho</option>
+              <option value="Pintura">Pintura</option>
+              <option value="Tatuagem">Tatuagem</option>
+              <option value="Arte Digital">Arte Digital</option>
+              <option value="Fotografia">Fotografia</option>
+              <option value="Leitura">Leitura</option>
+              <option value="Arte e cultura">Arte e cultura</option>
+            </select>
+
+            <button type="submit">Compartilhar ReflexiART</button>
+          </div>
         </form>
       </div>
 

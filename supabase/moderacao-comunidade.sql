@@ -88,6 +88,7 @@ declare
   v_owner uuid;
   v_total integer;
   v_status text;
+  v_inserted integer := 0;
 begin
   if auth.uid() is null then raise exception 'Entre na sua conta para denunciar.'; end if;
   select user_id, moderation_status into v_owner, v_status
@@ -101,6 +102,11 @@ begin
   insert into public.atelie_post_reports(post_id, reporter_id, reason, details)
   values(p_post_id, auth.uid(), p_reason, nullif(left(trim(coalesce(p_details,'')),500),''))
   on conflict(post_id, reporter_id) do nothing;
+  get diagnostics v_inserted = row_count;
+  if v_inserted = 0 then
+    select count(*) into v_total from public.atelie_post_reports where post_id=p_post_id;
+    return jsonb_build_object('accepted',false,'already_reported',true,'reports',v_total,'under_review',false);
+  end if;
 
   select count(*) into v_total from public.atelie_post_reports where post_id=p_post_id;
   if v_total >= 10 then
@@ -116,8 +122,6 @@ begin
 
   return jsonb_build_object('accepted',true,'already_reported',false,'reports',v_total,
     'under_review',v_total >= 10);
-exception when unique_violation then
-  return jsonb_build_object('accepted',false,'already_reported',true);
 end;
 $$;
 

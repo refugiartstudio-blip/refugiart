@@ -37,6 +37,19 @@ const TIPOS_IMAGEM = ["image/jpeg", "image/png", "image/webp"];
 
 let imagemSelecionada = null;
 let urlPreviaTemporaria = null;
+let imagemOriginalRecorte = null;
+let arquivoOriginalRecorte = null;
+let recorteAtual = { esquerda: 0, direita: 0, topo: 0, baixo: 0 };
+
+const editorRecorte = document.getElementById("editor-recorte-obra");
+const canvasRecorte = document.getElementById("canvas-recorte-obra");
+const contextoRecorte = canvasRecorte?.getContext("2d");
+const controlesRecorte = {
+  esquerda: document.getElementById("recorte-esquerda"),
+  direita: document.getElementById("recorte-direita"),
+  topo: document.getElementById("recorte-topo"),
+  baixo: document.getElementById("recorte-baixo")
+};
 let categoriaAtiva = "Todas";
 let termoBusca = "";
 let obrasCarregadas = [];
@@ -97,6 +110,17 @@ function normalizarTexto(texto) {
 /* ---------- Pré-visualização da imagem ---------- */
 
 function limparPrevia() {
+  imagemOriginalRecorte = null;
+  arquivoOriginalRecorte = null;
+  recorteAtual = { esquerda: 0, direita: 0, topo: 0, baixo: 0 };
+  if (editorRecorte) editorRecorte.hidden = true;
+  Object.entries(controlesRecorte).forEach(([lado, controle]) => {
+    if (controle) {
+      controle.value = 0;
+      const saida = document.getElementById("valor-" + lado);
+      if (saida) saida.textContent = "0%";
+    }
+  });
   if (urlPreviaTemporaria) {
     URL.revokeObjectURL(urlPreviaTemporaria);
     urlPreviaTemporaria = null;
@@ -131,30 +155,85 @@ function validarImagem(arquivo) {
 
 inputImagem?.addEventListener("change", () => {
   limparPrevia();
-
   imagemSelecionada = inputImagem.files?.[0] || null;
-
   if (!imagemSelecionada) return;
-
   const erro = validarImagem(imagemSelecionada);
-
   if (erro) {
-    imagemSelecionada = null;
-    inputImagem.value = "";
-    mostrarStatus(erro, "erro");
-    return;
+    imagemSelecionada = null; inputImagem.value = "";
+    mostrarStatus(erro, "erro"); return;
   }
-
-  urlPreviaTemporaria = URL.createObjectURL(imagemSelecionada);
-
-  if (previaImagem) {
-    previaImagem.src = urlPreviaTemporaria;
-    previaImagem.alt = "Pré-visualização da obra selecionada";
-    previaImagem.hidden = false;
-  }
-
-  mostrarStatus("Imagem pronta para publicação.", "sucesso");
+  arquivoOriginalRecorte = imagemSelecionada;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    const imagem = new Image();
+    imagem.onload = () => {
+      imagemOriginalRecorte = imagem;
+      if (editorRecorte) editorRecorte.hidden = false;
+      desenharPreviaRecorte();
+      mostrarStatus("Imagem pronta. Ajuste cada borda como desejar.", "sucesso");
+    };
+    imagem.onerror = () => mostrarStatus("Não foi possível abrir essa imagem.", "erro");
+    imagem.src = leitor.result;
+  };
+  leitor.onerror = () => mostrarStatus("Não foi possível ler a imagem.", "erro");
+  leitor.readAsDataURL(imagemSelecionada);
 });
+
+/* ---------- Recorte manual por cada uma das quatro bordas ---------- */
+function desenharPreviaRecorte() {
+  if (!imagemOriginalRecorte || !canvasRecorte || !contextoRecorte) return;
+  const largura = imagemOriginalRecorte.naturalWidth;
+  const altura = imagemOriginalRecorte.naturalHeight;
+  const x = Math.round(largura * recorteAtual.esquerda / 100);
+  const y = Math.round(altura * recorteAtual.topo / 100);
+  const w = Math.max(1, Math.round(largura * (100 - recorteAtual.esquerda - recorteAtual.direita) / 100));
+  const h = Math.max(1, Math.round(altura * (100 - recorteAtual.topo - recorteAtual.baixo) / 100));
+  const escala = Math.min(1, 900 / Math.max(w, h));
+  canvasRecorte.width = Math.max(1, Math.round(w * escala));
+  canvasRecorte.height = Math.max(1, Math.round(h * escala));
+  contextoRecorte.clearRect(0, 0, canvasRecorte.width, canvasRecorte.height);
+  contextoRecorte.drawImage(imagemOriginalRecorte, x, y, w, h, 0, 0, canvasRecorte.width, canvasRecorte.height);
+}
+
+Object.entries(controlesRecorte).forEach(([lado, controle]) => {
+  controle?.addEventListener("input", () => {
+    const oposto = lado === "esquerda" ? "direita" : lado === "direita" ? "esquerda" : lado === "topo" ? "baixo" : "topo";
+    const valor = Number(controle.value);
+    if (valor + recorteAtual[oposto] > 85) {
+      controle.value = Math.max(0, 85 - recorteAtual[oposto]);
+    }
+    recorteAtual[lado] = Number(controle.value);
+    const saida = document.getElementById("valor-" + lado);
+    if (saida) saida.textContent = controle.value + "%";
+    desenharPreviaRecorte();
+  });
+});
+
+document.getElementById("resetar-recorte-obra")?.addEventListener("click", () => {
+  Object.entries(controlesRecorte).forEach(([lado, controle]) => {
+    if (controle) controle.value = 0;
+    recorteAtual[lado] = 0;
+    const saida = document.getElementById("valor-" + lado);
+    if (saida) saida.textContent = "0%";
+  });
+  desenharPreviaRecorte();
+});
+
+async function obterArquivoRecortado() {
+  if (!imagemOriginalRecorte || !arquivoOriginalRecorte) return imagemSelecionada;
+  const largura = imagemOriginalRecorte.naturalWidth;
+  const altura = imagemOriginalRecorte.naturalHeight;
+  const x = Math.round(largura * recorteAtual.esquerda / 100);
+  const y = Math.round(altura * recorteAtual.topo / 100);
+  const w = Math.max(1, Math.round(largura * (100 - recorteAtual.esquerda - recorteAtual.direita) / 100));
+  const h = Math.max(1, Math.round(altura * (100 - recorteAtual.topo - recorteAtual.baixo) / 100));
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  canvas.getContext("2d").drawImage(imagemOriginalRecorte, x, y, w, h, 0, 0, w, h);
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, arquivoOriginalRecorte.type, 0.92));
+  if (!blob) throw new Error("Não foi possível preparar a imagem recortada.");
+  return new File([blob], arquivoOriginalRecorte.name, { type: arquivoOriginalRecorte.type, lastModified: Date.now() });
+}
 
 /* ---------- Sessão e perfil ---------- */
 
@@ -451,7 +530,7 @@ form?.addEventListener("submit", async (evento) => {
       return;
     }
 
-    const arquivo = imagemSelecionada || inputImagem?.files?.[0];
+    const arquivo = await obterArquivoRecortado() || imagemSelecionada || inputImagem?.files?.[0];
     const erroImagem = validarImagem(arquivo);
 
     if (erroImagem) {

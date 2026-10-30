@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const supabase=createClient("https://nlqalpiksbqflzxzsgoa.supabase.co","sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
-const status=document.getElementById("status-admin");
+const status=document.getElementById("status-admin");\nconsole.info("RefugiART moderação: JavaScript carregado.");
 const fila=document.getElementById("fila-moderacao");
 const busca=document.querySelector(".inbox-busca input");
 const titulo=document.querySelector(".inbox-titulo-linha h2");

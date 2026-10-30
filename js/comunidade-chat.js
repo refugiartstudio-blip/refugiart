@@ -264,35 +264,85 @@ document.addEventListener("DOMContentLoaded", () => {
   // MENU DE MENSAGENS
   // =====================================
 
-  function configurarMensagem(mensagem) {
-    mensagem.addEventListener("contextmenu", evento => {
-      evento.preventDefault();
-      abrirMenu(evento.clientX, evento.clientY, mensagem);
+ 
+function configurarMensagem(mensagem) {
+  // Abre o menu ao clicar no nome ou no avatar
+  const nome = mensagem.querySelector(".identificacao strong");
+  const avatar = mensagem.querySelector(".avatar");
+
+  [nome, avatar].forEach(elemento => {
+    if (!elemento) return;
+
+    elemento.style.cursor = "pointer";
+
+    elemento.addEventListener("click", evento => {
+      evento.stopPropagation();
+
+      const retangulo = elemento.getBoundingClientRect();
+      abrirMenu(
+        retangulo.left,
+        retangulo.bottom + 5,
+        mensagem
+      );
+    });
+  });
+
+  // Mantém o menu de clique direito no computador
+  mensagem.addEventListener("contextmenu", evento => {
+    evento.preventDefault();
+    abrirMenu(evento.clientX, evento.clientY, mensagem);
+  });
+
+  // Mantém o menu de toque prolongado no celular
+  let temporizador;
+  let movimento = false;
+
+  mensagem.addEventListener("touchstart", evento => {
+    movimento = false;
+    const toque = evento.touches[0];
+
+    temporizador = setTimeout(() => {
+      if (!movimento) {
+        abrirMenu(toque.clientX, toque.clientY, mensagem);
+      }
+    }, 550);
+  }, { passive: true });
+
+  mensagem.addEventListener("touchmove", () => {
+    movimento = true;
+    clearTimeout(temporizador);
+  }, { passive: true });
+
+  mensagem.addEventListener("touchend", () => {
+    clearTimeout(temporizador);
+  });
+
+  // Adiciona botão de curtir diretamente na mensagem
+  const areaReacoes = mensagem.querySelector(".reacoes-mensagem");
+
+  if (areaReacoes && !areaReacoes.querySelector("[data-like]")) {
+    const curtir = document.createElement("button");
+
+    curtir.type = "button";
+    curtir.dataset.like = "true";
+    curtir.className = "botao-curtir";
+    curtir.textContent = "♡ Curtir";
+    curtir.setAttribute("aria-label", "Curtir mensagem");
+
+    curtir.addEventListener("click", evento => {
+      evento.stopPropagation();
+
+      const curtido = curtir.dataset.curtido === "true";
+
+      curtir.dataset.curtido = String(!curtido);
+      curtir.classList.toggle("curtido", !curtido);
+      curtir.textContent = !curtido ? "❤️ 1" : "♡ Curtir";
     });
 
-    let temporizador;
-    let movimento = false;
-
-    mensagem.addEventListener("touchstart", evento => {
-      movimento = false;
-      const toque = evento.touches[0];
-
-      temporizador = setTimeout(() => {
-        if (!movimento) {
-          abrirMenu(toque.clientX, toque.clientY, mensagem);
-        }
-      }, 550);
-    }, { passive: true });
-
-    mensagem.addEventListener("touchmove", () => {
-      movimento = true;
-      clearTimeout(temporizador);
-    }, { passive: true });
-
-    mensagem.addEventListener("touchend", () => {
-      clearTimeout(temporizador);
-    });
+    areaReacoes.prepend(curtir);
   }
+}
+
 
   function configurarMensagensExistentes(area) {
     area.querySelectorAll(".mensagem").forEach(mensagem => {

@@ -1990,3 +1990,143 @@ body.pagina-atelie #acoes-relacionamento-atelie > button {
 .modal-obra-acoes .modal-obra-perigo { border-color:#963d30; background:#963d30; color:#fff; }
 .modal-obra-mensagem { margin:12px 0 0; color:#68746a; font-size:12px; }
 .modal-obra [hidden] { display:none !important; }
+
+
+/* Modal de gerenciamento — layout refinado para celular */
+body.pagina-atelie .modal-obra-overlay {
+  padding: 18px;
+  background: rgba(17, 29, 22, .62);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+body.pagina-atelie .modal-obra {
+  width: min(100%, 420px);
+  padding: 24px;
+  border: 1px solid rgba(214, 164, 93, .35);
+  border-radius: 22px;
+  background: linear-gradient(155deg, #fffefa 0%, #f7f6ef 100%);
+  box-shadow: 0 24px 70px rgba(10, 25, 17, .3);
+  animation: modalObraEntrada .2s ease-out;
+}
+@keyframes modalObraEntrada {
+  from { opacity: 0; transform: translateY(10px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+body.pagina-atelie .modal-obra-topo {
+  margin-bottom: 8px;
+}
+body.pagina-atelie .modal-obra-topo h2 {
+  font-size: 23px;
+  letter-spacing: -.3px;
+}
+body.pagina-atelie .modal-obra-topo::after {
+  content: "Escolha o que deseja fazer com sua publicação.";
+  position: absolute;
+  margin-top: 58px;
+  color: #778077;
+  font-size: 12px;
+}
+body.pagina-atelie .modal-obra-fechar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #edf0e9;
+  font-size: 25px;
+}
+body.pagina-atelie .modal-obra-opcoes {
+  gap: 11px;
+  margin-top: 28px;
+}
+body.pagina-atelie .modal-obra-opcao {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 66px;
+  padding: 13px 15px;
+  border: 1px solid #dce3d9;
+  border-radius: 14px;
+  background: #fff;
+  color: #344b3b;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 3px 10px rgba(36, 62, 53, .045);
+  transition: transform .18s, box-shadow .18s, border-color .18s;
+}
+body.pagina-atelie .modal-obra-opcao::before {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #eaf0e8;
+  color: #294638;
+  font-size: 20px;
+}
+body.pagina-atelie .modal-obra-opcoes .modal-obra-opcao:first-child::before {
+  content: "✎";
+}
+body.pagina-atelie .modal-obra-opcoes .modal-obra-excluir::before {
+  content: "🗑️";
+  background: #fff0ed;
+  font-size: 19px;
+}
+body.pagina-atelie .modal-obra-opcao:hover {
+  transform: translateY(-1px);
+  border-color: #b9cbb9;
+  box-shadow: 0 7px 18px rgba(36, 62, 53, .09);
+}
+body.pagina-atelie .modal-obra-opcoes .modal-obra-excluir {
+  border-color: #efd8d3;
+  background: #fffafa;
+  color: #963d30;
+}
+body.pagina-atelie .modal-obra-formulario,
+body.pagina-atelie .modal-obra-confirmacao {
+  margin-top: 18px;
+}
+body.pagina-atelie .modal-obra-formulario textarea {
+  min-height: 125px;
+  padding: 13px;
+  border-color: #d5dfd5;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+body.pagina-atelie .modal-obra-confirmacao p {
+  margin: 0;
+  padding: 14px;
+  border: 1px solid #efd8d3;
+  border-radius: 12px;
+  background: #fff5f2;
+  color: #814237;
+  font-size: 13px;
+  line-height: 1.5;
+}
+body.pagina-atelie .modal-obra-acoes {
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+body.pagina-atelie .modal-obra-acoes button {
+  min-height: 40px;
+  padding: 9px 16px;
+  border-radius: 22px;
+  font-size: 12px;
+  font-weight: 700;
+}
+body.pagina-atelie .modal-obra-mensagem {
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+body.pagina-atelie .modal-obra [disabled] {
+  opacity: .6;
+  cursor: wait;
+}
+@media (max-width: 420px) {
+  body.pagina-atelie .modal-obra { padding: 20px 17px; border-radius: 18px; }
+}

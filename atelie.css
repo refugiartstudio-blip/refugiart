@@ -1964,3 +1964,29 @@ body.pagina-atelie #acoes-relacionamento-atelie > button {
   line-height: 1.2 !important;
   white-space: nowrap !important;
 }
+
+
+/* Janela de gerenciamento de publicação */
+.modal-obra-overlay {
+  position: fixed; inset: 0; z-index: 3000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px; background: rgba(18, 30, 23, .48);
+}
+.modal-obra {
+  width: min(100%, 390px); padding: 20px;
+  border: 1px solid #e4e0d6; border-radius: 16px;
+  background: #fffefa; box-shadow: 0 18px 55px rgba(0,0,0,.22);
+}
+.modal-obra-topo { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
+.modal-obra-topo h2 { margin:0; color:#243e35; font:500 21px Georgia,serif; }
+.modal-obra-fechar { border:0; background:transparent; color:#526257; font-size:27px; cursor:pointer; }
+.modal-obra-opcoes { display:grid; gap:10px; }
+.modal-obra-opcao { width:100%; padding:13px; border:1px solid #dce3d9; border-radius:10px; background:#f3f6f1; color:#344b3b; text-align:left; font-size:14px; cursor:pointer; }
+.modal-obra-excluir { border-color:#ead2ce; background:#fff7f5; color:#963d30; }
+.modal-obra-formulario textarea { width:100%; box-sizing:border-box; padding:12px; border:1px solid #d5dfd5; border-radius:9px; background:#fff; color:#28342e; font:14px Arial,sans-serif; resize:vertical; }
+.modal-obra-acoes { display:flex; justify-content:flex-end; gap:8px; margin-top:13px; }
+.modal-obra-acoes button { padding:9px 12px; border:1px solid #d5dfd5; border-radius:20px; background:#f3f6f1; color:#344b3b; font-size:12px; cursor:pointer; }
+.modal-obra-acoes .modal-obra-salvar { border-color:#243e35; background:#243e35; color:#fff; }
+.modal-obra-acoes .modal-obra-perigo { border-color:#963d30; background:#963d30; color:#fff; }
+.modal-obra-mensagem { margin:12px 0 0; color:#68746a; font-size:12px; }
+.modal-obra [hidden] { display:none !important; }

@@ -34,7 +34,7 @@ body{background:#f4f1e9}.pagina-postagens{max-width:1000px;margin:30px auto;padd
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const supabase=createClient("https://nlqalpiksbqflzxzsgoa.supabase.co","sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
-const comunidades={desenho:{titulo:"Desenho",categoria:"Desenho"},pintura:{titulo:"Pintura",categoria:"Pintura"},tatuagem:{titulo:"Tatuagem",categoria:"Tatuagem"},digital:{titulo:"Arte Digital",categoria:"Digital"},leitura:{titulo:"Leitura",categoria:"Leitura"}};
+const comunidades={desenho:{titulo:"Desenho",categoria:"Desenho"},pintura:{titulo:"Pintura",categoria:"Pintura"},fotografia:{titulo:"Fotografia",categoria:"Fotografia"},tatuagem:{titulo:"Tatuagem",categoria:"Tatuagem"},digital:{titulo:"Arte Digital",categoria:"Digital"},leitura:{titulo:"Leitura",categoria:"Leitura"}};
 const slug=new URLSearchParams(location.search).get("comunidade")||"desenho";
 const comunidade=comunidades[slug],titulo=document.getElementById("titulo-comunidade"),lista=document.getElementById("lista-postagens");
 titulo.textContent=comunidade?comunidade.titulo:"Comunidade não encontrada";

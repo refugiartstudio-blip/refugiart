@@ -828,6 +828,142 @@ async function controlarAcessoPublicacao() {
   if (!souDonoDoAtelie) fecharPainelPublicacao();
 }
 
+
+/* ---------- Amizades e fãs ---------- */
+const areaRelacionamento = document.getElementById("acoes-relacionamento-atelie");
+const botaoAmizade = document.getElementById("botao-amizade-atelie");
+const botaoFa = document.getElementById("botao-fa-atelie");
+const areaSolicitacoes = document.getElementById("solicitacoes-amizade-atelie");
+const listaSolicitacoes = document.getElementById("lista-solicitacoes-amizade");
+const statusRelacionamento = document.getElementById("status-relacionamento-atelie");
+
+function statusRelacao(mensagem, erro = false) {
+  if (!statusRelacionamento) return;
+  statusRelacionamento.textContent = mensagem;
+  statusRelacionamento.dataset.tipo = erro ? "erro" : "sucesso";
+}
+
+async function atualizarRelacionamentos(usuario) {
+  const obrasEl = document.getElementById("total-obras-artista");
+  const amigosEl = document.getElementById("total-amigos-artista");
+  const fasEl = document.getElementById("total-fas-artista");
+
+  const { count: totalObras, error: erroObras } = await supabase
+    .from("atelie_posts").select("*", { count: "exact", head: true })
+    .eq("user_id", perfilIdAtelie);
+  if (!erroObras && obrasEl) obrasEl.textContent = totalObras ?? 0;
+
+  const { count: totalFas, error: erroFas } = await supabase
+    .from("atelie_fans").select("*", { count: "exact", head: true })
+    .eq("artist_id", perfilIdAtelie);
+  if (!erroFas && fasEl) fasEl.textContent = totalFas ?? 0;
+
+  const { data: relacoes, error } = await supabase
+    .from("atelie_friend_requests")
+    .select("id, requester_id, recipient_id, status")
+    .eq("status", "accepted")
+    .or(`requester_id.eq.${perfilIdAtelie},recipient_id.eq.${perfilIdAtelie}`);
+  if (!error && amigosEl) amigosEl.textContent = relacoes?.length ?? 0;
+
+  if (!usuario || usuario.id === perfilIdAtelie) {
+    if (areaRelacionamento) areaRelacionamento.hidden = true;
+    return;
+  }
+
+  if (areaRelacionamento) areaRelacionamento.hidden = false;
+
+  const { data: souFa } = await supabase.from("atelie_fans")
+    .select("id").eq("fan_id", usuario.id).eq("artist_id", perfilIdAtelie).maybeSingle();
+  if (botaoFa) {
+    botaoFa.textContent = souFa ? "Deixar de ser fã" : "Tornar-se fã";
+    botaoFa.dataset.seguindo = souFa ? "sim" : "nao";
+  }
+
+  const { data: pedidos, error: erroPedidos } = await supabase
+    .from("atelie_friend_requests")
+    .select("id, requester_id, recipient_id, status")
+    .or(`and(requester_id.eq.${usuario.id},recipient_id.eq.${perfilIdAtelie}),and(requester_id.eq.${perfilIdAtelie},recipient_id.eq.${usuario.id})`)
+    .order("created_at", { ascending: false });
+
+  const relacao = !erroPedidos && pedidos?.find(p => p.status === "accepted");
+  const enviado = !erroPedidos && pedidos?.find(p => p.requester_id === usuario.id && p.status === "pending");
+  const recebido = !erroPedidos && pedidos?.find(p => p.recipient_id === usuario.id && p.status === "pending");
+
+  if (botaoAmizade) {
+    botaoAmizade.disabled = false;
+    botaoAmizade.textContent = relacao ? "Vocês são amigos" : enviado ? "Solicitação enviada" : recebido ? "Responder solicitação abaixo" : "Adicionar amizade";
+    botaoAmizade.disabled = !!relacao || !!recebido;
+  }
+
+  if (areaSolicitacoes && listaSolicitacoes) {
+    listaSolicitacoes.replaceChildren();
+    if (recebido) {
+      areaSolicitacoes.hidden = false;
+      const texto = criarElemento("p", "", "Você recebeu uma solicitação de amizade deste artista.");
+      const aceitar = criarElemento("button", "acao-solicitacao", "Aceitar");
+      const recusar = criarElemento("button", "acao-solicitacao secundario", "Recusar");
+      aceitar.type = recusar.type = "button";
+      aceitar.addEventListener("click", () => responderSolicitacao(recebido.id, "accepted", usuario));
+      recusar.addEventListener("click", () => responderSolicitacao(recebido.id, "rejected", usuario));
+      listaSolicitacoes.append(texto, aceitar, recusar);
+    } else {
+      areaSolicitacoes.hidden = true;
+    }
+  }
+}
+
+async function responderSolicitacao(id, status, usuario) {
+  const { error } = await supabase.from("atelie_friend_requests")
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq("id", id).eq("recipient_id", usuario.id).eq("status", "pending");
+  if (error) return statusRelacao("Não foi possível responder à solicitação: " + error.message, true);
+  statusRelacao(status === "accepted" ? "Amizade confirmada!" : "Solicitação recusada.");
+  await atualizarRelacionamentos(usuario);
+}
+
+botaoFa?.addEventListener("click", async () => {
+  const usuario = await obterUsuario();
+  if (!usuario) return statusRelacao("Entre na sua conta para seguir artistas.", true);
+  if (usuario.id === perfilIdAtelie) return;
+  botaoFa.disabled = true;
+  try {
+    if (botaoFa.dataset.seguindo === "sim") {
+      const { error } = await supabase.from("atelie_fans").delete()
+        .eq("fan_id", usuario.id).eq("artist_id", perfilIdAtelie);
+      if (error) throw error;
+      statusRelacao("Você deixou de seguir este artista.");
+    } else {
+      const { error } = await supabase.from("atelie_fans")
+        .insert({ fan_id: usuario.id, artist_id: perfilIdAtelie });
+      if (error && error.code !== "23505") throw error;
+      statusRelacao("Agora você é fã deste artista!");
+    }
+    await atualizarRelacionamentos(usuario);
+  } catch (erro) {
+    statusRelacao("Não foi possível atualizar: " + erro.message, true);
+  } finally {
+    botaoFa.disabled = false;
+  }
+});
+
+botaoAmizade?.addEventListener("click", async () => {
+  const usuario = await obterUsuario();
+  if (!usuario) return statusRelacao("Entre na sua conta para enviar uma solicitação.", true);
+  if (usuario.id === perfilIdAtelie) return;
+  botaoAmizade.disabled = true;
+  try {
+    const { error } = await supabase.from("atelie_friend_requests")
+      .insert({ requester_id: usuario.id, recipient_id: perfilIdAtelie, status: "pending" });
+    if (error && error.code !== "23505") throw error;
+    statusRelacao(error ? "Já existe uma solicitação entre estas contas." : "Solicitação de amizade enviada!");
+    await atualizarRelacionamentos(usuario);
+  } catch (erro) {
+    statusRelacao("Não foi possível enviar: " + erro.message, true);
+  } finally {
+    botaoAmizade.disabled = false;
+  }
+});
+
 /* ---------- Inicialização ---------- */
 
 async function inicializarAtelie() {
@@ -844,6 +980,7 @@ async function inicializarAtelie() {
 
   await carregarIdentidadeAtelie();
   await controlarAcessoPublicacao();
+  await atualizarRelacionamentos(usuario);
   atualizarEstadoCategorias();
   await carregarObras();
 }

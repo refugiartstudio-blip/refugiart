@@ -134,19 +134,26 @@
      
 <section class="descoberta-atelie perfil-publico-atelie">
   <div class="perfil-publico-cabecalho">
-    <img
-      src="imagens/logo.png"
-      alt="Foto do artista"
-      class="perfil-publico-foto"
-      id="foto-artista-atelie"
-    >
+    <div class="perfil-publico-identidade">
+      <img
+        src="imagens/logo.png"
+        alt="Foto do artista"
+        class="perfil-publico-foto"
+        id="foto-artista-atelie"
+      >
 
-    <div class="perfil-publico-info">
-      <h2 id="nome-artista-atelie">Meu Ateliê</h2>
-      <p class="perfil-publico-artista" id="artista-responsavel-atelie">Artista RefugiART</p>
-      <p class="perfil-publico-area" id="area-artista-atelie">
-        Artista visual
-      </p>
+      <div class="perfil-publico-info">
+        <h2 id="nome-artista-atelie">Meu Ateliê</h2>
+        <p class="perfil-publico-artista" id="artista-responsavel-atelie">Artista RefugiART</p>
+        <p class="perfil-publico-area" id="area-artista-atelie">Artista visual</p>
+      </div>
+    </div>
+
+    <div class="perfil-publico-resumo">
+      <div class="acoes-relacionamento-atelie" id="acoes-relacionamento-atelie" hidden>
+        <button type="button" id="botao-amizade-atelie">Solicitar amizade</button>
+        <button type="button" id="botao-fa-atelie">Tornar fã</button>
+      </div>
 
       <div class="perfil-publico-estatisticas">
         <span><strong id="total-obras-artista">0</strong> obras</span>
@@ -160,10 +167,6 @@
     A arte aproxima pessoas, histórias e diferentes formas de expressão.
   </p>
 
-  <div class="acoes-relacionamento-atelie" id="acoes-relacionamento-atelie" hidden>
-    <button type="button" id="botao-amizade-atelie">Adicionar amizade</button>
-    <button type="button" id="botao-fa-atelie">Tornar-se fã</button>
-  </div>
   <section class="solicitacoes-amizade-atelie" id="solicitacoes-amizade-atelie" hidden aria-live="polite">
     <h3>Solicitações de amizade</h3>
     <div id="lista-solicitacoes-amizade"></div>

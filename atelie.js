@@ -330,46 +330,129 @@ function criarCartaoObra(obra) {
     editar.type = "button";
     editar.title = "Editar publicação";
     editar.setAttribute("aria-label", "Editar sua publicação");
-    editar.addEventListener("click", async () => {
-      const novaLegenda = window.prompt("Edite a legenda da publicação:", obra.caption || "");
-      if (novaLegenda === null) return;
+    editar.addEventListener("click", () => {
+      const overlay = criarElemento("div", "modal-obra-overlay");
+      overlay.setAttribute("role", "presentation");
+      const janela = criarElemento("section", "modal-obra");
+      janela.setAttribute("role", "dialog");
+      janela.setAttribute("aria-modal", "true");
+      janela.setAttribute("aria-labelledby", "titulo-modal-obra");
 
-      const categoriaAtual = obra.category || "Outros";
-      const novaCategoria = window.prompt(
-        "Categoria atual: " + categoriaAtual + "\nDigite uma categoria: " + CATEGORIAS.join(", "),
-        categoriaAtual
-      );
-      if (novaCategoria === null) return;
-      if (!CATEGORIAS.includes(novaCategoria.trim())) {
-        window.alert("Categoria inválida. Use: " + CATEGORIAS.join(", "));
-        return;
-      }
-      if (novaLegenda.trim().length > 2000) {
-        window.alert("A legenda deve ter no máximo 2.000 caracteres.");
-        return;
-      }
+      const topo = criarElemento("div", "modal-obra-topo");
+      const titulo = criarElemento("h2", "", "Gerenciar publicação");
+      titulo.id = "titulo-modal-obra";
+      const fechar = criarElemento("button", "modal-obra-fechar", "×");
+      fechar.type = "button";
+      fechar.setAttribute("aria-label", "Fechar");
+      topo.append(titulo, fechar);
 
-      editar.disabled = true;
-      try {
-        const { error } = await supabase
-          .from("atelie_posts")
-          .update({
-            caption: novaLegenda.trim(),
-            category: novaCategoria.trim()
-          })
-          .eq("id", obra.id)
-          .eq("user_id", usuario.id);
+      const opcoes = criarElemento("div", "modal-obra-opcoes");
+      const botaoEditar = criarElemento("button", "modal-obra-opcao", "✏️  Editar legenda");
+      const botaoExcluir = criarElemento("button", "modal-obra-opcao modal-obra-excluir", "🗑️  Excluir obra");
+      botaoEditar.type = botaoExcluir.type = "button";
+      opcoes.append(botaoEditar, botaoExcluir);
 
-        if (error) throw error;
-        obra.caption = novaLegenda.trim();
-        obra.category = novaCategoria.trim();
-        renderizarObras();
-      } catch (erro) {
-        console.error("Erro ao editar publicação:", erro);
-        window.alert("Não foi possível editar: " + (erro.message || "tente novamente."));
-      } finally {
-        editar.disabled = false;
-      }
+      const formulario = criarElemento("div", "modal-obra-formulario");
+      formulario.hidden = true;
+      const campo = document.createElement("textarea");
+      campo.value = obra.caption || "";
+      campo.maxLength = 2000;
+      campo.rows = 5;
+      campo.setAttribute("aria-label", "Legenda da obra");
+      const acoes = criarElemento("div", "modal-obra-acoes");
+      const cancelarEdicao = criarElemento("button", "modal-obra-secundario", "Cancelar");
+      const salvar = criarElemento("button", "modal-obra-salvar", "Salvar legenda");
+      cancelarEdicao.type = salvar.type = "button";
+      acoes.append(cancelarEdicao, salvar);
+      formulario.append(campo, acoes);
+
+      const confirmacao = criarElemento("div", "modal-obra-confirmacao");
+      confirmacao.hidden = true;
+      const aviso = criarElemento("p", "", "Tem certeza? Esta ação apagará a publicação permanentemente.");
+      const acoesExcluir = criarElemento("div", "modal-obra-acoes");
+      const cancelarExclusao = criarElemento("button", "modal-obra-secundario", "Manter obra");
+      const confirmarExclusao = criarElemento("button", "modal-obra-perigo", "Sim, excluir");
+      cancelarExclusao.type = confirmarExclusao.type = "button";
+      acoesExcluir.append(cancelarExclusao, confirmarExclusao);
+      confirmacao.append(aviso, acoesExcluir);
+
+      const mensagem = criarElemento("p", "modal-obra-mensagem");
+      mensagem.setAttribute("aria-live", "polite");
+      janela.append(topo, opcoes, formulario, confirmacao, mensagem);
+      overlay.appendChild(janela);
+      document.body.appendChild(overlay);
+
+      const fecharModal = () => overlay.remove();
+      fechar.addEventListener("click", fecharModal);
+      overlay.addEventListener("click", evento => {
+        if (evento.target === overlay) fecharModal();
+      });
+      document.addEventListener("keydown", function escapeModal(evento) {
+        if (evento.key === "Escape" && document.body.contains(overlay)) {
+          fecharModal();
+          document.removeEventListener("keydown", escapeModal);
+        }
+      });
+
+      botaoEditar.addEventListener("click", () => {
+        opcoes.hidden = true;
+        formulario.hidden = false;
+        campo.focus();
+      });
+      cancelarEdicao.addEventListener("click", () => {
+        formulario.hidden = true;
+        opcoes.hidden = false;
+        mensagem.textContent = "";
+      });
+      salvar.addEventListener("click", async () => {
+        const novaLegenda = campo.value.trim();
+        if (novaLegenda.length > 2000) {
+          mensagem.textContent = "A legenda deve ter no máximo 2.000 caracteres.";
+          return;
+        }
+        salvar.disabled = true;
+        mensagem.textContent = "Salvando...";
+        try {
+          const { error } = await supabase.from("atelie_posts")
+            .update({ caption: novaLegenda })
+            .eq("id", obra.id)
+            .eq("user_id", usuario.id);
+          if (error) throw error;
+          obra.caption = novaLegenda;
+          fecharModal();
+          renderizarObras();
+        } catch (erro) {
+          mensagem.textContent = "Não foi possível salvar: " + (erro.message || "tente novamente.");
+          salvar.disabled = false;
+        }
+      });
+
+      botaoExcluir.addEventListener("click", () => {
+        opcoes.hidden = true;
+        confirmacao.hidden = false;
+      });
+      cancelarExclusao.addEventListener("click", () => {
+        confirmacao.hidden = true;
+        opcoes.hidden = false;
+        mensagem.textContent = "";
+      });
+      confirmarExclusao.addEventListener("click", async () => {
+        confirmarExclusao.disabled = true;
+        mensagem.textContent = "Excluindo publicação...";
+        try {
+          const { error } = await supabase.from("atelie_posts")
+            .delete()
+            .eq("id", obra.id)
+            .eq("user_id", usuario.id);
+          if (error) throw error;
+          fecharModal();
+          obrasCarregadas = obrasCarregadas.filter(item => String(item.id) !== String(obra.id));
+          renderizarObras();
+        } catch (erro) {
+          mensagem.textContent = "Não foi possível excluir: " + (erro.message || "tente novamente.");
+          confirmarExclusao.disabled = false;
+        }
+      });
     });
     cabecalho.appendChild(editar);
   });

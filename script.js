@@ -310,6 +310,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       identificacao.append(nome, data);
       cabecalho.append(avatar, identificacao);
 
+      const categoriaSelecionada = document.getElementById("categoria-publicacao")?.value || "Arte e cultura";
+      const categoria = document.createElement("span");
+      categoria.className = "categoria-reflexiart";
+      categoria.textContent = categoriaSelecionada;
+
       const mensagem = document.createElement("p");
       mensagem.textContent = texto;
 
@@ -352,7 +357,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       lista.className = "lista-comentarios";
 
       area.append(formulario, lista);
-      publicacao.append(cabecalho, mensagem, acoes, area);
+      publicacao.append(cabecalho, categoria, mensagem, acoes, area);
 
       formPublicacao.insertAdjacentElement("afterend", publicacao);
       formPublicacao.reset();

@@ -20,6 +20,14 @@
       <h1>RefugiART</h1>
       <p>A arte nos aproxima.</p>
     </div>
+    <button class="botao-menu"
+            id="abrirMenu"
+            type="button"
+            aria-label="Abrir menu"
+            aria-controls="menuLateral"
+            aria-expanded="false">
+      ☰
+    </button>
   </header>
 
   <nav class="navegacao-principal">
@@ -247,6 +255,157 @@
   <footer>
     <p>RefugiART © 2026 — Criar é Sentir.</p>
   </footer>
+
+
+  <!-- Fundo escurecido do menu lateral -->
+  <div class="fundo-menu" id="fundoMenu"></div>
+
+  <!-- Menu lateral original do RefugiART -->
+  <aside class="menu-lateral"
+         id="menuLateral"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="tituloMenu"
+         aria-hidden="true"
+         inert>
+
+    <div class="cabecalho-menu">
+      <div>
+        <h2 id="tituloMenu">RefugiART</h2>
+        <p>Explore nossas iniciativas</p>
+      </div>
+
+      <button class="botao-fechar"
+              id="fecharMenu"
+              type="button"
+              aria-label="Fechar menu">
+        ×
+      </button>
+    </div>
+
+    <div class="introducao-menu">
+      <span>✦</span>
+      <div>
+        <h3>Conheça nosso universo</h3>
+        <p>Arte, cultura e transformação social.</p>
+      </div>
+    </div>
+
+    <nav class="opcoes-menu" aria-label="Áreas da RefugiART">
+
+      <a href="revista.html" class="item-menu">
+        <span class="icone-menu">▤</span>
+        <span class="texto-menu">
+          <strong>Revista RefugiART</strong>
+          <small>Publicações e entrevistas</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="eventos.html" class="item-menu">
+        <span class="icone-menu">▦</span>
+        <span class="texto-menu">
+          <strong>Eventos</strong>
+          <small>Encontros e programações</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="exposicoes.html" class="item-menu">
+        <span class="icone-menu">▧</span>
+        <span class="texto-menu">
+          <strong>Exposições</strong>
+          <small>Mostras e trabalhos artísticos</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="palestras.html" class="item-menu">
+        <span class="icone-menu">◉</span>
+        <span class="texto-menu">
+          <strong>Palestras e encontros</strong>
+          <small>Ideias e experiências</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="acoes-sociais.html" class="item-menu">
+        <span class="icone-menu">♡</span>
+        <span class="texto-menu">
+          <strong>Ações sociais</strong>
+          <small>Arte junto à comunidade</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="projetos-educativos.html" class="item-menu">
+        <span class="icone-menu">✎</span>
+        <span class="texto-menu">
+          <strong>Projetos educativos</strong>
+          <small>Oficinas, cursos e formação</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+      <a href="perfil.html" class="item-menu">
+        <span class="icone-menu">♙</span>
+        <span class="texto-menu">
+          <strong>Meu perfil</strong>
+          <small>Editar meus dados e informações</small>
+        </span>
+        <span class="seta-menu">›</span>
+      </a>
+
+    </nav>
+
+    <div class="rodape-menu">
+      <p>RefugiART — Criar é Sentir.</p>
+    </div>
+  </aside>
+
+  <!-- Script compartilhado do site -->
+  <script src="script.js"></script>
+
+  <!-- Abertura e fechamento do menu lateral -->
+  <script>
+    const abrirMenu = document.getElementById('abrirMenu');
+    const fecharMenu = document.getElementById('fecharMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const fundoMenu = document.getElementById('fundoMenu');
+
+    function abrirPainel() {
+      menuLateral.inert = false;
+      menuLateral.setAttribute('aria-hidden', 'false');
+      menuLateral.classList.add('menu-aberto');
+      fundoMenu.classList.add('fundo-visivel');
+      document.body.classList.add('menu-bloqueio');
+      abrirMenu.setAttribute('aria-expanded', 'true');
+      fecharMenu.focus();
+    }
+
+    function fecharPainel() {
+      menuLateral.classList.remove('menu-aberto');
+      fundoMenu.classList.remove('fundo-visivel');
+      document.body.classList.remove('menu-bloqueio');
+      abrirMenu.setAttribute('aria-expanded', 'false');
+      menuLateral.setAttribute('aria-hidden', 'true');
+      menuLateral.inert = true;
+      abrirMenu.focus();
+    }
+
+    abrirMenu.addEventListener('click', abrirPainel);
+    fecharMenu.addEventListener('click', fecharPainel);
+    fundoMenu.addEventListener('click', fecharPainel);
+
+    document.addEventListener('keydown', (evento) => {
+      if (
+        evento.key === 'Escape' &&
+        menuLateral.classList.contains('menu-aberto')
+      ) {
+        fecharPainel();
+      }
+    });
+  </script>
 
 </body>
 </html>

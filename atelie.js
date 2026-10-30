@@ -1059,7 +1059,7 @@ async function atualizarRelacionamentos(usuario) {
 
   if (botaoAmizade) {
     botaoAmizade.disabled = !!relacao || !!recebido || !!erroPedidos;
-    botaoAmizade.textContent = relacao ? "Vocês são amigos"
+    botaoAmizade.textContent = relacao ? "Amigos ✔"
       : enviado ? "Solicitação enviada"
       : recebido ? "Responder solicitação abaixo"
       : erroPedidos ? "Amizade indisponível"

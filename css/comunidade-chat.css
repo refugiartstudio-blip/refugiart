@@ -550,3 +550,38 @@ input::placeholder {
 .chat-header .status-online {
   color: #47752d;
 }
+
+
+/* SELETOR DE EMOJIS — MODELO 2 */
+.formulario-mensagem, #formGlobal, #formComunidade, #formPrivado { position: relative; }
+.botao-emojis {
+  flex: 0 0 40px; width: 40px; height: 40px; padding: 0 !important;
+  border: 1px solid var(--borda) !important; border-radius: 10px !important;
+  background: #202820 !important; color: var(--verde) !important; font-size: 25px !important;
+}
+.seletor-emojis {
+  position: absolute; z-index: 1000; left: 0; bottom: calc(100% + 9px);
+  width: min(330px, calc(100vw - 36px)); padding: 12px;
+  border: 1px solid #465344; border-radius: 14px; background: #202820;
+  box-shadow: 0 12px 32px #000b;
+}
+.seletor-emojis[hidden] { display: none !important; }
+.categorias-emojis { display: flex; justify-content: space-between; gap: 4px; margin-bottom: 10px; }
+.categorias-emojis button {
+  flex: 1; min-width: 0; padding: 7px 2px !important; border: 0 !important;
+  border-radius: 8px !important; background: transparent !important;
+  color: #c5d0c2 !important; font-size: 19px !important;
+}
+.categorias-emojis button.ativa { background: #35452f !important; color: var(--verde) !important; box-shadow: inset 0 -2px var(--verde); }
+.busca-emojis {
+  width: 100%; margin-bottom: 9px; padding: 9px 10px; border: 1px solid #465344;
+  border-radius: 8px; outline: none; background: #303a31; color: var(--texto); font-size: 13px;
+}
+.grade-emojis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; max-height: 180px; overflow-y: auto; }
+.grade-emojis button {
+  min-width: 0; aspect-ratio: 1; padding: 0 !important; border: 0 !important;
+  border-radius: 8px !important; background: #303a31 !important;
+  color: var(--texto) !important; font-size: 23px !important;
+}
+.grade-emojis button:hover { background: #40513b !important; }
+@media (max-width: 420px) { .seletor-emojis { width: min(310px, calc(100vw - 28px)); } }

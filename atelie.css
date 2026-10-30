@@ -1941,3 +1941,26 @@
   .pagina-atelie .acoes-relacionamento-atelie { gap: 5px; }
   .pagina-atelie .acoes-relacionamento-atelie button { padding: 5px 8px; font-size: 10px; }
 }
+
+
+/* Correção reforçada: impedir que estilos globais empilhem os botões */
+body.pagina-atelie #acoes-relacionamento-atelie {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  width: 100% !important;
+}
+body.pagina-atelie #acoes-relacionamento-atelie > button {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 28px !important;
+  margin: 0 !important;
+  padding: 4px 9px !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}

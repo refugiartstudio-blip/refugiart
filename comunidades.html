@@ -39,6 +39,7 @@
       line-height: 1.6;
     }
 
+    .vitrine-comunidades{max-width:1080px;margin:34px auto 0}.vitrine-cabecalho{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:18px}.vitrine-cabecalho h2{color:#243e35;margin:10px 0 4px;font-size:1.55rem}.vitrine-cabecalho p{margin:0;color:#6c746d}.total-comunidades{white-space:nowrap;color:#526456;background:#e6eadf;border-radius:20px;padding:7px 12px;font-size:.82rem;font-weight:700}.grade-comunidades{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.cartao-comunidade{overflow:hidden;background:#fff;border:1px solid #e2e3d9;border-radius:15px;box-shadow:0 5px 18px #243e3510;transition:transform .2s,box-shadow .2s}.cartao-comunidade:hover{transform:translateY(-3px);box-shadow:0 9px 24px #243e3520}.foto-comunidade{min-height:170px;display:flex;align-items:flex-end;padding:14px;background-size:cover;background-position:center;text-decoration:none;position:relative}.foto-comunidade:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#17251ed9,transparent 75%)}.selo-membros{z-index:1;color:#fff;font-size:.82rem;font-weight:700;text-shadow:0 1px 4px #0008}.foto-desenho{background-image:url('https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80')}.foto-pintura{background-image:url('https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&w=900&q=80')}.foto-tatuagem{background-image:url('https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&w=900&q=80')}.foto-digital{background-image:url('https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=900&q=80')}.foto-leitura{background-image:url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=900&q=80')}.dados-comunidade{padding:14px 16px 15px}.dados-comunidade h3{margin:0 0 5px;color:#243e35;font-size:1.12rem}.dados-comunidade p{min-height:48px;margin:0;color:#687168;font-size:.9rem;line-height:1.5}.rodape-comunidade{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;padding-top:11px;border-top:1px solid #edf0e9}.rodape-comunidade span{color:#7a8179;font-size:.76rem}.rodape-comunidade a{color:#243e35;font-weight:700;font-size:.88rem;text-decoration:none}.rodape-comunidade a b{color:#b18445;font-size:1.15rem;margin-left:3px}@media(max-width:560px){.grade-comunidades{grid-template-columns:1fr;gap:14px}.foto-comunidade{min-height:155px}.vitrine-cabecalho{align-items:flex-start;flex-direction:column}.dados-comunidade p{min-height:0}}
   </style>
 </head>
 
@@ -86,8 +87,19 @@
       </p>
     </section>
 
-
-
+    <section class="vitrine-comunidades" aria-label="Comunidades disponíveis">
+      <div class="vitrine-cabecalho">
+        <div><span class="comunidades-selo">ENCONTRE SUA TURMA</span><h2>Explore as comunidades</h2><p>Compartilhe referências, converse e encontre pessoas com os mesmos interesses.</p></div>
+        <span class="total-comunidades">5 comunidades</span>
+      </div>
+      <div class="grade-comunidades">
+        <article class="cartao-comunidade"><a class="foto-comunidade foto-desenho" href="chat.html?comunidade=desenho" aria-label="Entrar na comunidade Desenho"><span class="selo-membros">✏️ Criatividade em traços</span></a><div class="dados-comunidade"><h3>Desenho</h3><p>Esboço, anatomia, perspectiva, ilustração e técnicas tradicionais.</p><div class="rodape-comunidade"><span>Comunidade artística</span><a href="chat.html?comunidade=desenho">Entrar <b>›</b></a></div></div></article>
+        <article class="cartao-comunidade"><a class="foto-comunidade foto-pintura" href="chat.html?comunidade=pintura" aria-label="Entrar na comunidade Pintura"><span class="selo-membros">🎨 Cores e experimentação</span></a><div class="dados-comunidade"><h3>Pintura</h3><p>Aquarela, acrílica, óleo, guache e processos de criação.</p><div class="rodape-comunidade"><span>Comunidade artística</span><a href="chat.html?comunidade=pintura">Entrar <b>›</b></a></div></div></article>
+        <article class="cartao-comunidade"><a class="foto-comunidade foto-tatuagem" href="chat.html?comunidade=tatuagem" aria-label="Entrar na comunidade Tatuagem"><span class="selo-membros">✒️ Arte na pele</span></a><div class="dados-comunidade"><h3>Tatuagem</h3><p>Blackwork, fine line, tradições, referências e experiências.</p><div class="rodape-comunidade"><span>Comunidade artística</span><a href="chat.html?comunidade=tatuagem">Entrar <b>›</b></a></div></div></article>
+        <article class="cartao-comunidade"><a class="foto-comunidade foto-digital" href="chat.html?comunidade=arte-digital" aria-label="Entrar na comunidade Arte Digital"><span class="selo-membros">🖥️ Novas linguagens</span></a><div class="dados-comunidade"><h3>Arte Digital</h3><p>Ilustração digital, concept art, 3D, fotografia e criação com tecnologia.</p><div class="rodape-comunidade"><span>Comunidade artística</span><a href="chat.html?comunidade=arte-digital">Entrar <b>›</b></a></div></div></article>
+        <article class="cartao-comunidade"><a class="foto-comunidade foto-leitura" href="chat.html?comunidade=leitura" aria-label="Entrar na comunidade Leitura"><span class="selo-membros">📚 Histórias e ideias</span></a><div class="dados-comunidade"><h3>Leitura</h3><p>Livros, literatura, poesia, ficção e conversas sobre narrativas.</p><div class="rodape-comunidade"><span>Comunidade cultural</span><a href="chat.html?comunidade=leitura">Entrar <b>›</b></a></div></div></article>
+      </div>
+    </section>
 
   </main>
 

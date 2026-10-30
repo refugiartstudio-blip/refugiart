@@ -1,4 +1,3 @@
-
 /* =========================================
    REFUGIART — CHAT DA COMUNIDADE
    Identidade visual: escuro + verde
@@ -532,4 +531,22 @@ input::placeholder {
 .identificacao strong,
 .avatar {
   cursor: pointer;
+}
+
+/* CABEÇALHO CLARO: CONTRASTE PARA A LOGO PRETA E VERDE */
+.chat-header {
+  background: #f1f2ed;
+  border-color: #d7dbd2;
+}
+
+.chat-header .logo-chat {
+  color: #202820;
+}
+
+.chat-header .usuario-atual {
+  color: #283329;
+}
+
+.chat-header .status-online {
+  color: #47752d;
 }

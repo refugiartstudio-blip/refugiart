@@ -87,7 +87,87 @@ document.addEventListener("DOMContentLoaded", async () => {
       const horario = elemento.querySelector(".identificacao span");
       if (horario) horario.textContent = new Date(m.created_at).toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"});
     });
+    await carregarReacoes(data.map(m => m.id), area);
     area.scrollTop = area.scrollHeight;
+  }
+
+  async function carregarReacoes(messageIds, area) {
+    if (!messageIds.length) return;
+    const { data, error } = await supabase.from("chat_reactions")
+      .select("message_id, user_id, emoji")
+      .in("message_id", messageIds);
+    if (error) {
+      console.error("Erro ao carregar reações:", error);
+      return;
+    }
+    const porMensagem = {};
+    (data || []).forEach(r => {
+      (porMensagem[r.message_id] ||= []).push(r);
+    });
+    area.querySelectorAll(".mensagem[data-message-id]").forEach(mensagem => {
+      desenharReacoes(mensagem, porMensagem[mensagem.dataset.messageId] || []);
+    });
+  }
+
+  function desenharReacoes(mensagem, registros) {
+    const area = mensagem.querySelector(".reacoes-mensagem");
+    if (!area) return;
+    const curtir = area.querySelector("[data-like]");
+    area.querySelectorAll(".resumo-reacao").forEach(el => el.remove());
+    const agrupadas = {};
+    registros.forEach(r => {
+      if (!agrupadas[r.emoji]) agrupadas[r.emoji] = { total: 0, minha: false };
+      agrupadas[r.emoji].total++;
+      if (r.user_id === usuarioAtual.id) agrupadas[r.emoji].minha = true;
+    });
+    Object.entries(agrupadas).forEach(([emoji, info]) => {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "resumo-reacao" + (info.minha ? " minha-reacao" : "");
+      item.textContent = emoji + " " + info.total;
+      item.title = info.minha ? "Remover sua reação" : "Reagir com " + emoji;
+      item.addEventListener("click", () => alternarReacao(mensagem, emoji));
+      area.appendChild(item);
+    });
+    if (curtir) {
+      const minhaCurtida = registros.some(r => r.user_id === usuarioAtual.id && r.emoji === "❤️");
+      const total = registros.filter(r => r.emoji === "❤️").length;
+      curtir.dataset.curtido = String(minhaCurtida);
+      curtir.classList.toggle("curtido", minhaCurtida);
+      curtir.textContent = total ? "❤️ " + total : "♡ Curtir";
+    }
+  }
+
+  async function alternarReacao(mensagem, emoji) {
+    const messageId = mensagem.dataset.messageId;
+    if (!messageId) return;
+    const { data: existente, error: erroBusca } = await supabase.from("chat_reactions")
+      .select("id, emoji").eq("message_id", messageId).eq("user_id", usuarioAtual.id).maybeSingle();
+    if (erroBusca) {
+      console.error("Erro ao consultar reação:", erroBusca);
+      alert("Não foi possível atualizar a reação.");
+      return;
+    }
+    let resultado;
+    if (existente?.emoji === emoji) {
+      resultado = await supabase.from("chat_reactions").delete()
+        .eq("message_id", messageId).eq("user_id", usuarioAtual.id);
+    } else if (existente) {
+      resultado = await supabase.from("chat_reactions").update({ emoji })
+        .eq("message_id", messageId).eq("user_id", usuarioAtual.id);
+    } else {
+      resultado = await supabase.from("chat_reactions").insert({
+        message_id: messageId, user_id: usuarioAtual.id, emoji
+      });
+    }
+    if (resultado.error) {
+      console.error("Erro ao salvar reação:", resultado.error);
+      alert("Não foi possível salvar a reação.");
+      return;
+    }
+    const { data: reacoes, error } = await supabase.from("chat_reactions")
+      .select("message_id, user_id, emoji").eq("message_id", messageId);
+    if (!error) desenharReacoes(mensagem, reacoes || []);
   }
 
   async function enviarMensagem(tipo, chave, texto) {
@@ -417,12 +497,7 @@ function configurarMensagem(mensagem) {
 
     curtir.addEventListener("click", evento => {
       evento.stopPropagation();
-
-      const curtido = curtir.dataset.curtido === "true";
-
-      curtir.dataset.curtido = String(!curtido);
-      curtir.classList.toggle("curtido", !curtido);
-      curtir.textContent = !curtido ? "❤️ 1" : "♡ Curtir";
+      alternarReacao(mensagem, "❤️");
     });
 
     areaReacoes.prepend(curtir);
@@ -565,12 +640,7 @@ function configurarMensagem(mensagem) {
       const area = mensagemSelecionada.querySelector(".reacoes-mensagem");
       const emoji = botao.dataset.reacao;
 
-      if (area) {
-        const reacao = document.createElement("span");
-        reacao.textContent = emoji;
-        area.appendChild(reacao);
-      }
-
+      if (area) alternarReacao(mensagemSelecionada, emoji);
       fecharMenu();
     });
   });

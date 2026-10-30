@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#243e35">
+  <title>Bazar | RefugiART</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root{--verde-bazar:#243e35;--verde-claro:#edf2eb;--terracota:#a64f36;--texto-bazar:#29352e}
+    body{background:#f5f6f3;color:var(--texto-bazar)}
+    .bazar-cabecalho{background:#fff;padding:22px clamp(16px,4vw,48px);border-bottom:1px solid #e7ebe5}
+    .bazar-marca{max-width:1300px;margin:auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+    .bazar-marca-texto{min-width:190px}
+    .bazar-marca-texto span{font-size:11px;letter-spacing:1.5px;font-weight:800;color:#7a887b}
+    .bazar-marca-texto h2{font-family:Georgia,serif;color:var(--verde-bazar);font-size:clamp(25px,3vw,34px);margin:3px 0}
+    .bazar-marca-texto p{margin:0;color:#788078;font-size:13px}
+    .bazar-busca{display:flex;flex:1 1 360px;max-width:700px;margin-left:auto;border:2px solid var(--verde-bazar);border-radius:8px;overflow:hidden;background:#fff}
+    .bazar-busca input{flex:1;min-width:0;border:0;outline:0;padding:14px 16px;font:inherit;font-size:14px}
+    .bazar-busca button{border:0;background:var(--verde-bazar);color:white;padding:0 24px;font-size:20px;cursor:pointer}
+    .bazar-categorias-faixa{background:#fff;border-bottom:1px solid #e7ebe5;padding:0 16px}
+    .bazar-categorias{max-width:1300px;margin:auto;display:flex;gap:8px;overflow-x:auto;padding:12px 0;scrollbar-width:thin}
+    .bazar-categorias button{flex:0 0 auto;border:1px solid #e1e7df;background:#fff;color:#425448;padding:9px 15px;border-radius:6px;font:inherit;font-size:13px;cursor:pointer}
+    .bazar-categorias button.ativo,.bazar-categorias button:hover{background:var(--verde-bazar);border-color:var(--verde-bazar);color:#fff}
+    .bazar-conteudo{max-width:1300px;margin:24px auto 54px;padding:0 18px}
+    .bazar-banner{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(110deg,#243e35,#45624b);color:#fff;border-radius:12px;padding:clamp(24px,4vw,42px);margin-bottom:26px;min-height:145px}
+    .bazar-banner:after{content:"✳";position:absolute;right:7%;top:-55px;font-size:230px;line-height:1;color:rgba(255,255,255,.07);pointer-events:none}
+    .bazar-banner-conteudo{position:relative;z-index:1;max-width:650px}
+    .bazar-banner small{font-size:10px;letter-spacing:2px;font-weight:800;color:#d6e1d4}
+    .bazar-banner h1{font-family:Georgia,serif;font-size:clamp(25px,4vw,38px);margin:8px 0}
+    .bazar-banner p{font-size:14px;line-height:1.6;color:#e1e9df;margin:0}
+    .bazar-banner-selo{position:relative;z-index:1;border:1px solid rgba(255,255,255,.45);padding:12px 16px;border-radius:8px;font-size:12px;white-space:nowrap}
+    .bazar-ferramentas{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#fff;padding:14px 17px;border:1px solid #e8ece6;border-radius:9px;margin-bottom:18px}
+    .bazar-contagem{font-size:13px;color:#6d786f}.bazar-contagem strong{color:var(--verde-bazar)}
+    .bazar-ordenacao{display:flex;align-items:center;gap:8px;font-size:13px;color:#667168}
+    .bazar-ordenacao select{border:1px solid #dce3da;border-radius:6px;padding:9px 30px 9px 10px;background:#fff;color:#34483a;font:inherit}
+    .bazar-grade{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+    .produto-bazar{background:#fff;border:1px solid #e8ece6;border-radius:9px;overflow:hidden;min-width:0;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease}
+    .produto-bazar:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(30,55,38,.10)}
+    .produto-foto{position:relative;aspect-ratio:1/1;background:#e9ece6;overflow:hidden}
+    .produto-foto img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
+    .produto-bazar:hover .produto-foto img{transform:scale(1.035)}
+    .produto-categoria{position:absolute;left:10px;top:10px;background:rgba(255,255,255,.94);color:var(--verde-bazar);padding:5px 8px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:.5px}
+    .produto-info{padding:13px;display:flex;flex-direction:column;flex:1}
+    .produto-titulo{font-size:14px;line-height:1.4;color:#34463a;font-weight:650;margin:0 0 7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:39px}
+    .produto-artista{font-size:11px;color:#879087;margin:0 0 11px}
+    .produto-descricao{font-size:12px;line-height:1.5;color:#737d74;margin:0 0 12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .produto-preco{font-size:20px;font-weight:800;color:var(--verde-bazar);margin:auto 0 12px}
+    .produto-acoes{display:flex;gap:7px}
+    .produto-acoes a{flex:1;text-align:center;text-decoration:none;border-radius:6px;padding:10px 7px;font-size:12px;font-weight:700}
+    .produto-ver{background:var(--verde-bazar);color:#fff}
+    .produto-ver:hover{background:#365846}
+    .bazar-vazio{grid-column:1/-1;background:#fff;border:1px dashed #d5ded3;border-radius:10px;text-align:center;padding:50px 20px;color:#788278}
+    .bazar-vazio strong{display:block;color:var(--verde-bazar);font-family:Georgia,serif;font-size:22px;margin-bottom:8px}
+    .bazar-carregando{grid-column:1/-1;text-align:center;padding:35px;color:#748074}
+    @media(max-width:1000px){.bazar-grade{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:700px){.bazar-conteudo{padding:0 10px;margin-top:15px}.bazar-grade{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.produto-info{padding:10px}.produto-titulo{font-size:13px}.produto-preco{font-size:18px}.produto-acoes a{font-size:11px}.bazar-banner-selo{display:none}.bazar-ferramentas{align-items:flex-start}}
+    @media(max-width:380px){.bazar-grade{grid-template-columns:1fr 1fr;gap:7px}.produto-info{padding:8px}.produto-preco{font-size:16px}}
+  </style>
+</head>
+<body>
+  <header class="cabecalho">
+    <img src="imagens/logo.png" alt="Símbolo da RefugiART" class="logo">
+    <div class="identidade"><h1>RefugiART</h1><p>A arte nos aproxima.</p></div>
+    <button class="botao-menu" id="abrirMenu" type="button" aria-label="Abrir menu" aria-controls="menuLateral" aria-expanded="false">☰</button>
+  </header>
+  <nav class="navegacao-principal">
+    <a href="inicio.html">Início</a><a href="mercado.html" aria-current="page">Mercado</a><a href="comunidades.html">Comunidades</a><a href="galeria.html">Galeria</a><a id="linkLogin" href="login.html">Login</a>
+  </nav>
+
+  <section class="bazar-cabecalho">
+    <div class="bazar-marca">
+      <div class="bazar-marca-texto"><span>REFUGIART • MERCADO CRIATIVO</span><h2>Bazar de Arte</h2><p>Encontre uma criação que tenha a sua cara.</p></div>
+      <form class="bazar-busca" id="formBusca"><input id="buscaBazar" type="search" placeholder="Buscar obras, artistas ou categorias..." aria-label="Buscar no Bazar"><button type="submit" aria-label="Pesquisar">⌕</button></form>
+    </div>
+  </section>
+  <div class="bazar-categorias-faixa">
+    <nav class="bazar-categorias" id="categoriasBazar" aria-label="Categorias do Bazar">
+      <button type="button" class="ativo" data-categoria="todas">✦ Todas as obras</button>
+      <button type="button" data-categoria="Desenho">✎ Desenho</button>
+      <button type="button" data-categoria="Pintura">▧ Pintura</button>
+      <button type="button" data-categoria="Fotografia">▣ Fotografia</button>
+      <button type="button" data-categoria="Tatuagem">✳ Tatuagem</button>
+      <button type="button" data-categoria="Digital">✦ Arte digital</button>
+      <button type="button" data-categoria="Leitura">▤ Leitura</button>
+    </nav>
+  </div>
+
+  <main class="bazar-conteudo">
+    <section class="bazar-banner">
+      <div class="bazar-banner-conteudo"><small>ARTE INDEPENDENTE • COMPRA DIRETA COM ARTISTAS</small><h1>Arte que transforma espaços e histórias.</h1><p>Explore obras originais, conheça novos artistas e valorize a produção criativa da nossa comunidade.</p></div>
+      <span class="bazar-banner-selo">✦ Feito por artistas</span>
+    </section>
+    <section aria-label="Produtos disponíveis">
+      <div class="bazar-ferramentas">
+        <div class="bazar-contagem" id="contagemBazar">Carregando obras...</div>
+        <label class="bazar-ordenacao" for="ordenarBazar">Ordenar por
+          <select id="ordenarBazar"><option value="recentes">Mais recentes</option><option value="menor">Menor preço</option><option value="maior">Maior preço</option></select>
+        </label>
+      </div>
+      <div class="bazar-grade" id="gradeBazar" aria-live="polite"><p class="bazar-carregando">Carregando obras disponíveis...</p></div>
+    </section>
+  </main>
+
+  <footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
+  <div class="fundo-menu" id="fundoMenu"></div>
+  <aside class="menu-lateral" id="menuLateral" role="dialog" aria-modal="true" aria-labelledby="tituloMenu" aria-hidden="true" inert>
+    <div class="cabecalho-menu"><div><h2 id="tituloMenu">RefugiART</h2><p>Explore nossas iniciativas</p></div><button class="botao-fechar" id="fecharMenu" type="button" aria-label="Fechar menu">×</button></div>
+    <div class="introducao-menu"><span>✦</span><div><h3>Conheça nosso universo</h3><p>Arte, cultura e transformação social.</p></div></div>
+    <nav class="opcoes-menu" aria-label="Áreas da RefugiART">
+      <a href="revista.html" class="item-menu"><span class="icone-menu">▤</span><span class="texto-menu"><strong>Revista RefugiART</strong><small>Publicações e entrevistas</small></span><span class="seta-menu">›</span></a>
+      <a href="eventos.html" class="item-menu"><span class="icone-menu">▦</span><span class="texto-menu"><strong>Eventos</strong><small>Encontros e programações</small></span><span class="seta-menu">›</span></a>
+      <a href="exposicoes.html" class="item-menu"><span class="icone-menu">▧</span><span class="texto-menu"><strong>Exposições</strong><small>Mostras e trabalhos artísticos</small></span><span class="seta-menu">›</span></a>
+      <a href="palestras.html" class="item-menu"><span class="icone-menu">◉</span><span class="texto-menu"><strong>Palestras e encontros</strong><small>Ideias e experiências</small></span><span class="seta-menu">›</span></a>
+      <a href="acoes-sociais.html" class="item-menu"><span class="icone-menu">♡</span><span class="texto-menu"><strong>Ações sociais</strong><small>Arte junto à comunidade</small></span><span class="seta-menu">›</span></a>
+      <a href="projetos-educativos.html" class="item-menu"><span class="icone-menu">✎</span><span class="texto-menu"><strong>Projetos educativos</strong><small>Oficinas, cursos e formação</small></span><span class="seta-menu">›</span></a>
+      <a href="perfil.html" class="item-menu"><span class="icone-menu">♙</span><span class="texto-menu"><strong>Meu perfil</strong><small>Editar meus dados e informações</small></span><span class="seta-menu">›</span></a>
+    </nav>
+    <div class="rodape-menu"><p>RefugiART — Criar é Sentir.</p></div>
+  </aside>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+    const supabase = createClient("https://nlqalpiksbqflzxzsgoa.supabase.co", "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
+    const grade=document.getElementById("gradeBazar"), busca=document.getElementById("buscaBazar"), ordenar=document.getElementById("ordenarBazar"), contagem=document.getElementById("contagemBazar");
+    let obras=[], categoria="todas";
+    const moeda=v=>Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+    function filtrar(){
+      const termo=busca.value.trim().toLocaleLowerCase("pt-BR");
+      let lista=obras.filter(o=>{
+        const texto=[o.caption,o.category,o.artista].filter(Boolean).join(" ").toLocaleLowerCase("pt-BR");
+        return (categoria==="todas"||String(o.category||"").toLocaleLowerCase("pt-BR")===categoria.toLocaleLowerCase("pt-BR"))&&texto.includes(termo);
+      });
+      if(ordenar.value==="menor")lista.sort((a,b)=>Number(a.preco)-Number(b.preco));
+      if(ordenar.value==="maior")lista.sort((a,b)=>Number(b.preco)-Number(a.preco));
+      if(ordenar.value==="recentes")lista.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+      renderizar(lista);
+    }
+    function renderizar(lista){
+      contagem.innerHTML="<strong>"+lista.length+"</strong> obra(s) encontrada(s)";
+      grade.replaceChildren();
+      if(!lista.length){const vazio=document.createElement("div");vazio.className="bazar-vazio";vazio.innerHTML="<strong>Nenhuma obra encontrada</strong>Experimente mudar a busca ou escolher outra categoria.";grade.append(vazio);return;}
+      lista.forEach(obra=>{
+        const card=document.createElement("article");card.className="produto-bazar";
+        const foto=document.createElement("div");foto.className="produto-foto";
+        const img=document.createElement("img");img.src=obra.image_url;img.alt=obra.caption||"Obra disponível no Bazar RefugiART";img.loading="lazy";img.onerror=()=>{foto.style.background="#e9ece6";img.remove();};foto.append(img);
+        const selo=document.createElement("span");selo.className="produto-categoria";selo.textContent=obra.category||"Arte";foto.append(selo);
+        const info=document.createElement("div");info.className="produto-info";
+        const titulo=document.createElement("h2");titulo.className="produto-titulo";titulo.textContent=obra.caption?.trim()||"Obra de arte original";
+        const artista=document.createElement("p");artista.className="produto-artista";artista.textContent="Por "+(obra.artista||"Artista RefugiART");
+        const descricao=document.createElement("p");descricao.className="produto-descricao";descricao.textContent=obra.caption||"Uma criação disponível para adquirir no Mercado RefugiART.";
+        const preco=document.createElement("p");preco.className="produto-preco";preco.textContent=moeda(obra.preco);
+        const acoes=document.createElement("div");acoes.className="produto-acoes";
+        const link=document.createElement("a");link.className="produto-ver";link.href="atelie.html?id="+encodeURIComponent(obra.user_id);link.textContent="Ver obra";
+        acoes.append(link);info.append(titulo,artista,descricao,preco,acoes);card.append(foto,info);grade.append(card);
+      });
+    }
+    async function carregar(){
+      const {data,error}=await supabase.from("atelie_posts").select("id,user_id,image_url,caption,category,preco,created_at").eq("publicar_mercado",true).eq("publicar_comunidade",true).not("preco","is",null).order("created_at",{ascending:false});
+      if(error){console.error(error);grade.innerHTML='<div class="bazar-vazio"><strong>Não foi possível carregar o Bazar</strong>Tente novamente mais tarde.</div>';contagem.textContent="Não foi possível carregar as obras";return;}
+      const ids=[...new Set((data||[]).map(o=>o.user_id).filter(Boolean))];
+      let perfis=[];
+      if(ids.length){const resposta=await supabase.from("profiles").select("id,nome_artistico").in("id",ids);perfis=resposta.data||[];}
+      const nomes=new Map(perfis.map(p=>[p.id,p.nome_artistico||"Artista RefugiART"]));
+      obras=(data||[]).map(o=>({...o,artista:nomes.get(o.user_id)||"Artista RefugiART"}));
+      filtrar();
+    }
+    document.getElementById("formBusca").addEventListener("submit",e=>{e.preventDefault();filtrar();});
+    busca.addEventListener("input",filtrar);ordenar.addEventListener("change",filtrar);
+    document.getElementById("categoriasBazar").addEventListener("click",e=>{
+      const botao=e.target.closest("[data-categoria]");if(!botao)return;
+      categoria=botao.dataset.categoria;
+      document.querySelectorAll("#categoriasBazar button").forEach(b=>b.classList.toggle("ativo",b===botao));
+      filtrar();
+    });
+    carregar();
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

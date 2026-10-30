@@ -10,6 +10,16 @@
 
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="atelie.css?v=20261030-2">
+<style>
+.destinos-publicacao{border:1px solid #dfe5dc;border-radius:12px;padding:12px 14px;margin:14px 0;color:#294438}
+.destinos-publicacao legend{font-weight:700;padding:0 5px}
+.opcao-destino{display:inline-flex;align-items:center;gap:7px;margin:5px 18px 5px 0;font-size:.95rem}
+.opcao-destino input{width:16px;height:16px;accent-color:#294438}
+.campo-preco-mercado{margin-top:10px}
+.campo-preco-mercado label{display:block;margin-bottom:6px;font-weight:600}
+.campo-preco-mercado input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #cfd8ce;border-radius:8px;font:inherit}
+.destinos-publicacao small{display:block;margin-top:8px;color:#718075}
+</style>
 </head>
 
 <body class="pagina-atelie">
@@ -259,6 +269,17 @@
               </select>
             </div>
         
+            <fieldset class="destinos-publicacao">
+              <legend>Onde deseja compartilhar esta obra?</legend>
+              <label class="opcao-destino"><input type="checkbox" id="publicar-comunidade" name="publicar-comunidade"> <span>Comunidade</span></label>
+              <label class="opcao-destino"><input type="checkbox" id="publicar-mercado" name="publicar-mercado"> <span>Mercado</span></label>
+              <div id="campo-preco-mercado" class="campo-preco-mercado" hidden>
+                <label for="preco-obra">Preço da obra (R$)</label>
+                <input type="number" id="preco-obra" name="preco-obra" min="0.01" max="99999999" step="0.01" inputmode="decimal" placeholder="Ex.: 150,00">
+              </div>
+              <small>A comunidade será definida automaticamente pela categoria escolhida.</small>
+            </fieldset>
+
             <div class="rodape-formulario">
               <span class="nota-publicacao">✦ Sua criatividade merece espaço.</span>
               <button type="submit" id="botao-enviar-obra" class="botao-publicar">

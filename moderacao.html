@@ -50,7 +50,7 @@ body.pagina-moderacao{background:var(--mod-bg);color:#28342d;font-family:Arial,s
 .acoes-moderacao button:disabled{opacity:.5;cursor:wait}
 @media(max-width:700px){.mod-layout{grid-template-columns:1fr;margin-top:15px;gap:12px}.mod-sidebar{display:flex;align-items:center;gap:5px;padding:8px;overflow-x:auto}.mod-sidebar-label,.mod-side-note{display:none}.mod-side-item{white-space:nowrap;padding:10px}.topo-mod{flex-wrap:wrap}.topo-mod>a{font-size:12px}.inbox-topo{padding:19px 16px 15px}.item-moderacao{grid-template-columns:58px minmax(0,1fr);gap:0 12px;padding:16px}.item-moderacao img{width:58px;height:58px}#status-admin{padding:11px 16px}}
 @media(max-width:390px){.item-moderacao{grid-template-columns:1fr}.item-moderacao img{grid-column:1;grid-row:auto;width:100%;height:145px;margin-bottom:12px}.item-moderacao h3,.item-moderacao p,.acoes-moderacao{grid-column:1}.acoes-moderacao button{flex:1}}
-</style>
+button.mod-side-item,button.inbox-filtro{appearance:none;-webkit-appearance:none;font-family:inherit;line-height:1.3;touch-action:manipulation;position:relative;z-index:1}\n.mod-sidebar,.inbox-filtros{position:relative;z-index:2}\n</style>
 </head>
 <body class="pagina-moderacao">
 <header class="topo-mod">
@@ -84,6 +84,6 @@ body.pagina-moderacao{background:var(--mod-bg);color:#28342d;font-family:Arial,s
     <section id="fila-moderacao" class="fila-moderacao" aria-label="Mensagens aguardando análise"></section>
   </section>
 </main>
-<script type="module" src="moderacao.js"></script>
+<script type="module" src="moderacao.js?v=20261030-2"></script>
 </body>
 </html>

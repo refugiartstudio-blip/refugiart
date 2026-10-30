@@ -8,7 +8,7 @@
   <title>Mercado | RefugiART</title>
   <link rel="stylesheet" href="style.css">
 <style>
-#lista-obras-mercado .cartao-obra{overflow:hidden}
+#lista-obras-mercado .cartao-obra{overflow:hidden}\n.categorias-mercado{display:flex;flex-wrap:wrap;gap:10px}\n.categoria-mercado{cursor:pointer;border:1px solid #dfe5dc;border-radius:999px;padding:10px 15px;background:#fff;color:#294438;font:inherit;display:inline-flex;align-items:center;gap:8px}\n.categoria-mercado.selecionada{background:#243e35;color:#fff;border-color:#243e35}
 #lista-obras-mercado .imagem-obra{height:auto;aspect-ratio:4/3;background:#e8e8df}
 #lista-obras-mercado .imagem-obra img{width:100%;height:100%;object-fit:cover;display:block}
 #lista-obras-mercado .preco-mercado{font-size:1.15rem;font-weight:800;color:#243e35;margin:12px 0}
@@ -95,31 +95,16 @@
         </div>
       </div>
 
-      <div class="categorias-mercado">
-        <div class="categoria-mercado">
-          <span>✳</span>
-          <strong>Pintura</strong>
-        </div>
-
-        <div class="categoria-mercado">
-          <span>◈</span>
-          <strong>Desenho</strong>
-        </div>
-
-        <div class="categoria-mercado">
-          <span>▧</span>
-          <strong>Fotografia</strong>
-        </div>
-
-        <div class="categoria-mercado">
-          <span>✦</span>
-          <strong>Arte digital</strong>
-        </div>
-
-        <div class="categoria-mercado">
-          <span>❋</span>
-          <strong>Artesanato</strong>
-        </div>
+      <div class="categorias-mercado" id="categorias-mercado" aria-label="Filtrar obras por categoria">
+        <button type="button" class="categoria-mercado selecionada" data-categoria="Todas"><span>✦</span><strong>Todas</strong></button>
+        <button type="button" class="categoria-mercado" data-categoria="Desenho"><span>✎</span><strong>Desenho</strong></button>
+        <button type="button" class="categoria-mercado" data-categoria="Pintura"><span>▧</span><strong>Pintura</strong></button>
+        <button type="button" class="categoria-mercado" data-categoria="Fotografia"><span>▣</span><strong>Fotografia</strong></button>
+        <button type="button" class="categoria-mercado" data-categoria="Escultura"><span>◈</span><strong>Escultura</strong></button>
+        <button type="button" class="categoria-mercado" data-categoria="Tatuagem"><span>✳</span><strong>Tatuagem</strong></button>
+        <button type="button" class="categoria-mercado" data-categoria="Digital"><span>✦</span><strong>Arte digital</strong></button>
+        <button type="button" class="categoria-mercado" data-categoria="Leitura"><span>▤</span><strong>Leitura</strong></button>
+        <button type="button" class="categoria-mercado" data-categoria="Outros"><span>＋</span><strong>Outras artes</strong></button>
       </div>
     </section>
 
@@ -381,7 +366,7 @@
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     const supabase = createClient("https://nlqalpiksbqflzxzsgoa.supabase.co", "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
-    const lista = document.getElementById("lista-obras-mercado");
+    const lista = document.getElementById("lista-obras-mercado");\n    let categoriaSelecionada = "Todas";
     const el = (tag, cls, text) => { const n=document.createElement(tag); if(cls)n.className=cls; if(text!==undefined)n.textContent=text; return n; };
     async function carregarMercado() {
       const {data:obras,error}=await supabase.from("atelie_posts")
@@ -394,7 +379,7 @@
       const nomes=new Map((perfis||[]).map(p=>[p.id,p.nome_artistico||"Artista RefugiART"]));
       lista.replaceChildren();
       obras.forEach(obra=>{
-        const card=el("article","cartao-obra"),foto=el("div","imagem-obra"),img=el("img");
+        const card=el("article","cartao-obra"),foto=el("div","imagem-obra"),img=el("img");\n        card.dataset.categoria=obra.category||"Outros";
         img.src=obra.image_url;img.alt="Obra "+(obra.category||"artística");img.loading="lazy";foto.append(img);
         const dados=el("div","dados-obra");
         dados.append(el("span","categoria-obra",(obra.category||"ARTE").toUpperCase()));
@@ -405,7 +390,7 @@
         card.append(foto,dados);lista.append(card);
       });
     }
-    carregarMercado();
+    document.getElementById("categorias-mercado").addEventListener("click",evento=>{\n      const botao=evento.target.closest("[data-categoria]");\n      if(!botao)return;\n      categoriaSelecionada=botao.dataset.categoria;\n      document.querySelectorAll("#categorias-mercado .categoria-mercado").forEach(item=>item.classList.toggle("selecionada",item===botao));\n      document.querySelectorAll("#lista-obras-mercado .cartao-obra").forEach(card=>{card.hidden=categoriaSelecionada!=="Todas" && card.dataset.categoria!==categoriaSelecionada;});\n    });\n    carregarMercado();
   </script>
 
   <!-- Script compartilhado do site -->

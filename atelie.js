@@ -702,6 +702,17 @@ form?.addEventListener("submit", async (evento) => {
       return;
     }
 
+    const publicarComunidade = document.getElementById("publicar-comunidade")?.checked || false;
+    const publicarMercado = document.getElementById("publicar-mercado")?.checked || false;
+    const campoPreco = document.getElementById("preco-obra");
+    const precoTexto = (campoPreco?.value || "").trim().replace(",", ".");
+    const preco = publicarMercado ? Number(precoTexto) : null;
+
+    if (publicarMercado && (!precoTexto || !Number.isFinite(preco) || preco <= 0)) {
+      mostrarStatus("Informe um preço válido para anunciar no Mercado.", "erro");
+      return;
+    }
+
     const legenda = (inputLegenda?.value || "").trim();
 
     if (legenda.length > 2000) {
@@ -751,7 +762,10 @@ form?.addEventListener("submit", async (evento) => {
         user_id: usuario.id,
         image_url: urlPublica.publicUrl,
         caption: legenda,
-        category: categoria
+        category: categoria,
+        publicar_comunidade: publicarComunidade,
+        publicar_mercado: publicarMercado,
+        preco: publicarMercado ? preco : null
       });
 
     if (erroPublicacao) throw erroPublicacao;
@@ -790,6 +804,15 @@ form?.addEventListener("submit", async (evento) => {
       botaoPublicar.textContent = textoOriginal;
     }
   }
+});
+
+/* ---------- Opções de destino da publicação ---------- */
+const checkboxMercado = document.getElementById("publicar-mercado");
+const campoPrecoMercado = document.getElementById("campo-preco-mercado");
+const inputPrecoMercado = document.getElementById("preco-obra");
+checkboxMercado?.addEventListener("change", () => {
+  if (campoPrecoMercado) campoPrecoMercado.hidden = !checkboxMercado.checked;
+  if (inputPrecoMercado) inputPrecoMercado.required = checkboxMercado.checked;
 });
 
 /* ---------- Eventos das categorias ---------- */

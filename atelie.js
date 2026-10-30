@@ -29,6 +29,8 @@ const CATEGORIAS = [
   "Fotografia",
   "Escultura",
   "Tatuagem",
+  "Digital",
+  "Leitura",
   "Outros"
 ];
 

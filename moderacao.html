@@ -1,27 +1,89 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#243e35"><title>Moderação | RefugiART</title>
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="atelie.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#243e35">
+<title>Caixa de moderação | RefugiART</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="atelie.css">
 <style>
-.painel-moderacao{max-width:900px;margin:35px auto;padding:0 16px}
-.fila-moderacao{display:grid;gap:18px}
-.item-moderacao{background:#fff;border:1px solid #e1e5dc;border-radius:14px;padding:16px}
-.item-moderacao img{width:100%;max-height:420px;object-fit:contain;background:#eee}
-.item-moderacao p{line-height:1.6;overflow-wrap:anywhere}
-.acoes-moderacao{display:flex;gap:10px;flex-wrap:wrap}
-.acoes-moderacao button{border:0;border-radius:8px;padding:11px 15px;cursor:pointer;font-weight:700}
-.aprovar-moderacao{background:#e4efe4;color:#244a32}.remover-moderacao{background:#f8e5e2;color:#842d26}
-#status-admin{padding:12px;border-radius:8px;background:#f4f1e9}
-</style></head>
-<body>
-<header class="cabecalho"><a href="atelie.html">← Voltar ao Ateliê</a><h1>Moderação RefugiART</h1></header>
-<main class="painel-moderacao">
-<h2>Publicações aguardando revisão</h2>
-<p>Somente contas cadastradas como administradoras podem acessar esta fila.</p>
-<p id="status-admin" role="status">Verificando acesso...</p>
-<section id="fila-moderacao" class="fila-moderacao"></section>
+:root{--mod-green:#243e35;--mod-bg:#f3f4ef;--mod-line:#e4e8df;--mod-muted:#778078}
+body.pagina-moderacao{background:var(--mod-bg);color:#28342d;font-family:Arial,sans-serif}
+.topo-mod{display:flex;align-items:center;gap:18px;padding:17px clamp(16px,4vw,42px);background:var(--mod-green);color:#fff}
+.topo-mod a{color:#e5c58d;text-decoration:none;font-size:14px;white-space:nowrap}
+.marca-mod{display:flex;align-items:center;gap:11px;min-width:0}
+.marca-mod-simbolo{display:grid;place-items:center;width:39px;height:39px;border:1px solid #789080;border-radius:12px;color:#e5c58d;font-size:21px}
+.marca-mod h1{margin:0;font-family:Georgia,serif;font-size:clamp(19px,3vw,25px);font-weight:500;letter-spacing:.2px}
+.marca-mod small{display:block;margin-top:3px;color:#c7d2c8;font-size:11px;letter-spacing:1.2px;text-transform:uppercase}
+.mod-layout{width:min(1180px,calc(100% - 32px));margin:28px auto 55px;display:grid;grid-template-columns:225px minmax(0,1fr);gap:22px;align-items:start}
+.mod-sidebar,.mod-inbox{background:#fff;border:1px solid var(--mod-line);border-radius:15px;box-shadow:0 5px 20px rgba(31,52,39,.04)}
+.mod-sidebar{padding:18px 13px}
+.mod-sidebar-label{margin:2px 10px 12px;color:#929990;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.mod-side-item{display:flex;align-items:center;gap:11px;padding:12px 11px;border-radius:9px;color:#405348;font-size:14px}
+.mod-side-item.ativo{background:#eaf0e8;color:#243e35;font-weight:700}
+.mod-side-icon{width:22px;text-align:center;font-size:17px}
+.mod-side-note{margin:18px 8px 3px;padding-top:15px;border-top:1px solid var(--mod-line);color:#858d84;font-size:11px;line-height:1.6}
+.mod-inbox{overflow:hidden}
+.inbox-topo{padding:23px 25px 17px;border-bottom:1px solid var(--mod-line)}
+.inbox-titulo-linha{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.inbox-titulo-linha h2{margin:0;color:#263c30;font-family:Georgia,serif;font-size:25px;font-weight:500}
+.inbox-subtitulo{margin:7px 0 0;color:var(--mod-muted);font-size:13px;line-height:1.5}
+.inbox-filtros{display:flex;gap:7px;flex-wrap:wrap;margin-top:19px}
+.inbox-filtro{padding:8px 13px;border:1px solid var(--mod-line);border-radius:20px;color:#5f6c61;font-size:12px}
+.inbox-filtro.ativo{background:#243e35;border-color:#243e35;color:#fff}
+.inbox-busca{margin-top:16px}
+.inbox-busca input{width:100%;padding:11px 14px;border:1px solid #e0e5dc;border-radius:9px;background:#f8f9f6;font:inherit;font-size:13px;outline:none}
+.inbox-busca input:focus{border-color:#789080;box-shadow:0 0 0 3px #eaf0e8}
+#status-admin{margin:0;padding:12px 25px;background:#fafbf8;border-bottom:1px solid var(--mod-line);color:#667368;font-size:12px;line-height:1.5}
+.fila-moderacao{display:grid;gap:0}
+.item-moderacao{display:grid;grid-template-columns:76px minmax(0,1fr);gap:0 17px;position:relative;margin:0;padding:19px 25px;border:0;border-bottom:1px solid var(--mod-line);border-radius:0;background:#fff;box-shadow:none;min-width:0}
+.item-moderacao:last-child{border-bottom:0}
+.item-moderacao img{grid-column:1;grid-row:1 / span 5;width:76px;height:76px;object-fit:cover;border-radius:10px;background:#edf0e9}
+.item-moderacao h3{grid-column:2;margin:0 0 5px;color:#2d4034;font-size:14px;line-height:1.4}
+.item-moderacao p{grid-column:2;margin:3px 0;color:#737d73;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.item-moderacao p:nth-of-type(2){color:#48584c;font-size:13px}
+.acoes-moderacao{grid-column:2;display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.acoes-moderacao button{border:1px solid transparent;border-radius:7px;padding:9px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.aprovar-moderacao{background:#e8f0e7;color:#2d5b3b}
+.remover-moderacao{background:#f8e9e6;color:#8b3e35}
+.acoes-moderacao button:disabled{opacity:.5;cursor:wait}
+@media(max-width:700px){.mod-layout{grid-template-columns:1fr;margin-top:15px;gap:12px}.mod-sidebar{display:flex;align-items:center;gap:5px;padding:8px;overflow-x:auto}.mod-sidebar-label,.mod-side-note{display:none}.mod-side-item{white-space:nowrap;padding:10px}.topo-mod{flex-wrap:wrap}.topo-mod>a{font-size:12px}.inbox-topo{padding:19px 16px 15px}.item-moderacao{grid-template-columns:58px minmax(0,1fr);gap:0 12px;padding:16px}.item-moderacao img{width:58px;height:58px}#status-admin{padding:11px 16px}}
+@media(max-width:390px){.item-moderacao{grid-template-columns:1fr}.item-moderacao img{grid-column:1;grid-row:auto;width:100%;height:145px;margin-bottom:12px}.item-moderacao h3,.item-moderacao p,.acoes-moderacao{grid-column:1}.acoes-moderacao button{flex:1}}
+</style>
+</head>
+<body class="pagina-moderacao">
+<header class="topo-mod">
+  <a href="perfil.html">← Meu perfil</a>
+  <div class="marca-mod">
+    <span class="marca-mod-simbolo">✉</span>
+    <div><h1>RefugiART</h1><small>Central de moderação</small></div>
+  </div>
+</header>
+<main class="mod-layout">
+  <aside class="mod-sidebar" aria-label="Pastas da moderação">
+    <div class="mod-sidebar-label">Caixa de mensagens</div>
+    <div class="mod-side-item ativo"><span class="mod-side-icon">▣</span> Caixa de entrada</div>
+    <div class="mod-side-item"><span class="mod-side-icon">⚑</span> Denúncias</div>
+    <div class="mod-side-item"><span class="mod-side-icon">✉</span> Reclamações</div>
+    <div class="mod-side-item"><span class="mod-side-icon">✓</span> Arquivadas</div>
+    <p class="mod-side-note">Área reservada à equipe administrativa do RefugiART. As ocorrências devem ser analisadas antes de qualquer decisão.</p>
+  </aside>
+  <section class="mod-inbox" aria-label="Caixa de entrada da moderação">
+    <div class="inbox-topo">
+      <div class="inbox-titulo-linha"><h2>Caixa de entrada</h2></div>
+      <p class="inbox-subtitulo">Avisos de denúncias, reclamações e conteúdos sinalizados pela comunidade.</p>
+      <div class="inbox-filtros" aria-label="Categorias">
+        <span class="inbox-filtro ativo">Todas as mensagens</span>
+        <span class="inbox-filtro">Denúncias</span>
+        <span class="inbox-filtro">Reclamações</span>
+      </div>
+      <div class="inbox-busca"><input type="search" aria-label="Pesquisar mensagens" placeholder="Pesquisar na caixa de entrada..."></div>
+    </div>
+    <p id="status-admin" role="status">Verificando acesso administrativo...</p>
+    <section id="fila-moderacao" class="fila-moderacao" aria-label="Mensagens aguardando análise"></section>
+  </section>
 </main>
 <script type="module" src="moderacao.js"></script>
-</body></html>
+</body>
+</html>

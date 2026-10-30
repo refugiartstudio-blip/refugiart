@@ -8,7 +8,26 @@
   <title>Mercado | RefugiART</title>
   <link rel="stylesheet" href="style.css?v=mercado-titulo-3">
 <style>
-#lista-obras-mercado .cartao-obra{overflow:hidden}
+#lista-obras-mercado.vitrine-carrossel-mercado{
+  display:flex; flex-wrap:nowrap; gap:18px; overflow-x:auto; overflow-y:hidden;
+  padding:8px 2px 18px; scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch; scrollbar-width:thin; cursor:grab;
+  touch-action:pan-x pan-y;
+}
+#lista-obras-mercado.vitrine-carrossel-mercado:active{cursor:grabbing}
+#lista-obras-mercado.vitrine-carrossel-mercado .cartao-obra{
+  flex:0 0 clamp(250px, 30%, 330px); min-width:0; scroll-snap-align:start; overflow:hidden;
+}
+#lista-obras-mercado.vitrine-carrossel-mercado .cartao-obra[hidden]{display:none}
+.controles-vitrine-mercado{display:flex;justify-content:flex-end;gap:9px;margin:4px 0 8px}
+.controles-vitrine-mercado button{
+  width:42px;height:42px;border:0;border-radius:50%;background:#243e35;color:#fff;
+  font-size:28px;line-height:1;cursor:pointer;display:grid;place-items:center
+}
+.controles-vitrine-mercado button:disabled{opacity:.35;cursor:not-allowed}
+@media(max-width:600px){
+  #lista-obras-mercado.vitrine-carrossel-mercado .cartao-obra{flex-basis:82%;max-width:310px}
+}
 .categorias-mercado{display:flex;flex-wrap:wrap;gap:10px}
 .categoria-mercado{cursor:pointer;border:1px solid #dfe5dc;border-radius:999px;padding:10px 15px;background:#fff;color:#294438;font:inherit;display:inline-flex;align-items:center;gap:8px}
 .categoria-mercado.selecionada{background:#243e35;color:#fff;border-color:#243e35}
@@ -108,7 +127,11 @@
       <div class="titulo-secao-mercado vitrine-obras-titulo">
         <div><span class="etiqueta-mercado">ANÚNCIOS DOS ARTISTAS</span><h2>Obras disponíveis</h2><p>Criações anunciadas pelos artistas da RefugiART.</p></div>
       </div>
-      <div id="lista-obras-mercado" class="grade-obras" aria-live="polite"><p>Carregando obras...</p></div>
+      <div class="controles-vitrine-mercado" aria-label="Navegar pelas obras">
+        <button type="button" id="obras-anterior" aria-label="Obras anteriores">‹</button>
+        <button type="button" id="obras-proxima" aria-label="Próximas obras">›</button>
+      </div>
+      <div id="lista-obras-mercado" class="grade-obras vitrine-carrossel-mercado" aria-live="polite"><p>Carregando obras...</p></div>
     </section>
 
     <!-- LEILÕES -->
@@ -305,6 +328,20 @@
         card.append(foto,dados);lista.append(card);
       });
     }
+    const trilhoObras = document.getElementById("lista-obras-mercado");
+    const botaoAnterior = document.getElementById("obras-anterior");
+    const botaoProxima = document.getElementById("obras-proxima");
+    function atualizarControlesVitrine(){
+      const limite = trilhoObras.scrollWidth - trilhoObras.clientWidth;
+      botaoAnterior.disabled = trilhoObras.scrollLeft <= 2;
+      botaoProxima.disabled = trilhoObras.scrollLeft >= limite - 2;
+    }
+    botaoAnterior.addEventListener("click",()=>trilhoObras.scrollBy({left:-trilhoObras.clientWidth*0.8,behavior:"smooth"}));
+    botaoProxima.addEventListener("click",()=>trilhoObras.scrollBy({left:trilhoObras.clientWidth*0.8,behavior:"smooth"}));
+    trilhoObras.addEventListener("scroll",atualizarControlesVitrine);
+    window.addEventListener("resize",atualizarControlesVitrine);
+    const observarObras = new MutationObserver(atualizarControlesVitrine);
+    observarObras.observe(trilhoObras,{childList:true});
     document.getElementById("categorias-mercado").addEventListener("click",evento=>{
       const botao=evento.target.closest("[data-categoria]");
       if(!botao)return;

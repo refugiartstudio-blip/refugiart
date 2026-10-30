@@ -571,7 +571,14 @@ function configurarMensagem(mensagem) {
     });
     busca.addEventListener("input", desenharEmojis);
     document.addEventListener("click", evento => {
-      if (!form.contains(evento.target)) { painel.hidden = true; botao.setAttribute("aria-expanded", "false"); }
+      const clicouEmTopico = evento.target.closest(".zona-interesse");
+      if (!form.contains(evento.target) && !clicouEmTopico) return;
+      if (clicouEmTopico) return;
+      // Fecha somente quando o clique acontece fora do formulário e dos tópicos.
+      if (!form.contains(evento.target)) {
+        painel.hidden = true;
+        botao.setAttribute("aria-expanded", "false");
+      }
     });
     desenharCategorias(); desenharEmojis();
   });

@@ -59,6 +59,12 @@ let temporizadorBusca = null;
 let carregamentoEmAndamento = false;
 let ultimaSolicitacao = 0;
 
+// Identifica qual Ateliê deve ser exibido pela URL.
+const parametrosAtelie = new URLSearchParams(window.location.search);
+const artistaIdUrl = parametrosAtelie.get("id");
+let perfilIdAtelie = null;
+let souDonoDoAtelie = false;
+
 /* ---------- Elementos e mensagens ---------- */
 
 function criarElemento(tag, classe, texto) {
@@ -499,9 +505,16 @@ async function carregarObras() {
   carregamentoEmAndamento = true;
 
   try {
+    if (!perfilIdAtelie) {
+      obrasCarregadas = [];
+      mostrarMensagemFeed("Não foi possível identificar este Ateliê.");
+      return;
+    }
+
     const { data: obras, error } = await supabase
       .from("atelie_posts")
       .select("id, user_id, image_url, caption, category, created_at")
+      .eq("user_id", perfilIdAtelie)
       .order("created_at", { ascending: false })
       .limit(50);
 
@@ -581,6 +594,11 @@ form?.addEventListener("submit", async (evento) => {
       );
 
       window.location.href = "login.html";
+      return;
+    }
+
+    if (!souDonoDoAtelie || usuario.id !== perfilIdAtelie) {
+      mostrarStatus("Você só pode publicar no seu próprio Ateliê.", "erro");
       return;
     }
 
@@ -748,16 +766,15 @@ botaoAtualizar?.addEventListener("click", async () => {
   }
 });
 
-/* ---------- Inicialização ---------- */
-
-atualizarEstadoCategorias();
-carregarObras();
+/* ---------- Identidade do Ateliê selecionado ---------- */
 
 async function carregarIdentidadeAtelie() {
-  const usuario = await obterUsuario();
-  if (!usuario) return;
-  const perfil = await buscarPerfil(usuario.id);
-  if (!perfil) return;
+  if (!perfilIdAtelie) return;
+  const perfil = await buscarPerfil(perfilIdAtelie);
+  if (!perfil) {
+    mostrarMensagemFeed("Este Ateliê não foi encontrado ou não está público.");
+    return;
+  }
   const titulo = document.getElementById("nome-artista-atelie");
   const artista = document.getElementById("artista-responsavel-atelie");
   const area = document.getElementById("area-artista-atelie");
@@ -769,8 +786,6 @@ async function carregarIdentidadeAtelie() {
   if (bio) bio.textContent = perfil.biografia?.trim() || "Este espaço reúne a trajetória e as criações do artista.";
   if (foto && perfil.foto_url) foto.src = perfil.foto_url;
 }
-carregarIdentidadeAtelie();
-
 
 /* ---------- Aba de publicação exclusiva do próprio artista logado ---------- */
 const botaoAbrirPublicacao = document.getElementById("abrir-publicacao-atelie");
@@ -804,14 +819,33 @@ document.addEventListener("keydown", (evento) => {
 
 async function controlarAcessoPublicacao() {
   const usuario = await obterUsuario();
-  // O Ateliê exibido nesta página representa o espaço do próprio usuário.
-  // Sem sessão autenticada, a aba e o formulário permanecem indisponíveis.
-  if (usuario && botaoAbrirPublicacao) {
-    botaoAbrirPublicacao.hidden = false;
-  } else {
-    if (botaoAbrirPublicacao) botaoAbrirPublicacao.hidden = true;
-    fecharPainelPublicacao();
+  souDonoDoAtelie = !!usuario && usuario.id === perfilIdAtelie;
+
+  if (botaoAbrirPublicacao) {
+    botaoAbrirPublicacao.hidden = !souDonoDoAtelie;
   }
+
+  if (!souDonoDoAtelie) fecharPainelPublicacao();
 }
 
-controlarAcessoPublicacao();
+/* ---------- Inicialização ---------- */
+
+async function inicializarAtelie() {
+  const usuario = await obterUsuario();
+
+  // Sem ID na URL, mantém o comportamento antigo: abrir o próprio Ateliê.
+  perfilIdAtelie = artistaIdUrl || usuario?.id || null;
+
+  if (!perfilIdAtelie) {
+    mostrarMensagemFeed("Entre na sua conta ou acesse o link de um artista para visualizar um Ateliê.");
+    if (botaoAbrirPublicacao) botaoAbrirPublicacao.hidden = true;
+    return;
+  }
+
+  await carregarIdentidadeAtelie();
+  await controlarAcessoPublicacao();
+  atualizarEstadoCategorias();
+  await carregarObras();
+}
+
+inicializarAtelie();

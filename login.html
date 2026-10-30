@@ -199,6 +199,8 @@
 
       formEntrar.hidden = !entrar;
       formCadastro.hidden = entrar;
+      formRecuperar.hidden = true;
+      abasLogin.hidden = false;
 
       document.getElementById('aba-entrar')
         .classList.toggle('ativa', entrar);
@@ -234,7 +236,7 @@
         return;
       }
 
-      if (data.session) {
+      if (data.session && !modoRecuperacao) {
         window.location.replace(destino);
       }
     }

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#243e35"><title>Moderação | RefugiART</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="atelie.css">
+<style>
+.painel-moderacao{max-width:900px;margin:35px auto;padding:0 16px}
+.fila-moderacao{display:grid;gap:18px}
+.item-moderacao{background:#fff;border:1px solid #e1e5dc;border-radius:14px;padding:16px}
+.item-moderacao img{width:100%;max-height:420px;object-fit:contain;background:#eee}
+.item-moderacao p{line-height:1.6;overflow-wrap:anywhere}
+.acoes-moderacao{display:flex;gap:10px;flex-wrap:wrap}
+.acoes-moderacao button{border:0;border-radius:8px;padding:11px 15px;cursor:pointer;font-weight:700}
+.aprovar-moderacao{background:#e4efe4;color:#244a32}.remover-moderacao{background:#f8e5e2;color:#842d26}
+#status-admin{padding:12px;border-radius:8px;background:#f4f1e9}
+</style></head>
+<body>
+<header class="cabecalho"><a href="atelie.html">← Voltar ao Ateliê</a><h1>Moderação RefugiART</h1></header>
+<main class="painel-moderacao">
+<h2>Publicações aguardando revisão</h2>
+<p>Somente contas cadastradas como administradoras podem acessar esta fila.</p>
+<p id="status-admin" role="status">Verificando acesso...</p>
+<section id="fila-moderacao" class="fila-moderacao"></section>
+</main>
+<script type="module" src="moderacao.js"></script>
+</body></html>

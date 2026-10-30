@@ -1394,28 +1394,28 @@
 }
 
 .pagina-atelie .perfil-publico-atelie {
-  display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
-  align-items: center;
-  column-gap: 34px;
-  row-gap: 14px;
-  padding: 26px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  padding: 22px 26px;
   border: 1px solid var(--atelie-borda);
   border-radius: 18px;
   background: var(--atelie-branco);
   box-shadow: 0 4px 18px rgba(36, 62, 53, 0.045);
 }
 
-.pagina-atelie .perfil-publico-cabecalho {
-  display: contents;
+.pagina-atelie .perfil-publico-identidade {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
 }
 
 .pagina-atelie .perfil-publico-foto {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-  width: 142px;
-  height: 142px;
-  margin: 0 auto;
+  flex: 0 0 112px;
+  width: 112px;
+  height: 112px;
+  margin: 0;
   border: 4px solid var(--atelie-verde-claro);
   border-radius: 50%;
   object-fit: cover;
@@ -1424,12 +1424,11 @@
 
 .pagina-atelie .perfil-publico-info {
   min-width: 0;
-  grid-column: 2;
-  grid-row: 1;
 }
 
 .pagina-atelie .perfil-publico-info h2 {
   margin: 0 0 5px;
+  color: var(--atelie-verde);
   font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(20px, 3vw, 25px);
   font-weight: 600;
@@ -1437,19 +1436,33 @@
   overflow-wrap: anywhere;
 }
 
-.pagina-atelie .perfil-publico-area {
-  margin: 0 0 15px;
+.pagina-atelie .perfil-publico-artista {
+  margin: 0 0 5px;
   color: var(--atelie-texto-suave);
   font-size: 13px;
+}
+
+.pagina-atelie .perfil-publico-area {
+  margin: 0;
+  color: var(--atelie-texto-suave);
+  font-size: 13px;
+}
+
+.pagina-atelie .perfil-publico-resumo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding-top: 11px;
+  border-top: 1px solid var(--atelie-borda);
 }
 
 .pagina-atelie .perfil-publico-estatisticas {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 28px;
-  padding-top: 11px;
-  border-top: 1px solid var(--atelie-borda);
+  gap: 8px 22px;
+  margin-left: auto;
 }
 
 .pagina-atelie .perfil-publico-estatisticas span {
@@ -1465,8 +1478,6 @@
 }
 
 .pagina-atelie .perfil-publico-bio {
-  grid-column: 2;
-  grid-row: 2;
   margin: 0;
   color: #505a51;
   font-size: 13px;
@@ -1475,7 +1486,7 @@
 }
 
 .pagina-atelie .perfil-publico-atelie .link-galeria {
-  grid-column: 2;
+  align-self: flex-start;
   justify-self: start;
   display: inline-flex;
   align-items: center;
@@ -1573,17 +1584,18 @@
   }
 
   .pagina-atelie .perfil-publico-atelie {
-    grid-template-columns: 92px minmax(0, 1fr);
-    column-gap: 15px;
-    row-gap: 10px;
+    gap: 11px;
     margin: 0 12px;
-    padding: 18px 14px;
+    padding: 16px 14px;
     border-radius: 13px;
   }
 
+  .pagina-atelie .perfil-publico-identidade { gap: 12px; }
+
   .pagina-atelie .perfil-publico-foto {
-    width: 86px;
-    height: 86px;
+    flex-basis: 76px;
+    width: 76px;
+    height: 76px;
     border-width: 3px;
   }
 
@@ -1592,34 +1604,27 @@
     font-size: 18px;
   }
 
-  .pagina-atelie .perfil-publico-area {
-    margin-bottom: 9px;
-    font-size: 11px;
+  .pagina-atelie .perfil-publico-artista,
+  .pagina-atelie .perfil-publico-area { font-size: 11px; }
+
+  .pagina-atelie .perfil-publico-resumo {
+    align-items: flex-start;
+    gap: 8px 12px;
+    padding-top: 9px;
   }
 
   .pagina-atelie .perfil-publico-estatisticas {
-    gap: 6px 14px;
-    padding-top: 8px;
+    gap: 6px 12px;
+    margin-left: 0;
   }
 
-  .pagina-atelie .perfil-publico-estatisticas span {
-    font-size: 11px;
-  }
+  .pagina-atelie .perfil-publico-estatisticas span { font-size: 11px; }
+  .pagina-atelie .perfil-publico-estatisticas strong { font-size: 14px; }
 
-  .pagina-atelie .perfil-publico-estatisticas strong {
-    font-size: 14px;
-  }
-
-  .pagina-atelie .perfil-publico-bio {
-    grid-column: 1 / -1;
-    grid-row: 3;
-    font-size: 12px;
-  }
+  .pagina-atelie .perfil-publico-bio { font-size: 12px; }
 
   .pagina-atelie .perfil-publico-atelie .link-galeria {
-    grid-column: 1 / -1;
-    grid-row: 4;
-    justify-self: stretch;
+    align-self: stretch;
     justify-content: center;
     min-height: 36px;
   }
@@ -1683,11 +1688,14 @@
 }
 
 @media (max-width: 380px) {
-  .pagina-atelie .perfil-publico-atelie {
-    grid-template-columns: 76px minmax(0, 1fr);
-    column-gap: 11px;
-    padding: 15px 11px;
+  .pagina-atelie .perfil-publico-identidade { gap: 9px; }
+  .pagina-atelie .perfil-publico-foto {
+    flex-basis: 66px;
+    width: 66px;
+    height: 66px;
   }
+  .pagina-atelie .perfil-publico-estatisticas { gap: 5px 9px; }
+  .pagina-atelie .perfil-publico-estatisticas span { font-size: 10px; }
 
   .pagina-atelie .perfil-publico-foto {
     width: 72px;

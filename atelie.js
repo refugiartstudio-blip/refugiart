@@ -273,6 +273,32 @@ async function buscarPerfil(userId) {
   return data;
 }
 
+
+// Consulta pública e restrita ao resultado booleano: não revela a lista de administradores.
+const cacheStatusAdm = new Map();
+async function usuarioEhAdmin(userId) {
+  if (!userId) return false;
+  if (!cacheStatusAdm.has(userId)) {
+    cacheStatusAdm.set(userId, supabase.rpc("refugiart_is_admin_user", { p_user_id: userId })
+      .then(({ data, error }) => {
+        if (error) {
+          console.warn("Não foi possível verificar o selo administrativo:", error.message);
+          return false;
+        }
+        return data === true;
+      }));
+  }
+  return cacheStatusAdm.get(userId);
+}
+
+function criarSeloVerificado() {
+  const selo = criarElemento("span", "selo-verificado-admin", "✓");
+  selo.title = "Conta administradora verificada pelo RefugiART";
+  selo.setAttribute("aria-label", "Conta administradora verificada");
+  selo.setAttribute("role", "img");
+  return selo;
+}
+
 /* ---------- Cartão de publicação ---------- */
 
 function criarCartaoObra(obra) {
@@ -319,7 +345,12 @@ function criarCartaoObra(obra) {
     formatarData(obra.created_at)
   );
 
-  informacoesArtista.append(nomeArtista, data);
+  const linhaNome = criarElemento("span", "obra-nome-com-selo");
+  linhaNome.append(nomeArtista);
+  usuarioEhAdmin(obra.user_id).then(ehAdmin => {
+    if (ehAdmin) linhaNome.append(criarSeloVerificado());
+  });
+  informacoesArtista.append(linhaNome, data);
   cabecalho.append(avatar, informacoesArtista);
 
   // A edição só aparece para quem publicou esta obra.
@@ -942,7 +973,14 @@ async function carregarIdentidadeAtelie() {
   const bio = document.getElementById("bio-artista-atelie");
   const foto = document.getElementById("foto-artista-atelie");
   if (titulo) titulo.textContent = perfil.nome_atelie?.trim() || "Meu Ateliê";
-  if (artista) artista.textContent = perfil.nome_artistico?.trim() || "Artista RefugiART";
+  if (artista) {
+    artista.textContent = perfil.nome_artistico?.trim() || "Artista RefugiART";
+    usuarioEhAdmin(perfilIdAtelie).then(ehAdmin => {
+      if (ehAdmin && !artista.querySelector(".selo-verificado-admin")) {
+        artista.append(" ", criarSeloVerificado());
+      }
+    });
+  }
   if (area) area.textContent = perfil.area_atuacao || "Espaço artístico";
   if (bio) bio.textContent = perfil.biografia?.trim() || "Este espaço reúne a trajetória e as criações do artista.";
   if (foto && perfil.foto_url) foto.src = perfil.foto_url;

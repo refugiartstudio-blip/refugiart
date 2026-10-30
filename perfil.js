@@ -10,13 +10,14 @@ const supabase = createClient(
 // Elementos da página
 const form = document.getElementById('profile-form');
 const nome = document.getElementById('nome');
-const area = document.getElementById('area');
+const nomeAtelie = document.getElementById('nome-atelie');
 const bio = document.getElementById('bio');
 const foto = document.getElementById('foto');
 const photoPreview = document.getElementById('profile-photo');
 const botaoEscolherFoto = document.getElementById('escolher-foto');
 const status = document.getElementById('status');
 const saveButton = document.getElementById('save-button');
+const botaoSair = document.getElementById('botao-sair');
 const seletorFoto = document.querySelector('.seletor-foto');
 const iconeCamera = seletorFoto?.querySelector('.foto-editar');
 
@@ -141,7 +142,7 @@ async function carregarPerfil() {
     const { data, error } = await supabase
       .from('profiles')
       .select(
-        'nome_artistico, biografia, area_atuacao, foto_url'
+        'nome_artistico, nome_atelie, biografia, foto_url'
       )
       .eq('id', userId)
       .maybeSingle();
@@ -156,7 +157,7 @@ async function carregarPerfil() {
     const metadata = usuario.user_metadata || {};
 
     nome.value = data?.nome_artistico || metadata.nome || '';
-    area.value = data?.area_atuacao || '';
+    nomeAtelie.value = data?.nome_atelie || '';
     bio.value = data?.biografia || '';
 
     fotoAtualUrl = data?.foto_url || null;
@@ -226,7 +227,7 @@ form?.addEventListener('submit', async (evento) => {
     const perfil = {
       id: userId,
       nome_artistico: nome.value.trim(),
-      area_atuacao: area.value.trim(),
+      nome_atelie: nomeAtelie.value.trim(),
       biografia: bio.value.trim(),
       foto_url: fotoUrlSalva,
       updated_at: new Date().toISOString()
@@ -267,6 +268,19 @@ form?.addEventListener('submit', async (evento) => {
   } finally {
     saveButton.disabled = false;
   }
+});
+
+// Encerra a sessão da conta.
+botaoSair?.addEventListener('click', async () => {
+  botaoSair.disabled = true;
+  mostrarStatus('Saindo da sua conta...');
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    mostrarStatus('Não foi possível sair: ' + error.message);
+    botaoSair.disabled = false;
+    return;
+  }
+  window.location.href = 'login.html';
 });
 
 // Inicia a página

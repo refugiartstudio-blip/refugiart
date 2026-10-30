@@ -96,15 +96,12 @@
       </div>
 
       <div class="categorias-mercado" id="categorias-mercado" aria-label="Filtrar obras por categoria">
-        <button type="button" class="categoria-mercado selecionada" data-categoria="Todas"><span>✦</span><strong>Todas</strong></button>
         <button type="button" class="categoria-mercado" data-categoria="Desenho"><span>✎</span><strong>Desenho</strong></button>
         <button type="button" class="categoria-mercado" data-categoria="Pintura"><span>▧</span><strong>Pintura</strong></button>
         <button type="button" class="categoria-mercado" data-categoria="Fotografia"><span>▣</span><strong>Fotografia</strong></button>
-        <button type="button" class="categoria-mercado" data-categoria="Escultura"><span>◈</span><strong>Escultura</strong></button>
         <button type="button" class="categoria-mercado" data-categoria="Tatuagem"><span>✳</span><strong>Tatuagem</strong></button>
         <button type="button" class="categoria-mercado" data-categoria="Digital"><span>✦</span><strong>Arte digital</strong></button>
         <button type="button" class="categoria-mercado" data-categoria="Leitura"><span>▤</span><strong>Leitura</strong></button>
-        <button type="button" class="categoria-mercado" data-categoria="Outros"><span>＋</span><strong>Outras artes</strong></button>
       </div>
     </section>
 
@@ -367,12 +364,12 @@
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     const supabase = createClient("https://nlqalpiksbqflzxzsgoa.supabase.co", "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
     const lista = document.getElementById("lista-obras-mercado");
-    let categoriaSelecionada = "Todas";
+    let categoriaSelecionada = null;
     const el = (tag, cls, text) => { const n=document.createElement(tag); if(cls)n.className=cls; if(text!==undefined)n.textContent=text; return n; };
     async function carregarMercado() {
       const {data:obras,error}=await supabase.from("atelie_posts")
         .select("id,user_id,image_url,caption,category,preco,created_at")
-        .eq("publicar_mercado",true).not("preco","is",null).order("created_at",{ascending:false});
+        .eq("publicar_mercado",true).eq("publicar_comunidade",true).not("preco","is",null).order("created_at",{ascending:false});
       if(error){lista.replaceChildren(el("p","","Não foi possível carregar os anúncios neste momento."));return;}
       if(!obras?.length){lista.replaceChildren(el("p","","Ainda não há obras anunciadas. Quando um artista publicar no Mercado, elas aparecerão aqui."));return;}
       const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];
@@ -397,7 +394,7 @@
       if(!botao)return;
       categoriaSelecionada=botao.dataset.categoria;
       document.querySelectorAll("#categorias-mercado .categoria-mercado").forEach(item=>item.classList.toggle("selecionada",item===botao));
-      document.querySelectorAll("#lista-obras-mercado .cartao-obra").forEach(card=>{card.hidden=categoriaSelecionada!=="Todas" && card.dataset.categoria!==categoriaSelecionada;});
+      document.querySelectorAll("#lista-obras-mercado .cartao-obra").forEach(card=>{card.hidden=card.dataset.categoria!==categoriaSelecionada;});
     });
     carregarMercado();
   </script>

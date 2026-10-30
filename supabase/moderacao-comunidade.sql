@@ -10,7 +10,7 @@ alter table public.atelie_posts
 
 create table if not exists public.atelie_post_reports (
   id uuid primary key default gen_random_uuid(),
-  post_id uuid not null references public.atelie_posts(id) on delete cascade,
+  post_id bigint not null references public.atelie_posts(id) on delete cascade,
   reporter_id uuid not null references auth.users(id) on delete cascade,
   reason text not null check (reason in (
     'sexual_content','nonconsensual_intimate','violence','hate_or_harassment',
@@ -76,7 +76,7 @@ revoke all on public.refugiart_admins from anon, authenticated;
 grant select, update on public.refugiart_notifications to authenticated;
 
 create or replace function public.refugiart_submit_post_report(
-  p_post_id uuid,
+  p_post_id bigint,
   p_reason text,
   p_details text default null
 ) returns jsonb
@@ -126,7 +126,7 @@ end;
 $$;
 
 create or replace function public.refugiart_review_post(
-  p_post_id uuid,
+  p_post_id bigint,
   p_decision text,
   p_note text default null
 ) returns void
@@ -180,8 +180,8 @@ begin
 end;
 $$;
 
-grant execute on function public.refugiart_submit_post_report(uuid,text,text) to authenticated;
-grant execute on function public.refugiart_review_post(uuid,text,text) to authenticated;
+grant execute on function public.refugiart_submit_post_report(bigint,text,text) to authenticated;
+grant execute on function public.refugiart_review_post(bigint,text,text) to authenticated;
 grant execute on function public.refugiart_admin_queue() to authenticated;
 
 commit;

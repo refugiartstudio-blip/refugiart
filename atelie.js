@@ -848,51 +848,61 @@ async function atualizarRelacionamentos(usuario) {
   const amigosEl = document.getElementById("total-amigos-artista");
   const fasEl = document.getElementById("total-fas-artista");
 
-  const { count: totalObras, error: erroObras } = await supabase
-    .from("atelie_posts").select("*", { count: "exact", head: true })
-    .eq("user_id", perfilIdAtelie);
-  if (!erroObras && obrasEl) obrasEl.textContent = totalObras ?? 0;
+  // A função retorna somente números públicos, sem expor solicitações privadas.
+  const { data: totais, error: erroTotais } = await supabase
+    .rpc("get_atelie_relationship_counts", { p_artist_id: perfilIdAtelie });
 
-  const { count: totalFas, error: erroFas } = await supabase
-    .from("atelie_fans").select("*", { count: "exact", head: true })
-    .eq("artist_id", perfilIdAtelie);
-  if (!erroFas && fasEl) fasEl.textContent = totalFas ?? 0;
-
-  const { data: relacoes, error } = await supabase
-    .from("atelie_friend_requests")
-    .select("id, requester_id, recipient_id, status")
-    .eq("status", "accepted")
-    .or(`requester_id.eq.${perfilIdAtelie},recipient_id.eq.${perfilIdAtelie}`);
-  if (!error && amigosEl) amigosEl.textContent = relacoes?.length ?? 0;
+  if (erroTotais) {
+    console.error("Erro ao consultar estatísticas do Ateliê:", erroTotais);
+    statusRelacao("Não foi possível carregar as estatísticas deste Ateliê.", true);
+  } else {
+    const dados = Array.isArray(totais) ? totais[0] : totais;
+    if (obrasEl) obrasEl.textContent = dados?.posts_count ?? 0;
+    if (amigosEl) amigosEl.textContent = dados?.friends_count ?? 0;
+    if (fasEl) fasEl.textContent = dados?.fans_count ?? 0;
+  }
 
   if (!usuario || usuario.id === perfilIdAtelie) {
     if (areaRelacionamento) areaRelacionamento.hidden = true;
+    if (areaSolicitacoes) areaSolicitacoes.hidden = true;
     return;
   }
 
   if (areaRelacionamento) areaRelacionamento.hidden = false;
 
-  const { data: souFa } = await supabase.from("atelie_fans")
+  const { data: souFa, error: erroSouFa } = await supabase.from("atelie_fans")
     .select("id").eq("fan_id", usuario.id).eq("artist_id", perfilIdAtelie).maybeSingle();
+  if (erroSouFa) console.warn("Não foi possível verificar o vínculo de fã:", erroSouFa);
+
   if (botaoFa) {
     botaoFa.textContent = souFa ? "Deixar de ser fã" : "Tornar-se fã";
     botaoFa.dataset.seguindo = souFa ? "sim" : "nao";
   }
 
+  // A policy SELECT permite consultar apenas pedidos em que o usuário participa.
   const { data: pedidos, error: erroPedidos } = await supabase
     .from("atelie_friend_requests")
     .select("id, requester_id, recipient_id, status")
     .or(`and(requester_id.eq.${usuario.id},recipient_id.eq.${perfilIdAtelie}),and(requester_id.eq.${perfilIdAtelie},recipient_id.eq.${usuario.id})`)
     .order("created_at", { ascending: false });
 
-  const relacao = !erroPedidos && pedidos?.find(p => p.status === "accepted");
-  const enviado = !erroPedidos && pedidos?.find(p => p.requester_id === usuario.id && p.status === "pending");
-  const recebido = !erroPedidos && pedidos?.find(p => p.recipient_id === usuario.id && p.status === "pending");
+  if (erroPedidos) {
+    console.warn("Não foi possível consultar a relação de amizade:", erroPedidos);
+    statusRelacao("Não foi possível verificar a amizade. Confira as permissões da tabela.", true);
+  }
+
+  const relacoesValidas = pedidos || [];
+  const relacao = relacoesValidas.find(p => p.status === "accepted");
+  const enviado = relacoesValidas.find(p => p.requester_id === usuario.id && p.status === "pending");
+  const recebido = relacoesValidas.find(p => p.recipient_id === usuario.id && p.status === "pending");
 
   if (botaoAmizade) {
-    botaoAmizade.disabled = false;
-    botaoAmizade.textContent = relacao ? "Vocês são amigos" : enviado ? "Solicitação enviada" : recebido ? "Responder solicitação abaixo" : "Adicionar amizade";
-    botaoAmizade.disabled = !!relacao || !!recebido;
+    botaoAmizade.disabled = !!relacao || !!recebido || !!erroPedidos;
+    botaoAmizade.textContent = relacao ? "Vocês são amigos"
+      : enviado ? "Solicitação enviada"
+      : recebido ? "Responder solicitação abaixo"
+      : erroPedidos ? "Amizade indisponível"
+      : "Adicionar amizade";
   }
 
   if (areaSolicitacoes && listaSolicitacoes) {

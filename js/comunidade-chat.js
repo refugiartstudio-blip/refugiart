@@ -497,6 +497,85 @@ function configurarMensagem(mensagem) {
     configurarMensagensExistentes(area);
   });
 
+
+  // SELETOR DE EMOJIS — MODELO 2
+  const gruposEmojis = {
+    recentes: ["😂","❤️","🙏","☕","🔥","😍","👏","🎨","🖌️","🌻","✨","🤔","😎","🥰","🙌","💚","😭","🤣"],
+    rostos: ["😀","😃","😄","😁","😆","😅","😂","🤣","🥲","😊","😍","🥰","😘","😎","🤔","😴","😭","😡","🤗","🤩","🥳","😇","😌","🙃"],
+    gestos: ["👋","🤚","✋","👌","🤌","🤏","✌️","🤞","🫶","👏","🙌","🙏","💪","👍","👎","🤝","☝️","👇"],
+    coracoes: ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","💕","💞","💓","💗","💖","💘","💝","💟"],
+    comida: ["☕","🍵","🥐","🍞","🧀","🍎","🍓","🍉","🍕","🍔","🍟","🍰","🍫","🍩","🥑","🍇"],
+    natureza: ["🌱","🌿","🍀","🌻","🌷","🌹","🌳","🌴","🌵","🍃","🌎","🌙","⭐","🌈","🦋","🐝","🐢","🐦"],
+    arte: ["🎨","🖌️","🖍️","✏️","🖋️","🎭","🎬","📷","🎼","🎸","🧵","🧶","🖼️","📚","💡","✨"]
+  };
+  const iconesCategorias = [["recentes","⏱"],["rostos","😀"],["gestos","👋"],["coracoes","❤️"],["comida","☕"],["natureza","🌿"],["arte","🎨"]];
+
+  document.querySelectorAll(".formulario-mensagem").forEach(form => {
+    const botao = form.querySelector(".botao-emojis");
+    const campo = form.querySelector("input");
+    if (!botao || !campo) return;
+    const painel = document.createElement("div");
+    painel.className = "seletor-emojis";
+    painel.hidden = true;
+    const categorias = document.createElement("div");
+    categorias.className = "categorias-emojis";
+    const busca = document.createElement("input");
+    busca.className = "busca-emojis";
+    busca.type = "search";
+    busca.placeholder = "Pesquisar emoji...";
+    busca.setAttribute("aria-label", "Pesquisar emoji");
+    const grade = document.createElement("div");
+    grade.className = "grade-emojis";
+    painel.append(categorias, busca, grade);
+    form.appendChild(painel);
+    let categoriaAtual = "recentes";
+
+    function desenharEmojis() {
+      const termo = busca.value.trim();
+      const lista = termo ? [...new Set(Object.values(gruposEmojis).flat())].filter(e => e.includes(termo)) : gruposEmojis[categoriaAtual];
+      grade.innerHTML = "";
+      lista.forEach(emoji => {
+        const item = document.createElement("button");
+        item.type = "button"; item.textContent = emoji;
+        item.addEventListener("click", () => {
+          const inicio = campo.selectionStart ?? campo.value.length;
+          const fim = campo.selectionEnd ?? campo.value.length;
+          campo.value = campo.value.slice(0, inicio) + emoji + campo.value.slice(fim);
+          const pos = inicio + emoji.length;
+          campo.focus(); campo.setSelectionRange(pos, pos);
+          painel.hidden = true; botao.setAttribute("aria-expanded", "false");
+          campo.dispatchEvent(new Event("input", { bubbles: true }));
+        });
+        grade.appendChild(item);
+      });
+    }
+    function desenharCategorias() {
+      categorias.innerHTML = "";
+      iconesCategorias.forEach(([nome, icone]) => {
+        const item = document.createElement("button");
+        item.type = "button"; item.textContent = icone; item.title = nome;
+        item.setAttribute("aria-label", "Categoria " + nome);
+        item.classList.toggle("ativa", nome === categoriaAtual);
+        item.addEventListener("click", () => { categoriaAtual = nome; busca.value = ""; desenharCategorias(); desenharEmojis(); });
+        categorias.appendChild(item);
+      });
+    }
+    botao.addEventListener("click", () => {
+      const abrir = painel.hidden;
+      document.querySelectorAll(".seletor-emojis").forEach(outro => {
+        outro.hidden = true;
+        outro.parentElement.querySelector(".botao-emojis")?.setAttribute("aria-expanded", "false");
+      });
+      painel.hidden = !abrir;
+      botao.setAttribute("aria-expanded", String(abrir));
+    });
+    busca.addEventListener("input", desenharEmojis);
+    document.addEventListener("click", evento => {
+      if (!form.contains(evento.target)) { painel.hidden = true; botao.setAttribute("aria-expanded", "false"); }
+    });
+    desenharCategorias(); desenharEmojis();
+  });
+
   atualizarResposta("global");
   atualizarResposta("comunidade");
 });

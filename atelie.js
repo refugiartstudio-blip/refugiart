@@ -1036,7 +1036,7 @@ async function atualizarRelacionamentos(usuario) {
   if (erroSouFa) console.warn("Não foi possível verificar o vínculo de fã:", erroSouFa);
 
   if (botaoFa) {
-    botaoFa.textContent = souFa ? "Deixar de ser fã" : "Tornar-se fã";
+    botaoFa.textContent = souFa ? "Deixar de ser fã" : "Tornar fã";
     botaoFa.dataset.seguindo = souFa ? "sim" : "nao";
   }
 

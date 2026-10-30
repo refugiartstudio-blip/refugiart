@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let respostaGlobal = null;
   let respostaComunidade = null;
   let contatoAtual = null;
+  let salaPrivadaAtual = null;
 
   const nomesZonas = {
     desenho: "✏️ Desenho",
@@ -192,7 +193,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     canalChat = supabase.channel("refugiart-chat-publico")
       .on("postgres_changes", {event:"INSERT",schema:"public",table:"chat_messages"}, async payload => {
         const m = payload.new;
-        if (m.room_type === "global") {
+        if (m.room_type === "privado" && contatoAtual && m.room_key === salaPrivadaAtual) {
+          await carregarMensagensPrivadas();
+        } else if (m.room_type === "global") {
           await carregarMensagens("global", "global", document.getElementById("mensagensGlobal"));
         } else if (m.room_type === "comunidade" && m.room_key === salaAtual) {
           await carregarMensagens("comunidade", salaAtual, document.getElementById("mensagensComunidade"));
@@ -294,8 +297,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       const texto = campo.value.trim();
       if (!texto) return;
       if (tipo === "privado") {
-        alert("As conversas privadas serão conectadas na próxima etapa.");
-        return;
+        if (!contatoAtual) { alert("Pesquise e selecione um artista antes de enviar."); return; }
+        const { error } = await supabase.from("chat_messages").insert({ user_id: usuarioAtual.id, recipient_id: contatoAtual.id, content: texto, room_type: "privado", room_key: salaPrivadaAtual });
+        if (error) { console.error(error); alert("Não foi possível enviar: " + error.message); return; }
+        campo.value = ""; await carregarMensagensPrivadas(); await carregarListaConversas(); return;
       }
       const chave = tipo === "global" ? "global" : salaAtual;
       const enviado = await enviarMensagem(tipo, chave, texto);
@@ -393,36 +398,88 @@ document.addEventListener("DOMContentLoaded", async () => {
   // =====================================
   // CONVERSAS PRIVADAS
   // =====================================
+  const buscaArtistas = document.getElementById("buscarArtistas");
+  const resultadosArtistas = document.getElementById("resultadosArtistas");
+  const listaConversas = document.getElementById("listaConversas");
 
-  const conversas = document.querySelectorAll(".item-conversa");
+  function criarItemConversa(perfil, previa = "Abrir conversa") {
+    const botao = document.createElement("button");
+    botao.type = "button"; botao.className = "item-conversa"; botao.dataset.userId = perfil.id;
+    const avatar = document.createElement("div"); avatar.className = "avatar";
+    avatar.textContent = (perfil.nome_artistico || "A").charAt(0).toUpperCase();
+    const dados = document.createElement("div"); const nome = document.createElement("strong");
+    nome.textContent = perfil.nome_artistico || "Artista";
+    const detalhe = document.createElement("p"); detalhe.textContent = previa;
+    dados.append(nome, detalhe); botao.append(avatar, dados);
+    botao.addEventListener("click", () => selecionarContato(perfil));
+    return botao;
+  }
 
-  conversas.forEach(botao => {
-    botao.addEventListener("click", () => selecionarContato(botao.dataset.usuario));
+  buscaArtistas?.addEventListener("input", async () => {
+    const termo = buscaArtistas.value.trim(); resultadosArtistas.innerHTML = "";
+    if (termo.length < 2) return;
+    const { data, error } = await supabase.from("profiles")
+      .select("id, nome_artistico, nome_atelie, foto_url")
+      .ilike("nome_artistico", "%" + termo + "%").neq("id", usuarioAtual.id)
+      .order("nome_artistico", { ascending: true }).limit(10);
+    if (error) {
+      console.error(error); const aviso = document.createElement("p");
+      aviso.textContent = "Não foi possível pesquisar. Verifique as permissões de profiles no Supabase.";
+      resultadosArtistas.appendChild(aviso); return;
+    }
+    if (!data?.length) { const aviso = document.createElement("p"); aviso.textContent = "Nenhum artista encontrado."; resultadosArtistas.appendChild(aviso); return; }
+    data.forEach(perfil => {
+      const item = criarItemConversa(perfil, perfil.nome_atelie || "Iniciar conversa");
+      item.classList.add("resultado-artista"); resultadosArtistas.appendChild(item);
+    });
   });
 
-  function selecionarContato(nome) {
-    contatoAtual = nome;
-
-    const nomeContato = document.getElementById("nomeContato");
-    const statusContato = document.getElementById("statusContato");
-    const campo = document.getElementById("campoPrivado");
-    const enviar = document.querySelector("#formPrivado .botao-enviar");
+  async function carregarMensagensPrivadas() {
+    if (!contatoAtual || !salaPrivadaAtual) return;
     const area = document.getElementById("mensagensPrivadas");
-
-    if (nomeContato) nomeContato.textContent = nome;
-    if (statusContato) statusContato.textContent = "Conversa privada";
-    if (campo) campo.disabled = false;
-    if (enviar) enviar.disabled = false;
-
-    document.querySelectorAll(".item-conversa").forEach(item => {
-      item.classList.toggle("ativa", item.dataset.usuario === nome);
+    const { data, error } = await supabase.from("chat_messages")
+      .select("id, user_id, recipient_id, content, created_at")
+      .eq("room_type", "privado").eq("room_key", salaPrivadaAtual)
+      .order("created_at", { ascending: true }).limit(200);
+    if (error) { console.error(error); mostrarVazio(area, "Não foi possível carregar esta conversa."); return; }
+    area.innerHTML = "";
+    if (!data?.length) mostrarVazio(area, "Esta conversa ainda não tem mensagens. Envie a primeira!");
+    (data || []).forEach(m => {
+      const propria = m.user_id === usuarioAtual.id;
+      const item = criarMensagem(area, propria ? nomeAtual : contatoAtual.nome_artistico, m.content, propria);
+      item.dataset.messageId = m.id;
+      const horario = item.querySelector(".identificacao span");
+      if (horario) horario.textContent = new Date(m.created_at).toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"});
     });
-
-    if (area) {
-      area.innerHTML = historicoPrivado[nome] || "";
-      configurarMensagensExistentes(area);
-    }
+    await carregarReacoes(data.map(m => m.id), area); area.scrollTop = area.scrollHeight;
   }
+
+  async function carregarListaConversas() {
+    const { data, error } = await supabase.from("chat_messages")
+      .select("user_id, recipient_id").eq("room_type", "privado")
+      .order("created_at", { ascending: false }).limit(300);
+    if (error) { console.error(error); return; }
+    const ids = [...new Set((data || []).map(m => m.user_id === usuarioAtual.id ? m.recipient_id : m.user_id).filter(Boolean))];
+    listaConversas.innerHTML = "";
+    if (!ids.length) { mostrarVazio(listaConversas, "Suas conversas privadas aparecerão aqui quando você iniciar uma conversa."); return; }
+    const { data: perfis, error: erroPerfis } = await supabase.from("profiles")
+      .select("id, nome_artistico, nome_atelie, foto_url").in("id", ids);
+    if (erroPerfis) { console.error(erroPerfis); return; }
+    const mapa = Object.fromEntries((perfis || []).map(p => [p.id, p]));
+    ids.forEach(id => { if (mapa[id]) listaConversas.appendChild(criarItemConversa(mapa[id], "Conversa privada")); });
+  }
+
+  function selecionarContato(perfil) {
+    contatoAtual = perfil; salaPrivadaAtual = [usuarioAtual.id, perfil.id].sort().join(":");
+    document.getElementById("nomeContato").textContent = perfil.nome_artistico || "Artista";
+    document.getElementById("statusContato").textContent = "Conversa privada";
+    document.getElementById("campoPrivado").disabled = false;
+    document.querySelector("#formPrivado .botao-enviar").disabled = false;
+    document.querySelectorAll(".item-conversa").forEach(item => item.classList.toggle("ativa", item.dataset.userId === perfil.id));
+    resultadosArtistas.innerHTML = ""; buscaArtistas.value = ""; carregarMensagensPrivadas();
+  }
+
+  carregarListaConversas();
 
   // =====================================
   // MENU DE MENSAGENS

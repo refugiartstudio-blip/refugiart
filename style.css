@@ -790,7 +790,7 @@ footer {
 .hero-conteudo h2 {
   color: #243e35;
   font-family: Georgia, serif;
-  font-size: clamp(26px, 3.5vw, 40px);
+  font-size: clamp(24px, 3vw, 32px);
   line-height: 1.12;
   margin: 16px 0;
 }
@@ -1295,8 +1295,8 @@ footer {
     gap: 28px;
   }
 
-  .hero-conteudo h2 {
-    font-size: 34px;
+   .hero-conteudo h2 {
+    font-size: 26px;
   }
 
   .arte-destaque {

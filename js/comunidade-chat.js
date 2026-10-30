@@ -142,19 +142,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const messageId = mensagem.dataset.messageId;
     if (!messageId) return;
     const { data: existente, error: erroBusca } = await supabase.from("chat_reactions")
-      .select("id, emoji").eq("message_id", messageId).eq("user_id", usuarioAtual.id).maybeSingle();
+      .select("id").eq("message_id", messageId)
+      .eq("user_id", usuarioAtual.id).eq("emoji", emoji).maybeSingle();
     if (erroBusca) {
       console.error("Erro ao consultar reação:", erroBusca);
       alert("Não foi possível atualizar a reação.");
       return;
     }
     let resultado;
-    if (existente?.emoji === emoji) {
+    if (existente) {
       resultado = await supabase.from("chat_reactions").delete()
-        .eq("message_id", messageId).eq("user_id", usuarioAtual.id);
-    } else if (existente) {
-      resultado = await supabase.from("chat_reactions").update({ emoji })
-        .eq("message_id", messageId).eq("user_id", usuarioAtual.id);
+        .eq("id", existente.id);
     } else {
       resultado = await supabase.from("chat_reactions").insert({
         message_id: messageId, user_id: usuarioAtual.id, emoji

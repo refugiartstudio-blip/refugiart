@@ -33,9 +33,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.body.dataset.logado = String(estaLogado);
 
     const itemPerfil = document.getElementById("itemPerfil");
-    let linkLogin = document.getElementById("linkLogin");
+    let linkLogin = document.body.classList.contains("pagina-atelie")
+      ? null
+      : document.getElementById("linkLogin");
 
-    if (!linkLogin) {
+    if (!document.body.classList.contains("pagina-atelie") && !linkLogin) {
       const navegacao = document.querySelector(".navegacao-principal");
       if (navegacao) {
         linkLogin = document.createElement("a");

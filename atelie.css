@@ -1777,3 +1777,23 @@
 @media (prefers-reduced-motion: reduce) {
   .pagina-atelie .painel-publicacao-atelie { transition: none; }
 }
+
+
+/* Botão Publicar no perfil: substitui o atalho Explorar galeria */
+.pagina-atelie .botao-publicar-perfil {
+  width: auto;
+  min-height: 30px;
+  margin-top: 2px;
+  padding: 6px 12px;
+  border: 0;
+  cursor: pointer;
+  font: 700 11px Arial, Helvetica, sans-serif;
+  line-height: 1.2;
+  box-shadow: none;
+}
+.pagina-atelie .botao-publicar-perfil span {
+  font-size: 13px;
+}
+.pagina-atelie .botao-publicar-perfil[hidden] {
+  display: none;
+}

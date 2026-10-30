@@ -255,7 +255,7 @@ async function buscarPerfil(userId) {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, nome_artistico, foto_url")
+    .select("id, nome_artistico, nome_atelie, biografia, area_atuacao, foto_url")
     .eq("id", userId)
     .maybeSingle();
 
@@ -752,6 +752,24 @@ botaoAtualizar?.addEventListener("click", async () => {
 
 atualizarEstadoCategorias();
 carregarObras();
+
+async function carregarIdentidadeAtelie() {
+  const usuario = await obterUsuario();
+  if (!usuario) return;
+  const perfil = await buscarPerfil(usuario.id);
+  if (!perfil) return;
+  const titulo = document.getElementById("nome-artista-atelie");
+  const artista = document.getElementById("artista-responsavel-atelie");
+  const area = document.getElementById("area-artista-atelie");
+  const bio = document.getElementById("bio-artista-atelie");
+  const foto = document.getElementById("foto-artista-atelie");
+  if (titulo) titulo.textContent = perfil.nome_atelie?.trim() || "Meu Ateliê";
+  if (artista) artista.textContent = perfil.nome_artistico?.trim() || "Artista RefugiART";
+  if (area) area.textContent = perfil.area_atuacao || "Espaço artístico";
+  if (bio) bio.textContent = perfil.biografia?.trim() || "Este espaço reúne a trajetória e as criações do artista.";
+  if (foto && perfil.foto_url) foto.src = perfil.foto_url;
+}
+carregarIdentidadeAtelie();
 
 
 /* ---------- Aba de publicação exclusiva do próprio artista logado ---------- */

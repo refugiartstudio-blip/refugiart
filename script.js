@@ -33,7 +33,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.body.dataset.logado = String(estaLogado);
 
     const itemPerfil = document.getElementById("itemPerfil");
-    const linkLogin = document.getElementById("linkLogin");
+    let linkLogin = document.getElementById("linkLogin");
+
+    if (!linkLogin) {
+      const navegacao = document.querySelector(".navegacao-principal");
+      if (navegacao) {
+        linkLogin = document.createElement("a");
+        linkLogin.id = "linkLogin";
+        navegacao.appendChild(linkLogin);
+      }
+    }
 
     if (itemPerfil) {
       itemPerfil.hidden = !estaLogado;
@@ -41,8 +50,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     if (linkLogin) {
-      linkLogin.textContent = estaLogado ? "Meu perfil" : "Login";
-      linkLogin.href = estaLogado ? "perfil.html" : "login.html";
+      linkLogin.textContent = estaLogado ? "Ateliê" : "Login";
+      linkLogin.href = estaLogado ? "atelie.html" : "login.html";
+      linkLogin.hidden = false;
     }
 
     document.querySelectorAll("[data-link-login]").forEach((link) => {

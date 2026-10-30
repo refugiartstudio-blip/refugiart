@@ -153,14 +153,9 @@
         </div>
 
         <div class="perfil-campo">
-          <label for="area">Área de atuação</label>
-          <input
-            id="area"
-            name="area"
-            type="text"
-            maxlength="120"
-            placeholder="Ex.: desenho, pintura, tatuagem"
-          >
+          <label for="nome-atelie">Nome do ateliê *</label>
+          <input id="nome-atelie" name="nome-atelie" type="text" maxlength="100"
+            placeholder="Nome que aparecerá no seu espaço artístico" required>
         </div>
 
         <div class="perfil-campo">
@@ -182,6 +177,8 @@
         >
           Salvar meu perfil
         </button>
+
+        <button type="button" id="botao-sair" class="perfil-botao-sair">Sair da conta</button>
 
         <p
           id="status"

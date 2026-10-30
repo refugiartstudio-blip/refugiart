@@ -360,3 +360,9 @@
 }
 
 
+
+/* Botão de encerramento de sessão */
+.perfil-botao-sair { width:100%; min-height:48px; padding:12px 18px; border:1px solid #b85b50; border-radius:11px; background:#fff; color:#9d3f36; font:inherit; font-weight:700; cursor:pointer; }
+.perfil-botao-sair:hover { background:#fff3f1; }
+.perfil-botao-sair:disabled { opacity:.6; cursor:wait; }
+.perfil-publico-artista { margin:4px 0 0; color:#68756b; font-size:.92rem; }

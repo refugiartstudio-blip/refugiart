@@ -270,99 +270,235 @@ document.addEventListener("DOMContentLoaded", async function () {
   });
 
   // ==========================================
-  // 6. PUBLICAÇÕES DE TEXTO — VISUAIS
+  // 6. REFLEXIARTS — PUBLICAÇÃO E CARROSSEL
   // ==========================================
 
   const formPublicacao = document.getElementById("form-publicacao");
   const campoPublicacao = document.getElementById("texto-publicacao");
+  const listaReflexiarts = document.getElementById("lista-reflexiarts");
+  const indicadoresReflexiart = document.getElementById("reflexiart-indicadores");
+  const botaoReflexiartAnterior = document.getElementById("reflexiart-anterior");
+  const botaoReflexiartProxima = document.getElementById("reflexiart-proxima");
+
+  let reflexiarts = [];
+  let indiceReflexiart = 0;
+  let intervaloReflexiart = null;
+
+  function embaralharReflexiarts(lista) {
+    const copia = [...lista];
+    for (let i = copia.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copia[i], copia[j]] = [copia[j], copia[i]];
+    }
+    return copia;
+  }
+
+  function tempoRelativo(data) {
+    const instante = new Date(data).getTime();
+    if (!Number.isFinite(instante)) return "";
+    const minutos = Math.max(0, Math.floor((Date.now() - instante) / 60000));
+    if (minutos < 1) return "Agora mesmo";
+    if (minutos < 60) return "Há " + minutos + (minutos === 1 ? " minuto" : " minutos");
+    const horas = Math.floor(minutos / 60);
+    if (horas < 24) return "Há " + horas + (horas === 1 ? " hora" : " horas");
+    const dias = Math.floor(horas / 24);
+    return "Há " + dias + (dias === 1 ? " dia" : " dias");
+  }
+
+  function renderizarReflexiart() {
+    if (!listaReflexiarts || !indicadoresReflexiart) return;
+    listaReflexiarts.replaceChildren();
+    indicadoresReflexiart.replaceChildren();
+
+    if (!reflexiarts.length) {
+      const vazio = document.createElement("p");
+      vazio.className = "reflexiart-carregando";
+      vazio.textContent = "As reflexões compartilhadas pelos artistas aparecerão aqui.";
+      listaReflexiarts.appendChild(vazio);
+      botaoReflexiartAnterior && (botaoReflexiartAnterior.disabled = true);
+      botaoReflexiartProxima && (botaoReflexiartProxima.disabled = true);
+      return;
+    }
+
+    indiceReflexiart = (indiceReflexiart + reflexiarts.length) % reflexiarts.length;
+    const item = reflexiarts[indiceReflexiart];
+
+    const cartao = document.createElement("article");
+    cartao.className = "cartao-reflexiart";
+
+    const topo = document.createElement("div");
+    topo.className = "cartao-reflexiart-topo";
+
+    const avatar = document.createElement("div");
+    avatar.className = "reflexiart-avatar";
+    if (item.perfil?.foto_url) {
+      const imagem = document.createElement("img");
+      imagem.src = item.perfil.foto_url;
+      imagem.alt = "Foto de " + (item.perfil.nome_artistico || "artista");
+      imagem.loading = "lazy";
+      imagem.onerror = () => { imagem.remove(); avatar.textContent = "✦"; };
+      avatar.appendChild(imagem);
+    } else {
+      avatar.textContent = (item.perfil?.nome_artistico || item.perfil?.nome_atelie || "R").charAt(0).toUpperCase();
+    }
+
+    const identidade = document.createElement("div");
+    identidade.className = "reflexiart-identidade";
+    const atelie = document.createElement("strong");
+    atelie.textContent = item.perfil?.nome_atelie?.trim() || "Ateliê RefugiART";
+    const artista = document.createElement("span");
+    artista.textContent = item.perfil?.nome_artistico?.trim() || "Artista da comunidade";
+    const horario = document.createElement("small");
+    horario.textContent = tempoRelativo(item.created_at);
+    identidade.append(atelie, artista, horario);
+    topo.append(avatar, identidade);
+
+    const categoria = document.createElement("span");
+    categoria.className = "categoria-reflexiart";
+    categoria.textContent = item.category || "Arte e cultura";
+
+    const texto = document.createElement("p");
+    texto.className = "reflexiart-texto";
+    texto.textContent = item.content;
+
+    const rodape = document.createElement("div");
+    rodape.className = "reflexiart-rodape";
+    rodape.textContent = "Uma reflexão compartilhada na RefugiART";
+
+    cartao.append(topo, categoria, texto, rodape);
+    listaReflexiarts.appendChild(cartao);
+
+    reflexiarts.forEach((_, indice) => {
+      const ponto = document.createElement("button");
+      ponto.type = "button";
+      ponto.className = "reflexiart-ponto" + (indice === indiceReflexiart ? " ativo" : "");
+      ponto.setAttribute("aria-label", "Mostrar reflexão " + (indice + 1));
+      ponto.setAttribute("aria-current", indice === indiceReflexiart ? "true" : "false");
+      ponto.addEventListener("click", () => {
+        indiceReflexiart = indice;
+        renderizarReflexiart();
+        reiniciarRotacaoReflexiart();
+      });
+      indicadoresReflexiart.appendChild(ponto);
+    });
+
+    if (botaoReflexiartAnterior) botaoReflexiartAnterior.disabled = reflexiarts.length < 2;
+    if (botaoReflexiartProxima) botaoReflexiartProxima.disabled = reflexiarts.length < 2;
+  }
+
+  function reiniciarRotacaoReflexiart() {
+    if (intervaloReflexiart) clearInterval(intervaloReflexiart);
+    if (reflexiarts.length > 1) {
+      intervaloReflexiart = setInterval(() => {
+        indiceReflexiart = (indiceReflexiart + 1) % reflexiarts.length;
+        renderizarReflexiart();
+      }, 7000);
+    }
+  }
+
+  async function carregarReflexiarts() {
+    if (!listaReflexiarts || !supabase) return;
+    const { data, error } = await supabase
+      .from("reflexiarts")
+      .select("id, user_id, content, category, created_at")
+      .order("created_at", { ascending: false })
+      .limit(60);
+
+    if (error) {
+      console.error("Erro ao carregar ReflexiARTs:", error);
+      listaReflexiarts.textContent = "Não foi possível carregar as ReflexiARTs agora.";
+      return;
+    }
+
+    const publicacoes = data || [];
+    const ids = [...new Set(publicacoes.map(item => item.user_id).filter(Boolean))];
+    let perfis = {};
+
+    if (ids.length) {
+      const { data: dadosPerfis, error: erroPerfis } = await supabase
+        .from("profiles")
+        .select("id, nome_artistico, nome_atelie, foto_url")
+        .in("id", ids);
+      if (erroPerfis) console.warn("Não foi possível carregar os perfis das ReflexiARTs:", erroPerfis);
+      else perfis = Object.fromEntries((dadosPerfis || []).map(perfil => [perfil.id, perfil]));
+    }
+
+    reflexiarts = embaralharReflexiarts(publicacoes.map(item => ({
+      ...item,
+      perfil: perfis[item.user_id] || null
+    })));
+    indiceReflexiart = 0;
+    renderizarReflexiart();
+    reiniciarRotacaoReflexiart();
+  }
+
+  botaoReflexiartAnterior?.addEventListener("click", () => {
+    indiceReflexiart--;
+    renderizarReflexiart();
+    reiniciarRotacaoReflexiart();
+  });
+
+  botaoReflexiartProxima?.addEventListener("click", () => {
+    indiceReflexiart++;
+    renderizarReflexiart();
+    reiniciarRotacaoReflexiart();
+  });
 
   if (formPublicacao && campoPublicacao) {
-    formPublicacao.addEventListener("submit", (evento) => {
+    formPublicacao.addEventListener("submit", async (evento) => {
       evento.preventDefault();
 
       const texto = campoPublicacao.value.trim();
+      const categoria = document.getElementById("categoria-publicacao")?.value || "";
       const feed = document.getElementById("feed");
 
       if (!texto || !feed) return;
+      if (!usuarioAtual) {
+        alert("Entre na sua conta para compartilhar uma ReflexiART.");
+        window.location.href = "login.html";
+        return;
+      }
+      if (!categoria) {
+        alert("Selecione a área da sua ReflexiART.");
+        return;
+      }
 
-      const publicacao = document.createElement("article");
-      publicacao.className = "publicacao";
+      const botao = formPublicacao.querySelector('button[type="submit"]');
+      if (botao) {
+        botao.disabled = true;
+        botao.textContent = "Compartilhando...";
+      }
 
-      const cabecalho = document.createElement("div");
-      cabecalho.className = "autor";
+      try {
+        const { error } = await supabase
+          .from("reflexiarts")
+          .insert({
+            user_id: usuarioAtual.id,
+            content: texto,
+            category: categoria
+          });
 
-      const avatar = document.createElement("div");
-      avatar.className = "avatar";
-      avatar.textContent = (
-        usuarioAtual?.user_metadata?.nome ||
-        usuarioAtual?.email ||
-        "A"
-      ).charAt(0).toUpperCase();
+        if (error) throw error;
 
-      const identificacao = document.createElement("div");
-      const nome = document.createElement("strong");
-      nome.textContent = usuarioAtual?.user_metadata?.nome ||
-        usuarioAtual?.email || "Artista RefugiART";
-
-      const data = document.createElement("p");
-      data.textContent = "Agora";
-
-      identificacao.append(nome, data);
-      cabecalho.append(avatar, identificacao);
-
-      const categoriaSelecionada = document.getElementById("categoria-publicacao")?.value || "Arte e cultura";
-      const categoria = document.createElement("span");
-      categoria.className = "categoria-reflexiart";
-      categoria.textContent = categoriaSelecionada;
-
-      const mensagem = document.createElement("p");
-      mensagem.textContent = texto;
-
-      const acoes = document.createElement("div");
-      acoes.className = "acoes-publicacao";
-
-      const curtir = document.createElement("button");
-      curtir.type = "button";
-      curtir.className = "botao-curtir";
-      curtir.textContent = "♡ Curtir";
-
-      const comentar = document.createElement("button");
-      comentar.type = "button";
-      comentar.className = "botao-comentar";
-      comentar.textContent = "Comentar";
-
-      acoes.append(curtir, comentar);
-
-      const area = document.createElement("div");
-      area.className = "area-comentarios";
-      area.hidden = true;
-
-      const formulario = document.createElement("form");
-      formulario.className = "form-comentario";
-
-      const campo = document.createElement("input");
-      campo.type = "text";
-      campo.className = "texto-comentario";
-      campo.placeholder = "Escreva um comentário...";
-      campo.maxLength = 300;
-      campo.required = true;
-
-      const enviar = document.createElement("button");
-      enviar.type = "submit";
-      enviar.textContent = "Publicar";
-
-      formulario.append(campo, enviar);
-
-      const lista = document.createElement("div");
-      lista.className = "lista-comentarios";
-
-      area.append(formulario, lista);
-      publicacao.append(cabecalho, categoria, mensagem, acoes, area);
-
-      formPublicacao.insertAdjacentElement("afterend", publicacao);
-      formPublicacao.reset();
+        formPublicacao.reset();
+        await carregarReflexiarts();
+        document.getElementById("carrossel-reflexiart")?.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      } catch (erro) {
+        console.error("Erro ao publicar ReflexiART:", erro);
+        alert("Não foi possível publicar sua ReflexiART: " + (erro.message || "Tente novamente."));
+      } finally {
+        if (botao) {
+          botao.disabled = false;
+          botao.textContent = "Compartilhar ReflexiART";
+        }
+      }
     });
   }
+
+  carregarReflexiarts();
 
   // ==========================================
   // 7. PERFIL VISUAL DE DEMONSTRAÇÃO

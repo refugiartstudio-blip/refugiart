@@ -465,6 +465,20 @@ function criarCartaoObra(obra) {
     obra.category || "Outros"
   );
 
+  if (souDonoDoAtelie && obra.moderation_status && obra.moderation_status !== "published") {
+    const aviso = criarElemento("div", "aviso-moderacao-obra",
+      obra.moderation_status === "under_review"
+        ? "⚠ Publicação denunciada — em análise administrativa. Visível somente para você."
+        : "⛔ Publicação removida da visualização pública após revisão administrativa.");
+    aviso.setAttribute("role", "status");
+    artigo.appendChild(aviso);
+  }
+
+  if (obra.content_sensitive) {
+    artigo.appendChild(criarElemento("div", "aviso-sensivel-obra",
+      "⚠ Conteúdo sensível — pode conter nudez artística, violência, terror ou imagens perturbadoras."));
+  }
+
   const imagem = document.createElement("img");
 
   imagem.className = "obra-imagem";
@@ -490,6 +504,40 @@ function criarCartaoObra(obra) {
   );
 
   conteudo.append(categoria, legenda);
+
+  obterUsuario().then(usuario => {
+    if (!usuario || usuario.id === obra.user_id || obra.moderation_status !== "published") return;
+    const denunciar = criarElemento("button", "botao-denunciar-obra", "⚑ Denunciar");
+    denunciar.type = "button";
+    denunciar.addEventListener("click", async () => {
+      const motivo = window.prompt(
+        "Motivo: 1 Conteúdo sexual proibido; 2 Imagem íntima sem consentimento; 3 Violência; 4 Ódio/assédio; 5 Segurança de menores; 6 Conteúdo sensível sem aviso; 7 Spam; 8 Outro",
+        "8"
+      );
+      if (motivo === null) return;
+      const motivos = {"1":"sexual_content","2":"nonconsensual_intimate","3":"violence","4":"hate_or_harassment","5":"minor_safety","6":"missing_sensitive_warning","7":"spam","8":"other"};
+      if (!motivos[motivo]) { window.alert("Escolha um número entre 1 e 8."); return; }
+      denunciar.disabled = true;
+      try {
+        const {data,error} = await supabase.rpc("refugiart_submit_post_report", {
+          p_post_id: obra.id, p_reason: motivos[motivo], p_details: null
+        });
+        if (error) throw error;
+        window.alert(data?.already_reported
+          ? "Você já denunciou esta publicação."
+          : data?.under_review
+            ? "Denúncia registrada. A publicação atingiu o limite e foi ocultada para revisão."
+            : "Denúncia registrada. Obrigado por ajudar a comunidade.");
+      } catch (erro) {
+        window.alert("Não foi possível registrar: " + (erro.message || "tente novamente."));
+        denunciar.disabled = false;
+      }
+    });
+    const acoes = criarElemento("div", "obra-acoes-moderacao");
+    acoes.appendChild(denunciar);
+    artigo.appendChild(acoes);
+  });
+
   artigo.append(cabecalho, imagem, conteudo);
 
   return artigo;
@@ -598,7 +646,7 @@ async function carregarObras() {
 
     const { data: obras, error } = await supabase
       .from("atelie_posts")
-      .select("id, user_id, image_url, caption, category, created_at")
+      .select("id, user_id, image_url, caption, category, created_at, moderation_status, content_sensitive")
       .eq("user_id", perfilIdAtelie)
       .order("created_at", { ascending: false })
       .limit(50);
@@ -704,6 +752,7 @@ form?.addEventListener("submit", async (evento) => {
 
     const publicarComunidade = document.getElementById("publicar-comunidade")?.checked || false;
     const publicarMercado = document.getElementById("publicar-mercado")?.checked || false;
+    const conteudoSensivel = document.getElementById("conteudo-sensivel-obra")?.checked || false;
     const campoPreco = document.getElementById("preco-obra");
     const precoTexto = (campoPreco?.value || "").trim().replace(",", ".");
     const preco = publicarMercado ? Number(precoTexto) : null;
@@ -765,7 +814,8 @@ form?.addEventListener("submit", async (evento) => {
         category: categoria,
         publicar_comunidade: publicarComunidade,
         publicar_mercado: publicarMercado,
-        preco: publicarMercado ? preco : null
+        preco: publicarMercado ? preco : null,
+        content_sensitive: conteudoSensivel
       });
 
     if (erroPublicacao) throw erroPublicacao;

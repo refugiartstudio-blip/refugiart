@@ -622,8 +622,9 @@ form?.addEventListener("submit", async (evento) => {
   } catch (erro) {
     console.error("Erro ao publicar obra:", erro);
 
+    const detalhe = erro?.message || erro?.error_description || String(erro);
     mostrarStatus(
-      "Não foi possível publicar. Confira a conexão, o bucket artwork-images e as permissões do Supabase.",
+      "Falha ao publicar: " + detalhe,
       "erro"
     );
   } finally {

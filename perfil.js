@@ -39,12 +39,7 @@ async function verificarAcessoModeracao() {
       return;
     }
 
-    if (data === true) {
-      window.location.replace('moderacao.html');
-      return;
-    }
-
-    if (linkModeracao) linkModeracao.hidden = true;
+    if (linkModeracao) linkModeracao.hidden = (data !== true);
   } catch (erro) {
     console.warn('Falha ao verificar acesso à moderação:', erro);
   }

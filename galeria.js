@@ -195,163 +195,155 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // ==========================================
-  // 4. CADASTRO MANUAL DE ARTISTAS
-  // Adicione novos artistas nesta lista.
-  // ==========================================
-
-  const artistas = [
-    {
-      id: "Residente",
-      nome: "Henrique Sousa",
-      foto: "/refugiart/galeria/acervo/artistas/Henrique/henrique.png",
-      apresentacao: "Artista visual",
-      biografia:
-        "Henrique Sousa é artista visual, arte-educador e tatuador, formado em Licenciatura em Artes Visuais pela UNIFESSPA. Sua produção transita entre diferentes linguagens artísticas, com interesse pela cultura amazônica, pela formação artística e pelas relações entre arte, corpo e sociedade. É fundador da RefugiART, iniciativa dedicada à valorização da arte, à formação de novos artistas e à democratização do acesso à cultura. ",
-      obras: [
-        {
-          titulo: "Bailarina",
-          imagem: "",
-          descricao:
-            "Técnica: Aquarela sobre papel 300 g/m².",
-        },
-      
-     {
-  titulo: "Hagrid",
-  imagem: "",
-  descricao: "Técnica: Aquarela sobre papel."
-},
-      {
-        titulo: "Perplexa",
-        imagem: "/refugiart/galeria/acervo/artistas/Henrique/obras/IMG_20260703_115744.jpg",
-        descricao: "Técnica: Acrílica e aquarela."
-},
-      
-      
-      ] /*fecha a lista de obras*/
-    }
-  
-  
-  ] /*fecha a lista de Artistas*/;
-
-  // ==========================================
-  // 5. CARTÕES DO ACERVO
+  // 4. ACERVO DINÂMICO DE ARTISTAS
+  // Cada cartão abre o Ateliê público do respectivo perfil.
   // ==========================================
 
   const listaArtistas = document.getElementById("listaArtistas");
-  const perfil = document.getElementById("perfilArtista");
-  const conteudoPerfil = document.getElementById("conteudoPerfilArtista");
-  const fecharPerfil = document.getElementById("fecharPerfilArtista");
+  const SUPABASE_URL = "https://nlqalpiksbqflzxzsgoa.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP";
+  let clienteGaleria = null;
 
-  function renderizarArtistas() {
+  async function obterClienteGaleria() {
+    if (clienteGaleria) return clienteGaleria;
+
+    try {
+      const { createClient } = await import(
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+      );
+      clienteGaleria = createClient(SUPABASE_URL, SUPABASE_KEY);
+      return clienteGaleria;
+    } catch (erro) {
+      console.error("Erro ao conectar à Galeria:", erro);
+      return null;
+    }
+  }
+
+  function criarCartaoArtista(artista) {
+    const cartao = document.createElement("a");
+    cartao.className = "cartao-artista";
+    cartao.href = "atelie.html?id=" + encodeURIComponent(artista.id);
+    cartao.setAttribute("aria-label", "Visitar Ateliê de " + artista.nome);
+
+    if (artista.foto_url) {
+      const imagem = document.createElement("img");
+      imagem.src = artista.foto_url;
+      imagem.alt = "Retrato de " + artista.nome;
+      imagem.loading = "lazy";
+      cartao.appendChild(imagem);
+    }
+
+    const nome = document.createElement("h3");
+    nome.textContent = artista.nome;
+    cartao.appendChild(nome);
+
+    const apresentacao = document.createElement("p");
+    apresentacao.textContent = artista.nome_atelie || "Artista da comunidade";
+    cartao.appendChild(apresentacao);
+
+    return cartao;
+  }
+
+  async function renderizarArtistas() {
     if (!listaArtistas) return;
 
     listaArtistas.replaceChildren();
+    const carregando = document.createElement("p");
+    carregando.className = "texto-artistas-vazio";
+    carregando.textContent = "Carregando artistas...";
+    listaArtistas.appendChild(carregando);
 
-    artistas.forEach(function (artista) {
-      const cartao = document.createElement("button");
-      cartao.type = "button";
-      cartao.className = "cartao-artista";
-
-      if (artista.foto) {
-        const imagem = document.createElement("img");
-        imagem.src = artista.foto;
-        imagem.alt = "Retrato de " + artista.nome;
-        imagem.loading = "lazy";
-        cartao.appendChild(imagem);
-      }
-
-      const nome = document.createElement("h3");
-      nome.textContent = artista.nome;
-      cartao.appendChild(nome);
-
-      const apresentacao = document.createElement("p");
-      apresentacao.textContent = artista.apresentacao;
-      cartao.appendChild(apresentacao);
-
-      cartao.addEventListener("click", function () {
-        abrirPerfil(artista);
-      });
-
-      listaArtistas.appendChild(cartao);
-    });
-  }
-
-  // ==========================================
-  // 6. PERFIL DO ARTISTA NA PRÓPRIA GALERIA
-  // ==========================================
-
-  function abrirPerfil(artista) {
-    if (!perfil || !conteudoPerfil || !listaArtistas) return;
-
-    conteudoPerfil.replaceChildren();
-
-    const titulo = document.createElement("h2");
-    titulo.textContent = artista.nome;
-    conteudoPerfil.appendChild(titulo);
-
-    if (artista.foto) {
-      const imagem = document.createElement("img");
-      imagem.src = artista.foto;
-      imagem.alt = "Retrato de " + artista.nome;
-      imagem.className = "foto-perfil-artista";
-      conteudoPerfil.appendChild(imagem);
+    const cliente = await obterClienteGaleria();
+    if (!cliente) {
+      carregando.textContent = "Não foi possível conectar ao acervo. Tente novamente.";
+      return;
     }
 
-    const apresentacao = document.createElement("p");
-    apresentacao.textContent = artista.apresentacao;
-    conteudoPerfil.appendChild(apresentacao);
+    const { data, error } = await cliente
+      .from("profiles")
+      .select("id, nome_artistico, nome_atelie, foto_url")
+      .not("nome_artistico", "is", null)
+      .order("nome_artistico", { ascending: true });
 
-    const biografia = document.createElement("p");
-    biografia.textContent = artista.biografia;
-    conteudoPerfil.appendChild(biografia);
+    if (error) {
+      console.error("Erro ao carregar artistas:", error);
+      carregando.textContent =
+        "Não foi possível carregar os artistas. Verifique as permissões públicas do acervo no Supabase.";
+      return;
+    }
 
-    const tituloObras = document.createElement("h3");
-    tituloObras.textContent = "Obras";
-    conteudoPerfil.appendChild(tituloObras);
+    const artistas = (data || []).filter((perfil) =>
+      perfil.id && perfil.nome_artistico?.trim()
+    );
 
-    const obras = document.createElement("div");
-    obras.className = "obras-artista";
+    listaArtistas.replaceChildren();
 
-    (artista.obras || []).forEach(function (obra) {
-      const item = document.createElement("article");
-      item.className = "obra-artista";
+    if (!artistas.length) {
+      const vazio = document.createElement("p");
+      vazio.className = "texto-artistas-vazio";
+      vazio.textContent =
+        "Ainda não há artistas com perfil artístico cadastrado.";
+      listaArtistas.appendChild(vazio);
+      return;
+    }
 
-      if (obra.imagem) {
-        const imagem = document.createElement("img");
-        imagem.src = obra.imagem;
-        imagem.alt = obra.titulo;
-        imagem.loading = "lazy";
-        item.appendChild(imagem);
-      }
-
-      const nomeObra = document.createElement("h4");
-      nomeObra.textContent = obra.titulo;
-      item.appendChild(nomeObra);
-
-      const descricao = document.createElement("p");
-      descricao.textContent = obra.descricao;
-      item.appendChild(descricao);
-
-      obras.appendChild(item);
-    });
-
-    conteudoPerfil.appendChild(obras);
-
-    listaArtistas.hidden = true;
-    perfil.hidden = false;
-
-    if (fecharPerfil) fecharPerfil.focus();
-  }
-
-  if (fecharPerfil && perfil && listaArtistas) {
-    fecharPerfil.addEventListener("click", function () {
-      perfil.hidden = true;
-      listaArtistas.hidden = false;
+    artistas.forEach((perfil) => {
+      listaArtistas.appendChild(criarCartaoArtista({
+        id: perfil.id,
+        nome: perfil.nome_artistico.trim(),
+        nome_atelie: perfil.nome_atelie,
+        foto_url: perfil.foto_url
+      }));
     });
   }
 
   // ==========================================
-  
+  // 5. ESTADO INICIAL
+  // ==========================================
+
+  const visaoGeral = document.getElementById("visaoGeral");
+  const acervo = document.getElementById("acervo");
+  const salao = document.getElementById("salao");
+
+  const telas = {
+    visaoGeral: visaoGeral,
+    acervo: acervo,
+    salao: salao
+  };
+
+  function mostrarArea(nome) {
+    if (!telas[nome]) return;
+
+    Object.keys(telas).forEach(function (chave) {
+      const tela = telas[chave];
+      if (tela) tela.hidden = chave !== nome;
+    });
+
+    links.forEach(function (link) {
+      const ativo = link.dataset.telaGaleria === nome;
+      link.classList.toggle("ativo", ativo);
+
+      if (ativo) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
+    });
+
+    if (nome === "acervo") renderizarArtistas();
+  }
+
+  links.forEach(function (link) {
+    link.addEventListener("click", function (evento) {
+      const nome = link.dataset.telaGaleria;
+      if (!telas[nome]) return;
+      evento.preventDefault();
+      mostrarArea(nome);
+    });
+  });
+
+  // Mantém o carrossel e a navegação da Galeria independentes do acervo.
+  if (visaoGeral && acervo && salao) {
+    mostrarArea("visaoGeral");
+  }
+
   // ==========================================
   // 7. ESTADO INICIAL
   // ==========================================

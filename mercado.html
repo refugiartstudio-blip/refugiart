@@ -35,6 +35,24 @@
 #lista-obras-mercado .imagem-obra img{width:100%;height:100%;object-fit:cover;display:block}
 #lista-obras-mercado .preco-mercado{font-size:1.15rem;font-weight:800;color:#243e35;margin:12px 0}
 #lista-obras-mercado .link-artista-mercado{display:inline-block;color:#243e35;font-weight:700;text-decoration:none;margin-top:8px}
+
+/* MENU LATERAL DO MERCADO — mesmo comportamento da Galeria */
+.mercado-layout{display:flex;flex-direction:row;align-items:flex-start;gap:12px;width:100%;min-width:0;padding:0 18px;box-sizing:border-box}
+.coluna-mercado{position:relative;display:flex;flex-direction:column;align-items:stretch;flex:0 0 52px;width:52px;min-width:52px;max-width:52px;box-sizing:border-box;padding:12px 5px;background:#fff;border:1px solid #e1e7df;border-radius:14px;overflow:hidden;transition:flex-basis .25s ease,width .25s ease,max-width .25s ease;z-index:2}
+.coluna-mercado.expandida{flex-basis:190px;width:190px;min-width:190px;max-width:190px;padding:14px 10px}
+.conteudo-coluna-mercado{display:flex;flex-direction:column;align-items:stretch;width:100%;min-width:0;overflow:hidden}
+.coluna-mercado a.link-coluna-mercado{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;width:100%;min-width:0;gap:10px;margin:4px 0;padding:12px 8px;color:#294438;background:transparent;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;line-height:1.4;white-space:nowrap;box-sizing:border-box;transition:background .2s ease,color .2s ease}
+.coluna-mercado a.link-coluna-mercado:hover,.coluna-mercado a.link-coluna-mercado.ativo{color:#243e35;background:#e8eee8}
+.icone-coluna-mercado{display:inline-flex;align-items:center;justify-content:center;flex:0 0 24px;width:24px;font-size:19px}
+.texto-coluna-mercado{overflow:hidden}
+.coluna-mercado:not(.expandida) .titulo-coluna-mercado,.coluna-mercado:not(.expandida) .texto-coluna-mercado,.coluna-mercado:not(.expandida) .divisor-coluna-mercado{display:none!important}
+.coluna-mercado:not(.expandida) a.link-coluna-mercado{justify-content:center;padding:12px 2px}
+.titulo-coluna-mercado{margin:14px 8px 6px;color:#7b877d;font-size:10px;font-weight:800;letter-spacing:1.2px}
+.divisor-coluna-mercado{height:1px;background:#e1e7df;margin:10px 4px}
+.seta-coluna-mercado{display:flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0 auto 14px;border:0;border-radius:8px;background:#e8eee8;color:#243e35;cursor:pointer;font-size:18px}
+.pagina-mercado{flex:1 1 0;min-width:0;width:0;padding-left:0;padding-right:0}
+@media(max-width:700px){.mercado-layout{gap:8px;padding:0 8px}.coluna-mercado{flex-basis:48px;width:48px;min-width:48px;max-width:48px;padding:10px 4px}.coluna-mercado.expandida{flex-basis:165px;width:165px;min-width:165px;max-width:165px;padding:12px 8px}}
+
 </style>
 </head>
 
@@ -68,6 +86,19 @@
     <a id="linkLogin" href="login.html">Login</a>
   </nav>
 
+  <div class="mercado-layout">
+    <aside class="coluna-mercado" id="colunaMercado" aria-label="Menu do Mercado">
+      <button type="button" class="seta-coluna-mercado" id="alternarColunaMercado" aria-label="Expandir menu do Mercado" aria-controls="navegacaoMercado" aria-expanded="false"><span id="iconeSetaMercado">➜</span></button>
+      <nav class="conteudo-coluna-mercado" id="navegacaoMercado" aria-label="Áreas do Mercado">
+        <a href="carteira.html" class="link-coluna-mercado" title="Carteira"><span class="icone-coluna-mercado">▣</span><span class="texto-coluna-mercado">Carteira</span></a>
+        <a href="sacola.html" class="link-coluna-mercado" title="Sacola"><span class="icone-coluna-mercado">🛍</span><span class="texto-coluna-mercado">Sacola</span></a>
+        <a href="#obras" class="link-coluna-mercado ativo" title="Bazar" aria-current="page"><span class="icone-coluna-mercado">▧</span><span class="texto-coluna-mercado">Bazar</span></a>
+        <a href="#leiloes" class="link-coluna-mercado" title="Leilões"><span class="icone-coluna-mercado">⚒</span><span class="texto-coluna-mercado">Leilões</span></a>
+        <div class="divisor-coluna-mercado"></div>
+        <p class="titulo-coluna-mercado">INTERAÇÕES</p>
+        <a href="balao.html" class="link-coluna-mercado" title="Balão"><span class="icone-coluna-mercado">◉</span><span class="texto-coluna-mercado">Balão</span></a>
+      </nav>
+    </aside>
   <main class="pagina-mercado">
 
     <!-- APRESENTAÇÃO -->
@@ -187,6 +218,7 @@
     </section>
 
   </main>
+  </div>
 
   <footer>
     <p>RefugiART © 2026 — Criar é Sentir.</p>
@@ -350,6 +382,22 @@
       document.querySelectorAll("#lista-obras-mercado .cartao-obra").forEach(card=>{card.hidden=card.dataset.categoria!==categoriaSelecionada;});
     });
     carregarMercado();
+  </script>
+
+
+  <script>
+    (function () {
+      const coluna = document.getElementById("colunaMercado");
+      const botao = document.getElementById("alternarColunaMercado");
+      const icone = document.getElementById("iconeSetaMercado");
+      if (!coluna || !botao || !icone) return;
+      botao.addEventListener("click", function () {
+        const expandida = coluna.classList.toggle("expandida");
+        botao.setAttribute("aria-expanded", String(expandida));
+        botao.setAttribute("aria-label", expandida ? "Recolher menu do Mercado" : "Expandir menu do Mercado");
+        icone.textContent = expandida ? "⬅" : "➜";
+      });
+    })();
   </script>
 
   <!-- Script compartilhado do site -->

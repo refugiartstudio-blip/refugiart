@@ -65,12 +65,22 @@
     <section class="boas-vindas">
       <span class="etiqueta-galeria">NOSSO ESPAÇO CRIATIVO</span>
 
-      <h2>Um espaço para criar e compartilhar</h2>
-
-      <p>
-        Descubra artistas, compartilhe suas obras
-        e aprenda com pessoas que amam arte.
-      </p>
+      <div class="carrossel-reflexiart" id="carrossel-reflexiart" aria-label="ReflexiARTs da comunidade">
+        <div class="reflexiart-carrossel-topo">
+          <div>
+            <span class="reflexiart-selo">VOZES DA COMUNIDADE</span>
+            <h2>ReflexiARTs</h2>
+          </div>
+          <div class="reflexiart-setas">
+            <button type="button" id="reflexiart-anterior" aria-label="Reflexão anterior">‹</button>
+            <button type="button" id="reflexiart-proxima" aria-label="Próxima reflexão">›</button>
+          </div>
+        </div>
+        <div id="lista-reflexiarts" class="lista-reflexiarts" aria-live="polite">
+          <p class="reflexiart-carregando">Carregando reflexões da comunidade...</p>
+        </div>
+        <div id="reflexiart-indicadores" class="reflexiart-indicadores" aria-label="Navegação das reflexões"></div>
+      </div>
 
       <button class="botao-explorar"
               id="botaoExplorar"

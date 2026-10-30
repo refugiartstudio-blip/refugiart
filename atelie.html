@@ -200,6 +200,23 @@
             >
         
             <img id="previa-obra" class="previa-obra" alt="Prévia da obra selecionada" hidden>
+
+            <section id="editor-recorte-obra" class="editor-recorte-obra" hidden aria-label="Ajustar recorte da imagem">
+              <h3>Ajustar enquadramento</h3>
+              <p>Arraste cada controle para cortar as bordas da imagem.</p>
+              <canvas id="canvas-recorte-obra" aria-label="Prévia do recorte"></canvas>
+              <div class="controles-recorte">
+                <label for="recorte-esquerda">Lateral esquerda <output id="valor-esquerda">0%</output></label>
+                <input id="recorte-esquerda" type="range" min="0" max="80" value="0">
+                <label for="recorte-direita">Lateral direita <output id="valor-direita">0%</output></label>
+                <input id="recorte-direita" type="range" min="0" max="80" value="0">
+                <label for="recorte-topo">Topo <output id="valor-topo">0%</output></label>
+                <input id="recorte-topo" type="range" min="0" max="80" value="0">
+                <label for="recorte-baixo">Parte inferior <output id="valor-baixo">0%</output></label>
+                <input id="recorte-baixo" type="range" min="0" max="80" value="0">
+              </div>
+              <button type="button" id="resetar-recorte-obra" class="botao-resetar-recorte">Restaurar imagem original</button>
+            </section>
         
             <label for="legenda-obra">A história por trás da obra</label>
             <textarea

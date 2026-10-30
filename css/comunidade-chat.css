@@ -488,3 +488,32 @@ input::placeholder {
     padding: 11px;
   }
 }
+
+/* Botão de curtir das mensagens */
+
+.botao-curtir {
+  padding: 5px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 20px;
+  background: var(--painel-claro);
+  color: var(--texto-suave);
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.botao-curtir:hover {
+  border-color: var(--verde);
+  color: var(--verde);
+}
+
+.botao-curtir.curtido {
+  border-color: #d85b70;
+  background: #3b2229;
+  color: #ff8296;
+}
+
+.identificacao strong,
+.avatar {
+  cursor: pointer;
+}

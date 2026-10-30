@@ -274,19 +274,41 @@ async function buscarPerfil(userId) {
 }
 
 
-// Consulta pública e restrita ao resultado booleano: não revela a lista de administradores.
+// Verifica o selo administrativo sem expor a lista de administradores.
 const cacheStatusAdm = new Map();
+let usuarioLogadoPromise = null;
+
+async function obterIdUsuarioLogado() {
+  if (!usuarioLogadoPromise) {
+    usuarioLogadoPromise = supabase.auth.getUser().then(({ data, error }) => {
+      if (error) {
+        console.warn("Não foi possível identificar a sessão para o selo:", error.message);
+        return null;
+      }
+      return data.user?.id || null;
+    });
+  }
+  return usuarioLogadoPromise;
+}
+
 async function usuarioEhAdmin(userId) {
   if (!userId) return false;
   if (!cacheStatusAdm.has(userId)) {
-    cacheStatusAdm.set(userId, supabase.rpc("refugiart_is_admin_user", { p_user_id: userId })
-      .then(({ data, error }) => {
-        if (error) {
-          console.warn("Não foi possível verificar o selo administrativo:", error.message);
-          return false;
-        }
-        return data === true;
-      }));
+    cacheStatusAdm.set(userId, (async () => {
+      const idLogado = await obterIdUsuarioLogado();
+
+      // Para a própria conta, usa a mesma verificação já validada no perfil.
+      const chamada = idLogado === userId
+        ? supabase.rpc("refugiart_is_admin")
+        : supabase.rpc("refugiart_is_admin_user", { p_user_id: userId });
+
+      const { data, error } = await chamada;
+      if (error) {
+        console.warn("Não foi possível verificar o selo administrativo:", error.message);
+        return false;
+      }
+      return data === true;
+    })());
   }
   return cacheStatusAdm.get(userId);
 }

@@ -1822,3 +1822,38 @@
   padding: 8px 11px; border: 1px solid #cbd6c8; border-radius: 8px;
   background: #fff; color: #34463a; font-size: 12px; cursor: pointer;
 }
+
+
+/* Lápis discreto para editar a própria publicação */
+.pagina-atelie .obra-cabecalho {
+  position: relative;
+  padding-right: 54px;
+}
+.pagina-atelie .botao-editar-obra {
+  position: absolute;
+  top: 12px;
+  right: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgba(36, 62, 53, .12);
+  border-radius: 50%;
+  background: rgba(220, 232, 220, .78);
+  color: #243e35;
+  font-size: 17px;
+  opacity: .82;
+  box-shadow: 0 2px 7px rgba(36, 62, 53, .08);
+  transition: opacity .2s, background .2s, transform .2s;
+}
+.pagina-atelie .botao-editar-obra:hover {
+  opacity: 1;
+  background: #dce8dc;
+  transform: scale(1.05);
+}
+.pagina-atelie .botao-editar-obra:disabled {
+  opacity: .45;
+  cursor: wait;
+}

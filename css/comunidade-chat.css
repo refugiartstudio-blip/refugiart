@@ -1,14 +1,20 @@
 
+/* =========================================
+   REFUGIART — CHAT DA COMUNIDADE
+   Identidade visual: escuro + verde
+========================================= */
+
 :root {
-  --fundo: #101310;
-  --painel: #191e19;
-  --painel-secundario: #202720;
+  --fundo: #111511;
+  --painel: #1a211b;
+  --painel-claro: #242d25;
   --verde: #a4c639;
-  --verde-escuro: #526b24;
-  --texto: #f0f0e9;
-  --texto-suave: #a5ada0;
-  --borda: #343d32;
-  --mensagem: #252d24;
+  --verde-hover: #b7d94b;
+  --texto: #f1f3ed;
+  --texto-suave: #aab4a7;
+  --borda: #354035;
+  --mensagem: #252e26;
+  --mensagem-propria: #34442a;
 }
 
 * {
@@ -23,433 +29,462 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-button,
-input {
-  font: inherit;
-}
+/* ESTRUTURA PRINCIPAL */
 
-button {
-  cursor: pointer;
+.chat-container {
+  width: 100%;
+  max-width: 1100px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* CABEÇALHO */
 
-.cabecalho-chat {
-  min-height: 70px;
-  padding: 14px 22px;
+.chat-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   gap: 15px;
+  padding: 18px 22px;
   background: var(--painel);
-  border-bottom: 1px solid var(--borda);
+  border: 1px solid var(--borda);
+  border-radius: 16px 16px 0 0;
 }
 
 .logo-chat {
   color: var(--verde);
-  font-size: 21px;
-  font-weight: bold;
-  letter-spacing: 2px;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
-.status-usuario {
-  color: var(--texto-suave);
-  font-size: 13px;
+.usuario-atual {
+  color: var(--texto);
+  font-size: 14px;
 }
 
-/* NAVEGAÇÃO */
+.status-online {
+  color: var(--verde);
+}
 
-.navegacao-chat {
+/* ABAS PRINCIPAIS */
+
+.abas-chat {
   display: flex;
   gap: 8px;
-  padding: 12px 18px 0;
-  background: var(--painel);
-  border-bottom: 1px solid var(--borda);
-}
-
-.navegacao-chat button {
-  padding: 13px 20px;
-  color: var(--texto-suave);
-  background: transparent;
-  border: none;
-  border-bottom: 3px solid transparent;
-}
-
-.navegacao-chat button:hover,
-.navegacao-chat button.ativo {
-  color: var(--verde);
-  border-bottom-color: var(--verde);
-}
-
-/* ÁREA PRINCIPAL */
-
-.container-chat {
-  width: min(1100px, 100%);
-  margin: 25px auto;
-  padding: 0 16px;
-}
-
-.painel-chat {
-  min-height: 570px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  padding: 12px;
   background: var(--painel);
   border: 1px solid var(--borda);
-  border-radius: 12px;
+  border-top: 0;
+}
+
+.aba-chat {
+  flex: 1;
+  padding: 13px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--texto-suave);
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.aba-chat:hover {
+  background: var(--painel-claro);
+  color: var(--texto);
+}
+
+.aba-chat.ativa {
+  color: #17200f;
+  background: var(--verde);
+}
+
+/* PAINÉIS */
+
+.painel-chat {
+  flex: 1;
+  min-height: 550px;
+  display: flex;
+  flex-direction: column;
+  padding: 22px;
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  border-top: 0;
+  border-radius: 0 0 16px 16px;
 }
 
 .painel-chat[hidden] {
   display: none !important;
 }
 
-/* CABEÇALHO DAS SALAS */
+/* TÍTULOS E ZONAS */
 
-.topo-sala {
-  padding: 17px 20px;
-  background: var(--painel-secundario);
-  border-bottom: 1px solid var(--borda);
+.painel-chat h2 {
+  margin: 0 0 8px;
+  color: var(--texto);
+  font-size: 20px;
 }
 
-.topo-sala h2 {
-  margin: 0 0 5px;
-  font-size: 18px;
+.painel-chat h3 {
+  color: var(--verde);
 }
 
-.topo-sala p {
-  margin: 0;
+.zonas-interesse {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 15px 0 20px;
+}
+
+.zona-interesse {
+  padding: 9px 16px;
+  border: 1px solid var(--borda);
+  border-radius: 30px;
+  background: var(--painel-claro);
   color: var(--texto-suave);
   font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* MENSAGENS */
+.zona-interesse:hover,
+.zona-interesse.ativa {
+  background: var(--verde);
+  color: #17200f;
+  border-color: var(--verde);
+}
 
-.mensagens-chat {
-  min-height: 350px;
+/* LISTA DE MENSAGENS */
+
+.lista-mensagens {
+  flex: 1;
+  min-height: 280px;
   max-height: 480px;
-  padding: 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+  padding: 15px 5px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--verde) var(--painel);
 }
 
 .mensagem {
-  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
   max-width: 85%;
-  padding: 12px 15px;
-  align-self: flex-start;
-  background: var(--mensagem);
-  border: 1px solid var(--borda);
-  border-radius: 10px;
-  overflow-wrap: anywhere;
 }
 
 .mensagem.propria {
   align-self: flex-end;
-  background: #303b25;
-  border-color: var(--verde-escuro);
+  flex-direction: row-reverse;
 }
 
-.mensagem .autor {
-  display: block;
-  margin-bottom: 6px;
+.avatar {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: var(--verde);
+  color: #17200f;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.corpo-mensagem {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.identificacao {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   color: var(--verde);
   font-size: 13px;
   font-weight: bold;
 }
 
-.mensagem .conteudo {
+.identificacao time {
+  color: var(--texto-suave);
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.balao-mensagem {
+  padding: 12px 15px;
+  border: 1px solid var(--borda);
+  border-radius: 4px 14px 14px 14px;
+  background: var(--mensagem);
+  color: var(--texto);
   font-size: 14px;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
-.mensagem .horario {
-  display: block;
-  margin-top: 7px;
-  color: var(--texto-suave);
-  font-size: 10px;
-  text-align: right;
+.mensagem.propria .balao-mensagem {
+  background: var(--mensagem-propria);
+  border-radius: 14px 4px 14px 14px;
 }
 
-/* RESPOSTA À MENSAGEM */
+/* REAÇÕES */
 
-.resposta-selecionada {
-  margin: 0 16px;
-  padding: 10px 13px;
-  background: var(--painel-secundario);
-  border-left: 3px solid var(--verde);
-  border-radius: 5px;
-  color: var(--texto-suave);
-  font-size: 12px;
-}
-
-/* CAMPO DE ENVIO */
-
-.formulario-chat {
-  display: flex;
-  gap: 10px;
-  padding: 15px;
-  background: var(--painel-secundario);
-  border-top: 1px solid var(--borda);
-}
-
-.formulario-chat input {
-  min-width: 0;
-  flex: 1;
-  padding: 13px 15px;
-  color: var(--texto);
-  background: var(--fundo);
-  border: 1px solid var(--borda);
-  border-radius: 8px;
-  outline: none;
-}
-
-.formulario-chat input:focus {
-  border-color: var(--verde);
-}
-
-.formulario-chat button {
-  padding: 0 20px;
-  color: #14180e;
-  background: var(--verde);
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-.formulario-chat button:hover {
-  filter: brightness(1.1);
-}
-
-/* SALAS DA COMUNIDADE */
-
-.lista-zonas {
+.reacoes-mensagem {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 14px 18px;
-  background: var(--painel-secundario);
-  border-bottom: 1px solid var(--borda);
+  gap: 5px;
+  margin-top: 5px;
 }
 
-.lista-zonas button {
-  padding: 9px 14px;
-  color: var(--texto-suave);
-  background: var(--fundo);
+.reacoes-mensagem button {
+  padding: 4px 8px;
   border: 1px solid var(--borda);
   border-radius: 20px;
+  background: var(--painel-claro);
+  color: var(--texto);
+  cursor: pointer;
 }
 
-.lista-zonas button:hover,
-.lista-zonas button.ativo {
+/* FORMULÁRIOS DE MENSAGEM */
+
+.formulario-mensagem,
+#formGlobal,
+#formComunidade,
+#formPrivado {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: var(--painel-claro);
+}
+
+.formulario-mensagem input,
+#formGlobal input,
+#formComunidade input,
+#formPrivado input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--texto);
+  font-size: 14px;
+}
+
+input::placeholder {
+  color: var(--texto-suave);
+}
+
+.formulario-mensagem button,
+#formGlobal button,
+#formComunidade button,
+#formPrivado button {
+  padding: 11px 17px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--verde);
+  color: #17200f;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.formulario-mensagem button:hover,
+#formGlobal button:hover,
+#formComunidade button:hover,
+#formPrivado button:hover {
+  background: var(--verde-hover);
+}
+
+/* RESPOSTA SELECIONADA */
+
+#respostaSelecionada,
+#respostaComunidade {
+  margin-top: 10px;
+  padding: 12px;
+  border-left: 3px solid var(--verde);
+  border-radius: 7px;
+  background: var(--painel-claro);
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+
+#respostaSelecionada button,
+#respostaComunidade button {
+  margin-left: 8px;
+  border: 0;
+  background: transparent;
   color: var(--verde);
-  border-color: var(--verde);
+  cursor: pointer;
 }
 
-/* CONVERSAS PRIVADAS */
+/* CHAT PRIVADO */
 
 .area-privada {
   display: grid;
-  grid-template-columns: 250px minmax(0, 1fr);
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 15px;
   flex: 1;
-  min-height: 500px;
+  min-height: 450px;
 }
 
-.lista-conversas {
-  padding: 12px;
-  background: var(--painel-secundario);
-  border-right: 1px solid var(--borda);
+#listaConversas {
+  padding: 10px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: var(--painel-claro);
 }
 
-.conversa {
+.item-conversa {
   width: 100%;
   padding: 13px;
   margin-bottom: 7px;
-  display: block;
-  text-align: left;
-  color: var(--texto);
-  background: transparent;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--texto);
+  text-align: left;
+  cursor: pointer;
 }
 
-.conversa:hover,
-.conversa.ativa {
-  background: var(--mensagem);
-  border-color: var(--borda);
+.item-conversa:hover,
+.item-conversa.ativa {
+  background: #34442a;
+  border-color: var(--verde);
 }
 
-.conversa small {
-  display: block;
-  margin-top: 5px;
-  color: var(--texto-suave);
-}
-
-.janela-privada {
+.conversa-privada {
   min-width: 0;
   display: flex;
   flex-direction: column;
 }
 
-.topo-contato {
-  padding: 16px;
-  background: var(--painel-secundario);
-  border-bottom: 1px solid var(--borda);
+#nomeContato {
+  color: var(--verde);
 }
 
-.topo-contato h3 {
-  margin: 0 0 4px;
-}
-
-.topo-contato span {
+#statusContato {
   color: var(--texto-suave);
   font-size: 12px;
 }
 
-/* MENU DE AÇÕES DA MENSAGEM */
+/* MENU DE INTERAÇÃO */
 
-.menu-mensagem {
+#menuMensagem {
   position: fixed;
-  z-index: 1000;
-  width: 210px;
+  z-index: 9999;
+  width: 190px;
   padding: 7px;
-  background: #252c24;
   border: 1px solid var(--borda);
-  border-radius: 10px;
-  box-shadow: 0 8px 30px #0009;
+  border-radius: 12px;
+  background: #202820;
+  box-shadow: 0 8px 28px #0009;
 }
 
-.menu-mensagem[hidden] {
+#menuMensagem[hidden] {
   display: none !important;
 }
 
-.menu-mensagem button {
+#menuMensagem button {
   width: 100%;
-  padding: 11px;
+  padding: 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
   color: var(--texto);
   text-align: left;
-  background: transparent;
-  border: none;
-  border-radius: 6px;
+  cursor: pointer;
 }
 
-.menu-mensagem button:hover {
+#menuMensagem button:hover {
+  background: var(--painel-claro);
   color: var(--verde);
-  background: #343e30;
 }
 
-.reacoes {
-  display: flex;
-  justify-content: space-around;
-  padding: 7px 3px;
-  border-bottom: 1px solid var(--borda);
-}
+/* RODAPÉ */
 
-.reacoes button {
-  width: auto;
-  padding: 5px;
-  font-size: 19px;
-}
-
-/* MENÇÕES E CITAÇÕES */
-
-.mencao {
-  color: var(--verde);
-  font-weight: bold;
-}
-
-.mensagem-citada {
-  margin-bottom: 8px;
-  padding: 8px 10px;
+.rodape-chat {
+  padding: 15px;
   color: var(--texto-suave);
-  background: #151a14;
-  border-left: 3px solid var(--verde);
-  border-radius: 4px;
   font-size: 12px;
+  text-align: center;
 }
 
-/* CELULAR */
+/* RESPONSIVIDADE PARA CELULAR */
 
 @media (max-width: 650px) {
-  .cabecalho-chat {
-    padding: 13px 15px;
+  .chat-container {
+    padding: 8px;
+  }
+
+  .chat-header {
+    padding: 15px;
   }
 
   .logo-chat {
-    font-size: 17px;
+    font-size: 19px;
   }
 
-  .navegacao-chat {
-    padding: 10px 8px 0;
-    gap: 0;
+  .usuario-atual {
+    font-size: 12px;
   }
 
-  .navegacao-chat button {
-    flex: 1;
+  .abas-chat {
+    gap: 4px;
+    padding: 8px;
+  }
+
+  .aba-chat {
     padding: 12px 5px;
-    font-size: 13px;
-  }
-
-  .container-chat {
-    margin: 12px auto;
-    padding: 0 8px;
+    font-size: 12px;
   }
 
   .painel-chat {
-    min-height: 70vh;
-    border-radius: 8px;
+    min-height: 65vh;
+    padding: 14px;
   }
 
-  .mensagens-chat {
-    min-height: 300px;
-    padding: 13px;
+  .lista-mensagens {
+    max-height: 55vh;
   }
 
   .mensagem {
-    max-width: 94%;
-  }
-
-  .formulario-chat {
-    padding: 10px;
-  }
-
-  .formulario-chat input {
-    padding: 12px 10px;
-    font-size: 13px;
-  }
-
-  .formulario-chat button {
-    padding: 0 13px;
-    font-size: 13px;
+    max-width: 96%;
   }
 
   .area-privada {
-    grid-template-columns: 105px minmax(0, 1fr);
+    grid-template-columns: 1fr;
   }
 
-  .lista-conversas {
-    padding: 6px;
+  #listaConversas {
+    display: flex;
+    gap: 7px;
+    overflow-x: auto;
   }
 
-  .conversa {
-    padding: 9px 6px;
-    font-size: 12px;
+  .item-conversa {
+    width: auto;
+    min-width: 115px;
+    margin: 0;
   }
 
-  .conversa small {
-    font-size: 10px;
-  }
-
-  .lista-zonas {
-    gap: 6px;
-    padding: 10px;
-  }
-
-  .lista-zonas button {
-    padding: 8px 11px;
-    font-size: 12px;
+  .formulario-mensagem button,
+  #formGlobal button,
+  #formComunidade button,
+  #formPrivado button {
+    padding: 11px;
   }
 }
-
-

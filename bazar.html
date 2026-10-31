@@ -30,6 +30,11 @@
     .bazar-banner h1{font-family:Georgia,serif;font-size:clamp(25px,4vw,38px);margin:8px 0}
     .bazar-banner p{font-size:14px;line-height:1.6;color:#e1e9df;margin:0}
     .bazar-banner-selo{position:relative;z-index:1;border:1px solid rgba(255,255,255,.45);padding:12px 16px;border-radius:8px;font-size:12px;white-space:nowrap}
+    .bazar-anuncio{position:relative;z-index:1;width:100%;max-width:850px;text-align:center;margin:auto;opacity:1;transform:translateY(0);transition:opacity .65s ease,transform .65s ease}
+    .bazar-anuncio.saindo{opacity:0;transform:translateY(10px)}
+    .bazar-anuncio small{display:block;margin-bottom:12px}
+    .bazar-anuncio h1{margin:0;font-size:clamp(27px,4.5vw,44px);line-height:1.15}
+    @media(prefers-reduced-motion:reduce){.bazar-anuncio{transition:none}}
     .bazar-ferramentas{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#fff;padding:14px 17px;border:1px solid #e8ece6;border-radius:9px;margin-bottom:18px}
     .bazar-contagem{font-size:13px;color:#6d786f}.bazar-contagem strong{color:var(--verde-bazar)}
     .bazar-ordenacao{position:relative;display:flex;align-items:center;gap:8px;font-size:13px;color:#667168}
@@ -109,11 +114,13 @@
         <a href="carteira.html" class="link-coluna-mercado" title="Carteira"><span class="icone-coluna-mercado">▣</span><span class="texto-coluna-mercado">Carteira</span></a>
         <a href="sacola.html" class="link-coluna-mercado" title="Sacola"><span class="icone-coluna-mercado">🛍</span><span class="texto-coluna-mercado">Sacola</span></a>
         <a href="bazar.html" class="link-coluna-mercado ativo" title="Bazar"><span class="icone-coluna-mercado">▧</span><span class="texto-coluna-mercado">Bazar</span></a>
-        <a href="leiloes.html" class="link-coluna-mercado" title="Leilões"><span class="icone-coluna-mercado">⚒</span><span class="texto-coluna-mercado">Leilões</span></a>
-        <div class="divisor-coluna-mercado"></div>
-        <p class="titulo-coluna-mercado">INTERAÇÕES</p>
-        <a href="balao.html" class="link-coluna-mercado" title="Balão"><span class="icone-coluna-mercado">◉</span><span class="texto-coluna-mercado">Balão</span></a>
-      </nav>
+        <a href="leiloes.html" class="link-coluna-me    <section class="bazar-banner" aria-label="Espaço de anúncios">
+      <div class="bazar-anuncio" id="bazarAnuncio" aria-live="polite" aria-atomic="true">
+        <small>ESPAÇO DE DIVULGAÇÃO • REFUGIART</small>
+        <h1 id="bazarAnuncioFrase">Anuncie aqui.</h1>
+      </div>
+    </section>
+av>
     </aside>
   <main class="bazar-conteudo pagina-bazar">
     <section class="bazar-banner">
@@ -251,6 +258,24 @@
         botao.setAttribute("aria-label", expandida ? "Recolher menu do Mercado" : "Expandir menu do Mercado");
         icone.textContent = expandida ? "⬅" : "➜";
       });
+    })();
+  </script>
+  <script>
+    (function () {
+      const anuncio = document.getElementById("bazarAnuncio");
+      const frase = document.getElementById("bazarAnuncioFrase");
+      if (!anuncio || !frase) return;
+      const frases = ["Anuncie aqui.", "Impulsione seu negócio.", "Dê visibilidade à sua marca.", "Conecte sua ideia a novos públicos."];
+      let atual = 0;
+      const intervalo = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 6500 : 4200;
+      window.setInterval(function () {
+        anuncio.classList.add("saindo");
+        window.setTimeout(function () {
+          atual = (atual + 1) % frases.length;
+          frase.textContent = frases[atual];
+          anuncio.classList.remove("saindo");
+        }, 650);
+      }, intervalo);
     })();
   </script>
   <script src="script.js"></script>

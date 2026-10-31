@@ -57,9 +57,9 @@ drop policy if exists order_items_parties_read on public.refugiart_order_items;
 create policy order_items_parties_read on public.refugiart_order_items for select to authenticated using(exists(select 1 from public.refugiart_orders o where o.id=order_id and (o.buyer_id=auth.uid() or o.seller_id=auth.uid())));
 grant all on public.refugiart_checkout_groups,public.refugiart_checkout_reservations,public.refugiart_orders,public.refugiart_order_items to service_role;
 
-create or replace function public.refugiart_reserve_market_items(p_post_ids bigint[],p_idempotency_key uuid)
+create or replace function public.refugiart_reserve_market_items(p_post_ids bigint[],p_idempotency_key uuid,p_buyer_id uuid)
 returns jsonb language plpgsql security definer set search_path=public,pg_temp as $$
-declare v_buyer uuid:=auth.uid(); v_post public.atelie_posts%rowtype; v_group public.refugiart_checkout_groups%rowtype;
+declare v_buyer uuid:=p_buyer_id; v_post public.atelie_posts%rowtype; v_group public.refugiart_checkout_groups%rowtype;
 v_ids bigint[]; v_count integer:=0; v_total bigint:=0; v_exp timestamptz:=now()+interval '15 minutes';
 begin
  if v_buyer is null then raise exception 'Faça login para comprar.'; end if;
@@ -88,8 +88,8 @@ begin
  select v_group.id,p.id,v_buyer,p.user_id,coalesce(nullif(btrim(p.caption),''),'Obra RefugiART #'||p.id),p.image_url,round(p.preco*100)::bigint,v_exp from public.atelie_posts p where p.id=any(v_ids) order by p.id;
  return jsonb_build_object('checkout_group_id',v_group.id,'amount_cents',v_total,'expires_at',v_exp);
 end; $$;
-revoke all on function public.refugiart_reserve_market_items(bigint[],uuid) from public,anon;
-grant execute on function public.refugiart_reserve_market_items(bigint[],uuid) to authenticated;
+revoke all on function public.refugiart_reserve_market_items(bigint[],uuid,uuid) from public,anon,authenticated;
+grant execute on function public.refugiart_reserve_market_items(bigint[],uuid,uuid) to service_role;
 
 create or replace function public.refugiart_confirm_market_checkout(p_order_nsu text,p_invoice_slug text,p_transaction_nsu text,p_amount_cents bigint,p_paid_amount_cents bigint,p_payment_method text)
 returns jsonb language plpgsql security definer set search_path=public,pg_temp as $$

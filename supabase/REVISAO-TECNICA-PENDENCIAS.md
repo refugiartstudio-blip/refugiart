@@ -247,3 +247,20 @@ Foi realizada consulta somente leitura no projeto Supabase pelo SQL Editor. Resu
 Correção preparada em `migrations/20261031_015_harden_public_table_privileges.sql`: revoga somente `TRUNCATE`, `REFERENCES`, `TRIGGER` e `MAINTAIN` para `anon` e `authenticated` nas tabelas públicas existentes e nos privilégios padrão de futuras tabelas criadas por `postgres`. Mantém CRUD e RLS. A migration ainda **não foi aplicada**. Ver detalhes em `REVISAO-GRANTS-E-PRIVILEGIOS-PADRAO.md`.
 
 Pendências: homologar a migration; testar fluxos da comunidade e ateliê; revisar privilégios padrão de sequences; auditar Storage separadamente; avaliar policies duplicadas sem removê-las às cegas.
+
+
+
+## Auditoria real do Supabase Storage — 31/10/2026
+
+Documento detalhado: `REVISAO-SEGURANCA-STORAGE.md`.
+
+Consultas somente leitura confirmaram:
+- Buckets públicos `artwork-images` (12 objetos) e `profile-photos` (3 objetos); ambos são usados pelo frontend para URLs públicas.
+- Bucket `Public` sem objetos. Busca explícita no código por referência a esse bucket não retornou resultados; não excluir até confirmar ausência de dependências.
+- Policies de INSERT/UPDATE/DELETE de `artwork-images` limitam o primeiro segmento do caminho ao UUID do usuário autenticado.
+- Policies de INSERT/UPDATE de `profile-photos` aplicam a mesma restrição; não foi observada policy DELETE para fotos de perfil.
+- Não foram observadas policies de escrita para `anon`.
+- `storage.objects` concede grants SQL CRUD a `anon` e `authenticated`. Isso não prova, isoladamente, que acesso anônimo consiga gravar/apagar objetos; RLS/policies também se aplicam. Não revogar grants de Storage sem homologação.
+- Os buckets não têm limite de tamanho nem MIME types configurados. O frontend limita uploads a 5 MB; obras aceitam JPEG/PNG/WEBP e fotos também aceitam GIF. Limite no navegador não substitui validação no servidor.
+
+**Status:** auditoria somente leitura concluída para os resultados coletados. Nenhum bucket, objeto, grant ou policy foi alterado. Pendências: configurar limites e MIME types após testes; avaliar remoção/substituição de fotos e objetos órfãos; confirmar se `Public` é legado; homologar qualquer alteração de grants/policies. 

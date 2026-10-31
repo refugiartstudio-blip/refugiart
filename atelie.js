@@ -747,6 +747,7 @@ async function carregarObras() {
       .from("atelie_posts")
       .select("id, user_id, image_url, caption, category, created_at, moderation_status, content_sensitive, publicar_comunidade, publicar_mercado, preco, removida_do_portfolio")
       .eq("user_id", perfilIdAtelie)
+      .eq("removida_do_portfolio", false)
       .order("created_at", { ascending: false })
       .limit(50);
 

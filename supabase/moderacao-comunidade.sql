@@ -173,6 +173,9 @@ begin
 end;
 $$;
 
+-- Remove a assinatura anterior para permitir a correção do tipo de retorno (uuid -> bigint).
+drop function if exists public.refugiart_admin_queue();
+
 create or replace function public.refugiart_admin_queue()
 returns table(
   id bigint, user_id uuid, image_url text, caption text, category text,

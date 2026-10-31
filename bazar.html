@@ -47,7 +47,7 @@
     .produto-descricao{font-size:12px;line-height:1.5;color:#737d74;margin:0 0 12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .produto-preco{font-size:20px;font-weight:800;color:var(--verde-bazar);margin:auto 0 12px}.produto-tipo-leilao{display:inline-block;margin:0 0 8px;padding:5px 8px;border-radius:5px;background:#fff1e9;color:#9b432b;font-size:10px;font-weight:800;letter-spacing:.5px}.produto-cronometro{font-size:13px;font-weight:800;color:#9b432b;margin:0 0 10px}.produto-baloes{font-size:12px;color:#6b776d;margin:0 0 10px}
     .produto-acoes{display:flex;gap:7px}
-    .produto-acoes a{flex:1;text-align:center;text-decoration:none;border-radius:6px;padding:10px 7px;font-size:12px;font-weight:700}
+    .produto-acoes a,.produto-acoes button{flex:1;text-align:center;text-decoration:none;border-radius:6px;padding:10px 7px;font-size:12px;font-weight:700}
     .produto-ver{background:var(--verde-bazar);color:#fff}
     .produto-ver:hover{background:#365846}
     .bazar-vazio{grid-column:1/-1;background:#fff;border:1px dashed #d5ded3;border-radius:10px;text-align:center;padding:50px 20px;color:#788278}
@@ -161,7 +161,7 @@
         if(obra.listing_mode==="community"||obra.listing_mode==="auction"){const baloes=document.createElement("p");baloes.className="produto-baloes";baloes.textContent="🎈 "+(obra.auction_balloon_count||0)+(obra.listing_mode==="community"?" / 30 balões de interesse":" / 10 manifestações de interesse");info.append(baloes);}
         const acoes=document.createElement("div");acoes.className="produto-acoes";
         const link=document.createElement("a");link.className="produto-ver";link.href=obra.listing_mode==="auction"?"leiloes.html":"atelie.html?id="+encodeURIComponent(obra.user_id);link.textContent=obra.listing_mode==="auction"?"Ver leilão":"Ver obra";
-        acoes.append(link);info.append(titulo,artista,descricao,preco,acoes);card.append(foto,info);grade.append(card);
+        if(obra.listing_mode==="market"){const comprar=document.createElement("button");comprar.type="button";comprar.className="produto-ver";comprar.textContent="Adicionar à sacola";comprar.style.border="0";comprar.style.cursor="pointer";comprar.addEventListener("click",()=>{let itens=[];try{itens=JSON.parse(localStorage.getItem("refugiart_sacola")||"[]");}catch{}if(itens.some(x=>String(x.id)===String(obra.id))){alert("Esta obra já está na sua sacola.");return;}itens.push({id:obra.id,user_id:obra.user_id,image_url:obra.image_url,caption:obra.caption,artista:obra.artista,preco:Number(obra.preco)});localStorage.setItem("refugiart_sacola",JSON.stringify(itens));alert("Obra adicionada à sacola.");});acoes.append(comprar);}acoes.append(link);info.append(titulo,artista,descricao,preco,acoes);card.append(foto,info);grade.append(card);
       });
     }
     async function carregar(){

@@ -570,7 +570,7 @@ function criarCartaoObra(obra) {
       const botaoBalao = criarElemento("button", "botao-denunciar-obra", "🎈 Manifestar interesse");
       botaoBalao.type = "button";
       botaoBalao.addEventListener("click", async () => {
-        const confirmou = window.confirm("Este balão representa intenção real de participar de um possível leilão. Ele não é uma curtida e não garante a compra. Para registrar, sua carteira precisa ter saldo compatível. Deseja continuar?");
+        const confirmou = window.confirm("Este balão representa intenção real de participar de um possível leilão. Ele não é uma curtida e não garante a compra. Para registrar, sua carteira precisa ter pelo menos R$ 10,00 disponíveis. Esse valor não será descontado. Deseja continuar?");
         if (!confirmou) return;
         botaoBalao.disabled = true;
         try {

@@ -222,25 +222,61 @@ language plpgsql
 security definer
 set search_path = public
 as $$
-declare v_post public.atelie_posts%rowtype;
+declare
+  v_post public.atelie_posts%rowtype;
+  v_interest_count integer;
+  v_ends_at timestamptz;
 begin
   if auth.uid() is null then raise exception 'Faça login.'; end if;
-  select * into v_post from public.atelie_posts where id::text=p_post_id for update;
-  if not found or v_post.user_id <> auth.uid() then raise exception 'Somente o artista pode aprovar este leilão.'; end if;
-  if v_post.listing_mode <> 'community' or v_post.auction_status <> 'pending_artist' then
+
+  select * into v_post
+    from public.atelie_posts
+    where id::text=p_post_id
+    for update;
+  if not found or v_post.user_id <> auth.uid() then
+    raise exception 'Somente o artista pode aprovar este leilão.';
+  end if;
+  if v_post.listing_mode <> 'community'
+     or v_post.publicar_comunidade is not true
+     or v_post.auction_status <> 'pending_artist' then
     raise exception 'Esta obra não está aguardando aprovação.';
   end if;
-  if p_initial_price is null or p_initial_price <= 0 then raise exception 'Informe um lance inicial válido.'; end if;
-  update public.atelie_posts set listing_mode='auction', publicar_mercado=true,
-    preco=p_initial_price, auction_initial_price=p_initial_price,
-    auction_status='active', auction_approved_at=now(),
-    auction_starts_at=now(), auction_ends_at=now()+interval '24 hours'
+  if p_initial_price is null or p_initial_price <= 0 then
+    raise exception 'Informe um lance inicial válido.';
+  end if;
+
+  select count(*)::integer into v_interest_count
+    from public.refugiart_auction_interests
+    where post_id=p_post_id;
+  if v_interest_count < 30 then
+    raise exception 'A obra ainda não atingiu os 30 balões necessários.';
+  end if;
+
+  v_ends_at := now()+interval '24 hours';
+
+  update public.atelie_posts
+    set listing_mode='auction',
+        publicar_mercado=true,
+        preco=p_initial_price,
+        auction_initial_price=p_initial_price,
+        auction_status='active',
+        auction_approved_at=now(),
+        auction_starts_at=now(),
+        auction_ends_at=v_ends_at
     where id::text=p_post_id;
+
   insert into public.refugiart_auctions(post_id,artist_id,initial_price,starts_at,ends_at)
-    values(p_post_id,v_post.user_id,p_initial_price,now(),now()+interval '24 hours')
-    on conflict(post_id) do update set status='active',initial_price=excluded.initial_price,
-      starts_at=excluded.starts_at,ends_at=excluded.ends_at,winning_user_id=null,winning_bid=null,closed_at=null;
-  return jsonb_build_object('status','active','ends_at',now()+interval '24 hours');
+    values(p_post_id,v_post.user_id,p_initial_price,now(),v_ends_at)
+    on conflict(post_id) do update
+      set status='active',
+          initial_price=excluded.initial_price,
+          starts_at=excluded.starts_at,
+          ends_at=excluded.ends_at,
+          winning_user_id=null,
+          winning_bid=null,
+          closed_at=null;
+
+  return jsonb_build_object('status','active','ends_at',v_ends_at);
 end;
 $$;
 

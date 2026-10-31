@@ -1,5 +1,16 @@
 
 document.addEventListener("DOMContentLoaded", async function () {
+  // Destaca automaticamente a página atual na navegação principal.
+  const navPrincipal = document.querySelector("nav.navegacao-principal");
+  if (navPrincipal) {
+    const paginaAtual = location.pathname.split("/").pop() || "inicio.html";
+    navPrincipal.querySelectorAll("a[href]").forEach((link) => {
+      const destino = new URL(link.getAttribute("href"), location.href).pathname.split("/").pop();
+      if (destino === paginaAtual) link.setAttribute("aria-current", "page");
+      else if (link.getAttribute("aria-current") === "page") link.removeAttribute("aria-current");
+    });
+  }
+
   // ==========================================
   // 1. SESSÃO DO SUPABASE E NAVEGAÇÃO
   // ==========================================

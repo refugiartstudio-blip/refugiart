@@ -62,6 +62,11 @@ alter table public.refugiart_auction_interests enable row level security;
 alter table public.refugiart_auctions enable row level security;
 alter table public.refugiart_auction_bids enable row level security;
 
+grant select on public.refugiart_wallets to authenticated;
+grant select on public.refugiart_auction_interests to authenticated;
+grant select on public.refugiart_auctions to anon, authenticated;
+grant select on public.refugiart_auction_bids to authenticated;
+
 drop policy if exists "wallet_owner_read" on public.refugiart_wallets;
 create policy "wallet_owner_read" on public.refugiart_wallets
   for select to authenticated using (auth.uid() = user_id);

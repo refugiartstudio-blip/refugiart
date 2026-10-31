@@ -100,3 +100,16 @@ A ordem deve ser confirmada contra o estado real do projeto antes de executar. O
 - Pedido por transportadora em `shipped`: comprador pode confirmar recebimento explicitamente; a liquidacao continua bloqueada se houver disputa ou credito pendente divergente.
 - Pedido por entrega pessoal/retirada: fluxo de codigo de uso unico continua disponivel.
 - Testar tambem pedido inexistente, comprador diferente, pedido cancelado, disputa aberta e confirmacao repetida.
+
+
+## Migration 009 — testes de saúde financeira
+
+1. Lançar despesas de gateway, tributos, subsídio de frete, reembolso, chargeback e operação; conferir categorias e total mensal.
+2. Confirmar que uma comissão aparece uma única vez no relatório, a partir de `refugiart_platform_ledger`.
+3. Aportar R$ 100,00 na reserva promocional e conferir saldo R$ 100,00; tentar gastar R$ 100,01 e confirmar rejeição; gastar R$ 40,00 e conferir saldo R$ 60,00.
+4. Repetir uma chamada com a mesma chave idempotente e confirmar que não cria lançamento duplicado.
+5. Executar dois gastos promocionais concorrentes e confirmar que a soma nunca ultrapassa a reserva disponível.
+6. Confirmar que aportes promocionais não entram como receita nem como lucro; somente o gasto promocional entra nos custos.
+7. Conferir que o resultado mensal é identificado como resultado de contribuição antes de custos não registrados, e não como lucro líquido.
+8. Testar usuário anon, authenticated e service_role: somente service_role pode consultar a visão gerencial ou lançar custos.
+9. Conciliar comissão, despesas e saldos com pedidos e extratos de pagamento em ambiente de homologação.

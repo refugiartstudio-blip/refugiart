@@ -17,6 +17,12 @@ alter table public.atelie_posts
 
 update public.atelie_posts set listing_mode='market' where publicar_mercado=true and preco is not null and listing_mode='community';
 
+-- O navegador pode editar somente a legenda de uma obra existente.
+-- Campos de moderação, preço, modalidade e estado do leilão só mudam por
+-- funções confiáveis do banco (SECURITY DEFINER) ou pela administração.
+revoke update on table public.atelie_posts from public, anon, authenticated;
+grant update (caption) on table public.atelie_posts to authenticated;
+
 create table if not exists public.refugiart_wallets (
   user_id uuid primary key references auth.users(id) on delete cascade,
   available_balance numeric(12,2) not null default 0 check (available_balance >= 0),

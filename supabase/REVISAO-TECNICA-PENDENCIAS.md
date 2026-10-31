@@ -315,3 +315,11 @@ Consulta de `pg_sequences` e dependências confirmou cinco sequences, todas de p
 Isso confirma que USAGE deve ser preservado para o fluxo normal de geração automática de IDs. A migration 016 mantém USAGE e revoga apenas SELECT/UPDATE para `anon` e `authenticated` nas sequences existentes e nos defaults do papel `postgres` no schema `public`.
 
 **Status:** inventário somente leitura. Nenhuma sequence, tabela ou permissão foi alterada no banco.
+
+## Revisão técnica do Mercado, Bazar e Leilões — 31/10/2026
+
+Documento complementar: `REVISAO-TECNICA-MARKETPLACE-LEILOES.md`.
+
+A leitura estática confirmou que `atelie.js`, `mercado.html` e `bazar.html` dependem das colunas de modalidade/estado de leilão adicionadas pela migration `20261030_auction_balloon_system.sql`, enquanto `leiloes.html` depende de `refugiart_auctions`. A inspeção anterior do schema live não encontrou esses campos/tabelas, portanto o marketplace ainda depende da aplicação ordenada e homologada das migrations.
+
+A revisão também confirmou que os lances financeiros permanecem desabilitados na interface, e que a migration não conclui liquidação nem agendamento de encerramento. Nenhuma alteração foi executada no banco. Não liberar checkout, pagamentos, lances ou saques.

@@ -19,12 +19,6 @@
   flex:0 0 clamp(250px, 30%, 330px); min-width:0; scroll-snap-align:start; overflow:hidden;
 }
 #lista-obras-mercado.vitrine-carrossel-mercado .cartao-obra[hidden]{display:none}
-.controles-vitrine-mercado{display:flex;justify-content:flex-end;gap:9px;margin:4px 0 8px}
-.controles-vitrine-mercado button{
-  width:42px;height:42px;border:0;border-radius:50%;background:#243e35;color:#fff;
-  font-size:28px;line-height:1;cursor:pointer;display:grid;place-items:center
-}
-.controles-vitrine-mercado button:disabled{opacity:.35;cursor:not-allowed}
 @media(max-width:600px){
   #lista-obras-mercado.vitrine-carrossel-mercado .cartao-obra{flex-basis:82%;max-width:310px}
 }
@@ -114,9 +108,6 @@
     <section class="secao-mercado" id="obras">
 
 
-      <div class="controles-vitrine-mercado" aria-label="Navegar pelas obras">
-        <button type="button" id="obras-proxima" aria-label="Próximas obras">›</button>
-      </div>
       <div id="lista-obras-mercado" class="grade-obras vitrine-carrossel-mercado" aria-live="polite"><p>Carregando obras...</p></div>
     </section>
 
@@ -316,17 +307,7 @@
       });
     }
     const trilhoObras = document.getElementById("lista-obras-mercado");
-    const botaoAnterior = document.getElementById("obras-anterior");
-    const botaoProxima = document.getElementById("obras-proxima");
-    function atualizarControlesVitrine(){
-      const limite = trilhoObras.scrollWidth - trilhoObras.clientWidth;
-      if (botaoProxima) botaoProxima.disabled = trilhoObras.scrollLeft >= limite - 2;
-    }
-    if (botaoProxima) botaoProxima.addEventListener("click",()=>trilhoObras.scrollBy({left:trilhoObras.clientWidth*0.8,behavior:"smooth"}));
-    trilhoObras.addEventListener("scroll",atualizarControlesVitrine);
-    window.addEventListener("resize",atualizarControlesVitrine);
-    const observarObras = new MutationObserver(atualizarControlesVitrine);
-    observarObras.observe(trilhoObras,{childList:true});
+    trilhoObras.addEventListener("scroll",()=>{});
     carregarMercado();
   </script>
 

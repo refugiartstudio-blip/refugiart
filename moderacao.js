@@ -16,6 +16,7 @@ const indicadorDenuncias = document.getElementById("indicador-denuncias");
 
 let publicacoes = [];
 let notificacoesFinanceiras = [];
+let canalFinanceiro = null;
 let pastaAtual = "entrada";
 let filtroAtual = "todas";
 
@@ -86,6 +87,35 @@ function rotuloStatusFinanceiro(statusEvento) {
     failed: "Falhou"
   };
   return rotulos[statusEvento] || statusEvento || "Não informado";
+}
+
+
+function conectarAtualizacoesFinanceiras() {
+  if (canalFinanceiro) return;
+  canalFinanceiro = supabase
+    .channel("refugiart-central-financeira")
+    .on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "refugiart_financial_notifications"
+    }, payload => {
+      if (payload.eventType === "INSERT" && payload.new) {
+        notificacoesFinanceiras = [
+          payload.new,
+          ...notificacoesFinanceiras.filter(item => item.id !== payload.new.id)
+        ].slice(0, 150);
+      } else if (payload.eventType === "UPDATE" && payload.new) {
+        if (payload.new.archived_at) {
+          notificacoesFinanceiras = notificacoesFinanceiras.filter(item => item.id !== payload.new.id);
+        } else {
+          notificacoesFinanceiras = notificacoesFinanceiras.map(item =>
+            item.id === payload.new.id ? payload.new : item
+          );
+        }
+      }
+      if (pastaAtual === "financeiro") renderizarFinanceiro();
+    })
+    .subscribe();
 }
 
 async function carregarFinanceiro() {
@@ -305,6 +335,7 @@ async function carregar() {
     return;
   }
 
+  conectarAtualizacoesFinanceiras();
   await carregarFinanceiro();
 
   const { data, error } = await supabase.rpc("refugiart_admin_queue");

@@ -124,3 +124,11 @@ A ordem deve ser confirmada contra o estado real do projeto antes de executar. O
 5. Carrinho abaixo/acima de R$ 300: elegibilidade deve refletir o subtotal, sem alterar o teto financeiro.
 6. Pacotes com identificador repetido, campo ausente, frete negativo ou formato inválido devem ser rejeitados.
 7. Conferir que nenhum pacote recebe subsídio maior que seu frete e que a soma do frete pago pelo comprador + subsídio é igual ao frete cotado total.
+
+
+## Encerramento sem vencedor — migration 012
+
+14. Encerrar leilao sem lances: deve finalizar sem criar pedido ou debito e sem alterar carteiras.
+15. Encerrar leilao com reservas ativas, mas sem vencedor valido: devolver cada reserva ao saldo disponivel e registrar uma transacao por participante.
+16. Repetir a rotina depois de encerrado: nenhuma carteira pode receber devolucao duplicada.
+17. Simular reserva maior que o saldo reservado na carteira: a operacao deve falhar integralmente, sem encerrar o leilao nem liberar parcialmente outros participantes.

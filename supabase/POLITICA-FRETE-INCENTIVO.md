@@ -73,3 +73,8 @@ A migration `20261030_009_platform_costs_and_promo_reserve.sql` adiciona um livr
 A visão gerencial mensal apresenta comissão bruta, categorias de custo e resultado de contribuição antes de custos não registrados. Esse resultado não é lucro líquido contábil ou fiscal. A comissão só aparece quando registrada no livro da plataforma; despesas precisam ser lançadas pelo backend com chave idempotente. A reserva promocional não é receita nem lucro.
 
 **Regra:** não oferecer subsídio adicional acima dos 20% ordinários da comissão sem saldo promocional real e previamente financiado. O custo do benefício deve ser registrado no livro de despesas.
+
+
+## Rateio exato de frete — migration 010
+
+A migration `20261030_010_exact_group_shipping_subsidy.sql` acrescenta cálculo de subsídio para o checkout inteiro. Recebe os pacotes e fretes cotados, calcula uma única verba de até 20% da comissão total e distribui centavos pelo método de maiores restos, garantindo que a soma dos subsídios por pacote corresponda ao subsídio total, sem ultrapassar o frete individual. A função é restrita a `service_role`.

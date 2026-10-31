@@ -104,9 +104,9 @@
         </div>
         <div class="saldo-bloqueado-card"><small>SALDO BLOQUEADO / PENDENTE</small><strong id="saldoPendente">R$ 0,00</strong><p>Valores de vendas aguardando a confirmação da postagem da obra ou a conclusão de outras etapas de segurança.</p></div>
         <div class="atalhos-carteira">
-          <button class="atalho" type="button" data-acao="saque">
+          <button class="atalho" type="button" data-acao="saque" disabled aria-disabled="true" title="Saques ainda não estão disponíveis">
             <span class="atalho-icone">↗</span>
-            <span><strong>Fazer saque</strong><small>Transfira seu saldo disponível para sua conta ou chave Pix.</small></span>
+            <span><strong>Saques indisponíveis</strong><small>Essa função será liberada após a validação dos repasses.</small></span>
           </button>
           <button class="atalho" type="button" data-acao="deposito">
             <span class="atalho-icone">＋</span>
@@ -116,7 +116,7 @@
       </section>
 
       <aside class="carteira-aviso">
-        <span>ⓘ</span><div><b>Compras no Bazar não exigem depósito.</b>Você paga diretamente ao comprar uma obra e escolhe a forma de pagamento. O depósito na carteira será destinado aos créditos utilizados nos leilões.</div>
+        <span>ⓘ</span><div><b>Compras no Bazar não exigem depósito.</b>Você paga diretamente ao comprar uma obra e escolhe a forma de pagamento. A carteira está em preparação; depósitos e uso de créditos só serão liberados após a validação do serviço financeiro.</div>
       </aside>
 
       <section class="historico-card" aria-labelledby="tituloHistorico">
@@ -162,7 +162,7 @@
       <label for="valorCarteira">Valor (R$)</label><input id="valorCarteira" type="number" min="1" step="0.01" placeholder="Ex.: 50,00">
       <div id="campoChavePix" hidden><label for="chavePixSaque">Chave Pix para recebimento</label><input id="chavePixSaque" type="text" placeholder="Informe sua chave Pix"></div>
       <button class="modal-confirmar" id="confirmarAcaoCarteira" type="button">Continuar</button>
-      <p class="modal-rodape">Esta interface é demonstrativa. As operações serão habilitadas após a integração segura com o provedor de pagamentos.</p>
+      <p class="modal-rodape" id="statusPagamento" role="status" aria-live="polite">Os depósitos ainda estão bloqueados. Nenhuma cobrança será criada enquanto a operação não estiver autorizada.</p>
     </div>
   </div>
 
@@ -174,6 +174,7 @@
     document.querySelectorAll("[data-acao]").forEach(botao=>botao.addEventListener("click",()=>{
       acaoAtual=botao.dataset.acao;
       const saque=acaoAtual==="saque";
+      if(saque){return;}
       titulo.textContent=saque?"Solicitar saque":"Adicionar saldo";
       descricao.textContent=saque?"Informe o valor que deseja retirar e a chave Pix para receber. O saque dependerá da confirmação do saldo e das regras do serviço de pagamentos.":"Adicione créditos à sua carteira para participar dos leilões RefugiART. Compras no Bazar não exigem depósito.";
       campoPix.hidden=!saque;document.getElementById("valorCarteira").value="";document.getElementById("chavePixSaque").value="";
@@ -183,9 +184,7 @@
     function fecharModal(){modal.classList.remove("aberto")}
     document.getElementById("fecharModalCarteira").addEventListener("click",fecharModal);
     modal.addEventListener("click",e=>{if(e.target===modal)fecharModal()});
-    botaoAcao.addEventListener("click",()=>{
-      alert("As operações financeiras ainda não estão ativas. A integração com o provedor de pagamentos será necessária antes de movimentar dinheiro.");
-    });
+    // O envio do depósito é tratado no módulo Supabase, que possui a sessão autenticada.
     document.querySelectorAll("#filtrosHistorico button").forEach(botao=>botao.addEventListener("click",()=>{
       document.querySelectorAll("#filtrosHistorico button").forEach(b=>b.classList.toggle("ativo",b===botao));
     }));
@@ -194,6 +193,43 @@
     import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
     const sb=createClient("https://nlqalpiksbqflzxzsgoa.supabase.co","sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
     const fmt=v=>Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+    const statusPagamento=document.getElementById("statusPagamento");
+    const botaoPagamento=document.getElementById("confirmarAcaoCarteira");
+    const inputValor=document.getElementById("valorCarteira");
+    botaoPagamento.addEventListener("click",async()=>{
+      const valor=Number(inputValor.value);
+      if(!Number.isFinite(valor)||valor<1||valor>10000){
+        statusPagamento.textContent="Informe um valor entre R$ 1,00 e R$ 10.000,00.";
+        return;
+      }
+      const centavos=Math.round(valor*100);
+      if(Math.abs(valor*100-centavos)>0.001){
+        statusPagamento.textContent="Informe um valor com no máximo duas casas decimais.";
+        return;
+      }
+      botaoPagamento.disabled=true;
+      botaoPagamento.textContent="Verificando...";
+      statusPagamento.textContent="Verificando a disponibilidade segura do pagamento...";
+      try{
+        const {data,error}=await sb.functions.invoke("infinitepay-create-checkout",{body:{amount_cents:centavos}});
+        if(error){
+          let detalhe=error.message||"Não foi possível iniciar o pagamento.";
+          try{
+            const resposta=await error.context?.json?.();
+            if(resposta?.message)detalhe=resposta.message;
+          }catch{}
+          throw new Error(detalhe);
+        }
+        if(!data?.checkout_url||!data.checkout_url.startsWith("https://"))throw new Error("O provedor não retornou um endereço de pagamento válido.");
+        statusPagamento.textContent="Link criado. Redirecionando para a InfinitePay...";
+        window.location.assign(data.checkout_url);
+      }catch(err){
+        statusPagamento.textContent=err.message||"Não foi possível iniciar o pagamento. Tente novamente mais tarde.";
+        botaoPagamento.disabled=false;
+        botaoPagamento.textContent="Continuar para depósito";
+      }
+    });
+
     (async()=>{const {data:{user}}=await sb.auth.getUser();if(!user)return;const {data,error}=await sb.from("refugiart_wallets").select("available_balance,pending_balance").eq("user_id",user.id).maybeSingle();if(error){console.warn("Carteira indisponível:",error.message);return;}document.getElementById("saldoDisponivel").textContent=fmt(data?.available_balance);document.getElementById("saldoPendente").textContent=fmt(data?.pending_balance);})();
     const depositoSolicitado=Number(new URLSearchParams(location.search).get("deposito"));if(Number.isFinite(depositoSolicitado)&&depositoSolicitado>0){document.getElementById("modalTitulo").textContent="Adicionar saldo";document.getElementById("modalDescricao").textContent="Para registrar seu balão, sua carteira precisa ter pelo menos "+fmt(depositoSolicitado)+". O depósito ainda depende da integração de pagamento.";document.getElementById("valorCarteira").value=depositoSolicitado.toFixed(2);document.getElementById("modalCarteira").classList.add("aberto");}
   </script>

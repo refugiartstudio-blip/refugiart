@@ -8,7 +8,8 @@ Este roteiro é para ambiente de desenvolvimento/homologação. Não usar dinhei
 2. `migrations/20261030_auction_balloon_system.sql`.
 3. `migrations/20261030_003_orders_shipping_disputes.sql`.
 4. `migrations/20261030_004_auction_reservations.sql`.
-5. `agendar-encerramento-leiloes.sql` somente depois de validar a função e confirmar que pg_cron está habilitado.
+5. `migrations/20261030_005_auction_settlement_safety.sql`.
+6. `agendar-encerramento-leiloes.sql` somente depois de validar a função e confirmar que pg_cron está habilitado.
 
 A ordem deve ser confirmada contra o estado real do projeto antes de executar. Os arquivos não foram executados neste repositório remoto.
 
@@ -43,6 +44,7 @@ A ordem deve ser confirmada contra o estado real do projeto antes de executar. O
 - É criado um pedido único vinculado ao leilão.
 - O pedido fica em `awaiting_shipment`, com pagamento interno registrado e prazo de três dias úteis.
 - É criada uma remessa em `awaiting_post`.
+- O frete fica explicitamente `pending_quote`; o valor do lance não deve ser apresentado como frete grátis.
 - O item preserva o título/legenda e o preço do momento da venda.
 - Qualquer inconsistência deve abortar toda a transação, sem liquidar parcialmente.
 

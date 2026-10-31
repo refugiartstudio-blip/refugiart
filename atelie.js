@@ -916,6 +916,8 @@ form?.addEventListener("submit", async (evento) => {
         category: categoria,
         publicar_comunidade: publicarComunidade,
         publicar_mercado: publicarMercado,
+        listing_mode: listingMode,
+        auction_status: publicarLeilao ? "collecting" : "none",
         preco: publicarMercado ? preco : null,
         content_sensitive: conteudoSensivel
       });

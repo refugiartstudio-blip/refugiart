@@ -2266,3 +2266,37 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
   .pagina-atelie .janela-banner-kraken{min-height:86px;padding:18px 10px;border-radius:11px}
   .pagina-atelie .janela-banner-kraken span{letter-spacing:.055em}
 }
+
+
+/* Identidade Kraken Tattoo ao lado do botão Atualizar */
+.pagina-atelie .titulo-feed{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.pagina-atelie .marca-janela-kraken{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:1 1 auto;
+  min-width:0;
+  min-height:38px;
+  padding:7px 12px;
+  border-radius:9px;
+  background:#050505;
+  color:#fff;
+  font-family:Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size:clamp(16px, 3vw, 25px);
+  font-weight:900;
+  letter-spacing:.08em;
+  line-height:1;
+  text-align:center;
+  white-space:nowrap;
+}
+.pagina-atelie .controles-janela-criativa{flex:0 0 auto}
+.pagina-atelie .botao-carrossel{display:none!important}
+@media(max-width:520px){
+  .pagina-atelie .titulo-feed{align-items:center;gap:8px}
+  .pagina-atelie .marca-janela-kraken{min-height:34px;padding:6px 8px;font-size:clamp(14px,4vw,19px);letter-spacing:.045em}
+}

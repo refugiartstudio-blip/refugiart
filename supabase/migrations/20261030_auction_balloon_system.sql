@@ -54,6 +54,39 @@ for each row execute function public.refugiart_create_wallet_for_user();
 
 -- Livro-razão imutável da carteira. Nenhum cliente pode criar ou alterar
 -- movimentações; somente o backend confiável/provedor financeiro poderá fazê-lo.
+-- Saldo reservado fica separado do saldo livre e do saldo pendente.
+alter table public.refugiart_wallets
+  add column if not exists reserved_balance numeric(12,2) not null default 0
+    check (reserved_balance >= 0);
+
+-- Uma reserva ativa por participante e leilão. O valor permanece na carteira,
+-- mas não pode ser reutilizado em outro lance ou saque.
+create table if not exists public.refugiart_auction_reservations (
+  id bigint generated always as identity primary key,
+  auction_id bigint not null references public.refugiart_auctions(id) on delete restrict,
+  user_id uuid not null references auth.users(id) on delete restrict,
+  bid_id bigint,
+  amount numeric(12,2) not null check (amount > 0),
+  status text not null default 'active'
+    check (status in ('active','released','captured','cancelled')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (auction_id,user_id)
+);
+create index if not exists refugiart_auction_reservations_user_idx
+  on public.refugiart_auction_reservations(user_id,status);
+create index if not exists refugiart_auction_reservations_auction_idx
+  on public.refugiart_auction_reservations(auction_id,status);
+
+alter table public.refugiart_auction_reservations enable row level security;
+revoke all on public.refugiart_auction_reservations from public, anon, authenticated;
+grant select on public.refugiart_auction_reservations to authenticated;
+drop policy if exists "auction_reservations_owner_read" on public.refugiart_auction_reservations;
+create policy "auction_reservations_owner_read"
+  on public.refugiart_auction_reservations for select to authenticated
+  using (auth.uid() = user_id);
+grant all on public.refugiart_auction_reservations to service_role;
+
 create table if not exists public.refugiart_wallet_transactions (
   id bigint generated always as identity primary key,
   user_id uuid not null references auth.users(id) on delete restrict,

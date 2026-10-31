@@ -92,7 +92,7 @@ grant select on public.refugiart_auction_interests to authenticated;
 -- Expõe apenas os campos necessários para a vitrine pública.
 -- artist_id permanece disponível somente para as funções SECURITY DEFINER.
 revoke select on public.refugiart_auctions from anon, authenticated;
-grant select (id, post_id, status, initial_price, starts_at, ends_at, winning_user_id, winning_bid, closed_at, created_at)
+grant select (id, post_id, status, initial_price, starts_at, ends_at, winning_bid, closed_at, created_at)
   on public.refugiart_auctions to anon, authenticated;
 
 -- Lances só podem ser consultados pelo próprio participante via RLS.

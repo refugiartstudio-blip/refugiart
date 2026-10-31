@@ -83,10 +83,20 @@ botao.addEventListener("click",async()=>{
  if(!ids.length||ids.some(id=>!Number.isSafeInteger(id)||id<=0)){aviso.textContent="A sacola contém uma obra inválida. Remova os itens e adicione-os novamente.";return;}
  botao.disabled=true;botao.textContent="Validando obras...";aviso.textContent="O RefugiART está conferindo preços, vendedores e disponibilidade diretamente no banco de dados.";
  try{
-  const {data:{user},error:userError}=await sb.auth.getUser();
-  if(userError||!user)throw new Error("Faça login para finalizar sua compra.");
+  let {data:sessionData,error:sessionError}=await sb.auth.getSession();
+  if(sessionError)throw new Error("Não foi possível verificar sua sessão. Atualize a página e tente novamente.");
+  let session=sessionData?.session;
+  if(!session){
+   const refreshed=await sb.auth.refreshSession();
+   if(refreshed.error)throw new Error("Sua sessão não foi localizada. Entre novamente na sua conta e volte à sacola.");
+   session=refreshed.data?.session;
+  }
+  if(!session?.access_token)throw new Error("Sua sessão não foi localizada. Entre novamente na sua conta e volte à sacola.");
   const key=crypto.randomUUID();
-  const {data,error}=await sb.functions.invoke("infinitepay-create-market-checkout",{body:{post_ids:ids,idempotency_key:key}});
+  const {data,error}=await sb.functions.invoke("infinitepay-create-market-checkout",{
+   body:{post_ids:ids,idempotency_key:key},
+   headers:{Authorization:"Bearer "+session.access_token}
+  });
   if(error){let msg=error.message||"Não foi possível iniciar o pagamento.";try{const detail=await error.context?.json?.();if(detail?.message)msg=detail.message;}catch{}throw new Error(msg);}
   if(!data?.checkout_url||!data.checkout_url.startsWith("https://"))throw new Error("A InfinitePay não retornou um endereço de pagamento válido.");
   aviso.textContent="Obras reservadas e valor conferido pelo servidor. Abrindo a página segura da InfinitePay...";

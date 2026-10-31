@@ -191,3 +191,21 @@ Pendências de alta prioridade:
 - Saldo disponível não é saque Pix; saques continuam desabilitados.
 
 **Status:** documentado; nenhuma migration foi executada nem alterada nesta etapa.
+
+
+## Checkout, entrada de pagamentos e conciliação — auditoria estática
+
+Documento: `REVISAO-CHECKOUT-ENTRADA-PAGAMENTOS.md`
+
+Achados:
+- A sacola (`sacola.html`) usa `localStorage`; preço e total são manipuláveis no navegador. O botão de finalizar ainda apenas informa que a integração não está disponível.
+- O Bazar consulta anúncios publicados no Supabase e adiciona dados locais à sacola; isso não reserva a obra nem garante disponibilidade.
+- A migration 003 cria estrutura de pedidos e referências de provedor, mas não implementa cobrança nem confirmação de pagamento.
+- Não foi localizado fluxo de servidor para criar cobrança, validar webhook assinado, processar eventos idempotentes ou conciliar com extrato/API do provedor.
+- O diagnóstico SQL existente é somente leitura e não substitui conciliação externa.
+
+**Bloqueios P0:** backend recalcular preços e frete; reserva atômica de obra única; snapshots financeiros; cobrança vinculada a referência interna; webhook autenticado e idempotente; estados explícitos; tratamento de eventos atrasados/repetidos; conciliação de bruto, taxas, líquido, reembolso e chargeback.
+
+**Dependências:** escolher provedor que aceite marketplace, vendedores terceiros, KYC, split e Pix; decidir recebimento centralizado ou split; definir política de expiração e tratamento de carrinho com múltiplos artistas. Não presumir suporte do provedor.
+
+**Status:** auditoria estática concluída e documentada. Nenhuma cobrança foi criada e nenhum SQL foi executado. Checkout permanece desativado até implementação e homologação ponta a ponta.

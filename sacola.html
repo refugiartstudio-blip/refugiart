@@ -1,7 +1,70 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#243e35"><title>Sacola | RefugiART</title><link rel="stylesheet" href="style.css">
-<style>body{background:#f4f6f2}.sacola-main{max-width:980px;margin:30px auto;padding:0 16px}.sacola-main h2{font:34px Georgia,serif;color:#243e35}.sacola-lista{display:grid;gap:12px}.item-sacola{display:grid;grid-template-columns:100px 1fr auto;gap:14px;align-items:center;background:#fff;border:1px solid #e2e8e0;border-radius:12px;padding:12px}.item-sacola img{width:100px;height:100px;object-fit:cover;border-radius:8px}.item-sacola h3{margin:0;color:#243e35;font-size:16px}.item-sacola p{margin:5px 0;color:#748074;font-size:13px}.item-sacola strong{color:#243e35}.item-sacola button{border:1px solid #e3d6d2;background:#fff;color:#984b3b;border-radius:7px;padding:8px 10px}.sacola-total{background:#fff;border:1px solid #e2e8e0;border-radius:12px;padding:18px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px}.sacola-total strong{font-size:22px;color:#243e35}.sacola-vazia{text-align:center;padding:45px;background:#fff;border:1px dashed #d8e1d7;border-radius:12px;color:#748074}.sacola-vazia a{display:inline-block;margin-top:12px;color:#243e35;font-weight:700}@media(max-width:520px){.item-sacola{grid-template-columns:76px 1fr}.item-sacola img{width:76px;height:76px}.item-sacola button{grid-column:2;justify-self:start}.sacola-total{align-items:flex-start;flex-direction:column}}</style></head>
-<body><header class="cabecalho"><img src="imagens/logo.png" alt="RefugiART" class="logo"><div class="identidade"><h1>RefugiART</h1><p>A arte nos aproxima.</p></div></header><nav class="navegacao-principal"><a href="inicio.html">Início</a><a href="mercado.html">Mercado</a><a href="bazar.html">Bazar</a><a href="leiloes.html">Leilões</a><a href="carteira.html">Carteira</a><a id="linkLogin" href="login.html">Login</a></nav>
-<main class="sacola-main"><small>REFUGIART • COMPRA DIRETA</small><h2>Minha sacola</h2><p>Revise as obras escolhidas para compra direta. Obras em leilão não podem ser adicionadas à sacola.</p><div id="listaSacola" class="sacola-lista"></div><div id="totalSacola" class="sacola-total" hidden><span>Total dos itens<strong id="valorTotal">R$ 0,00</strong></span><button id="continuarCompra" type="button" disabled>Finalizar compra</button></div><p id="avisoSacola" style="font-size:12px;color:#7a847c">O checkout e o pagamento ainda dependem da integração com o provedor financeiro. Nenhum valor será cobrado nesta etapa.</p></main><footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer><script>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#243e35"><title>Sacola | RefugiART</title><link rel="stylesheet" href="style.css">
+<style>
+body{background:#f4f6f2}
+.sacola-layout{position:relative;display:block;width:100%;min-width:0;padding:0 18px;box-sizing:border-box}
+.coluna-mercado{position:absolute;left:18px;top:0;display:flex;flex-direction:column;align-items:stretch;width:52px;min-width:52px;max-width:52px;box-sizing:border-box;padding:12px 5px;background:#fff;border:1px solid #e1e7df;border-radius:14px;overflow:hidden;transition:width .25s ease,max-width .25s ease;z-index:20}
+.coluna-mercado.expandida{width:190px;min-width:190px;max-width:190px;padding:14px 10px;box-shadow:0 8px 24px rgba(20,40,28,.14)}
+.conteudo-coluna-mercado{display:flex;flex-direction:column;align-items:stretch;width:100%;min-width:0;overflow:hidden}
+.coluna-mercado a.link-coluna-mercado{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;width:100%;min-width:0;gap:10px;margin:4px 0;padding:12px 8px;color:#294438;background:transparent;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;line-height:1.4;white-space:nowrap;box-sizing:border-box;transition:background .2s ease,color .2s ease}
+.coluna-mercado a.link-coluna-mercado:hover,.coluna-mercado a.link-coluna-mercado.ativo{color:#243e35;background:#e8eee8}
+.icone-coluna-mercado{display:inline-flex;align-items:center;justify-content:center;flex:0 0 24px;width:24px;font-size:19px}
+.texto-coluna-mercado{overflow:hidden}
+.coluna-mercado:not(.expandida) .titulo-coluna-mercado,.coluna-mercado:not(.expandida) .texto-coluna-mercado,.coluna-mercado:not(.expandida) .divisor-coluna-mercado{display:none!important}
+.coluna-mercado:not(.expandida) a.link-coluna-mercado{justify-content:center;padding:12px 2px}
+.titulo-coluna-mercado{margin:14px 8px 6px;color:#7b877d;font-size:10px;font-weight:800;letter-spacing:1.2px}
+.divisor-coluna-mercado{height:1px;background:#e1e7df;margin:10px 4px}
+.seta-coluna-mercado{display:flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0 auto 14px;border:0;border-radius:8px;background:#e8eee8;color:#243e35;cursor:pointer;font-size:18px}
+.sacola-main{max-width:980px;margin:30px auto 54px;padding:0 16px;box-sizing:border-box}
+.sacola-main h2{font:34px Georgia,serif;color:#243e35}
+.sacola-lista{display:grid;gap:12px}
+.item-sacola{display:grid;grid-template-columns:100px 1fr auto;gap:14px;align-items:center;background:#fff;border:1px solid #e2e8e0;border-radius:12px;padding:12px}
+.item-sacola img{width:100px;height:100px;object-fit:cover;border-radius:8px}
+.item-sacola h3{margin:0;color:#243e35;font-size:16px}
+.item-sacola p{margin:5px 0;color:#748074;font-size:13px}
+.item-sacola strong{color:#243e35}
+.item-sacola button{border:1px solid #e3d6d2;background:#fff;color:#984b3b;border-radius:7px;padding:8px 10px}
+.sacola-total{background:#fff;border:1px solid #e2e8e0;border-radius:12px;padding:18px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sacola-total strong{font-size:22px;color:#243e35}
+.sacola-vazia{text-align:center;padding:45px;background:#fff;border:1px dashed #d8e1d7;border-radius:12px;color:#748074}
+.sacola-vazia a{display:inline-block;margin-top:12px;color:#243e35;font-weight:700}
+@media(max-width:700px){.sacola-layout{padding:0 8px}.coluna-mercado{left:8px;width:48px;min-width:48px;max-width:48px;padding:10px 4px}.coluna-mercado.expandida{width:165px;min-width:165px;max-width:165px;padding:12px 8px}.sacola-main{margin-top:18px;padding:0 10px}}
+@media(max-width:520px){.item-sacola{grid-template-columns:76px 1fr}.item-sacola img{width:76px;height:76px}.item-sacola button{grid-column:2;justify-self:start}.sacola-total{align-items:flex-start;flex-direction:column}}
+</style></head>
+<body>
+<header class="cabecalho"><img src="imagens/logo.png" alt="Símbolo da RefugiART" class="logo"><div class="identidade"><h1>RefugiART</h1><p>A arte nos aproxima.</p></div><button class="botao-menu" id="abrirMenu" type="button" aria-label="Abrir menu" aria-controls="menuLateral" aria-expanded="false">☰</button></header>
+<nav class="navegacao-principal"><a href="inicio.html">Início</a><a href="mercado.html">Mercado</a><a href="comunidades.html">Comunidades</a><a href="galeria.html">Galeria</a><a id="linkLogin" href="login.html">Login</a></nav>
+<div class="sacola-layout">
+<aside class="coluna-mercado" id="colunaMercado" aria-label="Menu do Mercado">
+<button type="button" class="seta-coluna-mercado" id="alternarColunaMercado" aria-label="Expandir menu do Mercado" aria-controls="navegacaoMercado" aria-expanded="false"><span id="iconeSetaMercado">➜</span></button>
+<nav class="conteudo-coluna-mercado" id="navegacaoMercado" aria-label="Áreas do Mercado">
+<a href="carteira.html" class="link-coluna-mercado" title="Carteira"><span class="icone-coluna-mercado">▣</span><span class="texto-coluna-mercado">Carteira</span></a>
+<a href="sacola.html" class="link-coluna-mercado ativo" title="Sacola"><span class="icone-coluna-mercado">🛍</span><span class="texto-coluna-mercado">Sacola</span></a>
+<a href="bazar.html" class="link-coluna-mercado" title="Bazar"><span class="icone-coluna-mercado">▧</span><span class="texto-coluna-mercado">Bazar</span></a>
+<a href="leiloes.html" class="link-coluna-mercado" title="Leilões"><span class="icone-coluna-mercado">⚒</span><span class="texto-coluna-mercado">Leilões</span></a>
+<div class="divisor-coluna-mercado"></div><p class="titulo-coluna-mercado">INTERAÇÕES</p>
+<a href="balao.html" class="link-coluna-mercado" title="Balão"><span class="icone-coluna-mercado">◉</span><span class="texto-coluna-mercado">Balão</span></a>
+</nav></aside>
+<main class="sacola-main"><small>REFUGIART • COMPRA DIRETA</small><h2>Minha sacola</h2><p>Revise as obras escolhidas para compra direta. Obras em leilão não podem ser adicionadas à sacola.</p><div id="listaSacola" class="sacola-lista"></div><div id="totalSacola" class="sacola-total" hidden><span>Total dos itens<strong id="valorTotal">R$ 0,00</strong></span><button id="continuarCompra" type="button" disabled>Finalizar compra</button></div><p id="avisoSacola" style="font-size:12px;color:#7a847c">O checkout e o pagamento ainda dependem da integração com o provedor financeiro. Nenhum valor será cobrado nesta etapa.</p></main>
+</div>
+<footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
+<div class="fundo-menu" id="fundoMenu"></div>
+<aside class="menu-lateral" id="menuLateral" role="dialog" aria-modal="true" aria-labelledby="tituloMenu" aria-hidden="true" inert>
+<div class="cabecalho-menu"><div><h2 id="tituloMenu">RefugiART</h2><p>Explore nossas iniciativas</p></div><button class="botao-fechar" id="fecharMenu" type="button" aria-label="Fechar menu">×</button></div>
+<div class="introducao-menu"><span>✦</span><div><h3>Conheça nosso universo</h3><p>Arte, cultura e transformação social.</p></div></div>
+<nav class="opcoes-menu" aria-label="Áreas da RefugiART">
+<a href="revista.html" class="item-menu"><span class="icone-menu">▤</span><span class="texto-menu"><strong>Revista RefugiART</strong><small>Publicações e entrevistas</small></span><span class="seta-menu">›</span></a>
+<a href="eventos.html" class="item-menu"><span class="icone-menu">▦</span><span class="texto-menu"><strong>Eventos</strong><small>Encontros e programações</small></span><span class="seta-menu">›</span></a>
+<a href="exposicoes.html" class="item-menu"><span class="icone-menu">▧</span><span class="texto-menu"><strong>Exposições</strong><small>Mostras e trabalhos artísticos</small></span><span class="seta-menu">›</span></a>
+<a href="palestras.html" class="item-menu"><span class="icone-menu">◉</span><span class="texto-menu"><strong>Palestras e encontros</strong><small>Ideias e experiências</small></span><span class="seta-menu">›</span></a>
+<a href="acoes-sociais.html" class="item-menu"><span class="icone-menu">♡</span><span class="texto-menu"><strong>Ações sociais</strong><small>Arte junto à comunidade</small></span><span class="seta-menu">›</span></a>
+<a href="projetos-educativos.html" class="item-menu"><span class="icone-menu">✎</span><span class="texto-menu"><strong>Projetos educativos</strong><small>Oficinas, cursos e formação</small></span><span class="seta-menu">›</span></a>
+<a href="perfil.html" class="item-menu"><span class="icone-menu">♙</span><span class="texto-menu"><strong>Meu perfil</strong><small>Editar meus dados e informações</small></span><span class="seta-menu">›</span></a>
+</nav><div class="rodape-menu"><p>RefugiART — Criar é Sentir.</p></div></aside>
+<script>
 const chave="refugiart_sacola";const lista=document.getElementById("listaSacola"),total=document.getElementById("totalSacola"),valor=document.getElementById("valorTotal");const moeda=v=>Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});function ler(){try{return JSON.parse(localStorage.getItem(chave)||"[]")}catch{return []}}function salvar(itens){localStorage.setItem(chave,JSON.stringify(itens));renderizar()}function renderizar(){const itens=ler().filter(item=>item.listing_mode==="market");lista.replaceChildren();if(!itens.length){const vazio=document.createElement("div");vazio.className="sacola-vazia";vazio.innerHTML='<strong>Sua sacola está vazia.</strong><br>Explore o Bazar e encontre uma obra para levar para casa.<br><a href="bazar.html">Voltar ao Bazar →</a>';lista.append(vazio);total.hidden=true;return;}let soma=0;itens.forEach(item=>{soma+=Number(item.preco)||0;const card=document.createElement("article");card.className="item-sacola";const img=document.createElement("img");img.src=item.image_url;img.alt=item.caption||"Obra";const info=document.createElement("div");const h=document.createElement("h3");h.textContent=item.caption||"Obra de arte";const p=document.createElement("p");p.textContent=item.artista||"Artista RefugiART";const preco=document.createElement("strong");preco.textContent=moeda(item.preco);info.append(h,p,preco);const remover=document.createElement("button");remover.type="button";remover.textContent="Remover";remover.addEventListener("click",()=>salvar(ler().filter(x=>String(x.id)!==String(item.id))));card.append(img,info,remover);lista.append(card);});valor.textContent=moeda(soma);total.hidden=false;}document.getElementById("continuarCompra").addEventListener("click",()=>alert("O checkout será habilitado após a integração segura com o provedor de pagamentos."));renderizar();
-</script><script src="script.js"></script></body></html>
+</script>
+<script>(function(){const coluna=document.getElementById("colunaMercado"),botao=document.getElementById("alternarColunaMercado"),icone=document.getElementById("iconeSetaMercado");if(!coluna||!botao||!icone)return;botao.addEventListener("click",function(){const expandida=coluna.classList.toggle("expandida");botao.setAttribute("aria-expanded",String(expandida));botao.setAttribute("aria-label",expandida?"Recolher menu do Mercado":"Expandir menu do Mercado");icone.textContent=expandida?"⬅":"➜";});})();</script>
+<script src="script.js"></script></body></html>

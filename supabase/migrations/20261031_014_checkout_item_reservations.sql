@@ -127,6 +127,11 @@ begin
   set status='expired',updated_at=clock_timestamp()
   where status='reserved' and expires_at<=clock_timestamp();
 
+  update public.refugiart_checkout_groups g
+  set status='expired',updated_at=clock_timestamp()
+  where g.status in ('reserved_for_quote','awaiting_payment')
+    and g.expires_at<=clock_timestamp();
+
   -- Bloqueia todas as obras em ordem estável para serializar compras concorrentes.
   for v_post in
     select * from public.atelie_posts

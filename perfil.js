@@ -11,6 +11,7 @@ const supabase = createClient(
 const form = document.getElementById('profile-form');
 const nome = document.getElementById('nome');
 const nomeAtelie = document.getElementById('nome-atelie');
+const areaAtuacao = document.getElementById('area-atuacao');
 const bio = document.getElementById('bio');
 const foto = document.getElementById('foto');
 const photoPreview = document.getElementById('profile-photo');
@@ -290,6 +291,7 @@ async function carregarPerfil() {
 
     nome.value = data?.nome_artistico || metadata.nome || '';
     nomeAtelie.value = data?.nome_atelie || '';
+    areaAtuacao.value = data?.area_atuacao || metadata.tipo_conta || '';
     bio.value = data?.biografia || '';
 
     fotoAtualUrl = data?.foto_url || null;
@@ -360,6 +362,7 @@ form?.addEventListener('submit', async (evento) => {
       id: userId,
       nome_artistico: nome.value.trim(),
       nome_atelie: nomeAtelie.value.trim(),
+      area_atuacao: areaAtuacao.value,
       biografia: bio.value.trim(),
       foto_url: fotoUrlSalva,
       updated_at: new Date().toISOString()

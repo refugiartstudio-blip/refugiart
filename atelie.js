@@ -578,7 +578,7 @@ function criarCartaoObra(obra) {
           if (error) throw error;
           if (data?.needs_wallet) {
             window.alert("Saldo insuficiente. É necessário ter pelo menos " + Number(data.required).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}) + " na carteira. O balão não foi registrado.");
-            window.location.href = "carteira.html";
+            window.location.href = "carteira.html?deposito=" + encodeURIComponent(data.required);
             return;
           }
           obra.auction_balloon_count = data.count;

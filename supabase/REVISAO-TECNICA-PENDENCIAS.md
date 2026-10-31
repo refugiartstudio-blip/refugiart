@@ -288,3 +288,16 @@ Também aparecem SELECT, UPDATE e USAGE para `postgres` e `service_role`. Não f
 UPDATE em sequência permite alterar o estado do contador (por exemplo, via `setval`); SELECT permite consultar seu estado. Essas permissões são mais amplas do que o necessário para o uso comum de IDs por inserts com defaults, que normalmente precisam de USAGE. Isso não concede, por si só, escrita nas linhas das tabelas, mas pode permitir interferir nos contadores e causar saltos ou colisões de IDs se o contador for reposicionado incorretamente.
 
 **Próximo passo:** verificar privilégios padrão de sequences e defaults efetivos antes de preparar uma migration. Não revogar ainda; testar inserts legítimos que dependam de `nextval`, funções e fluxos existentes em homologação. A consulta atual cobre as cinco sequences existentes no schema public que retornaram no inventário.
+
+
+## Privilégios padrão de sequences — 31/10/2026
+
+A consulta a `pg_default_acl` confirmou defaults amplos de SELECT, UPDATE e USAGE para `anon` e `authenticated` em sequences no schema `public`, tanto para o criador `postgres` quanto para `supabase_admin`. Também existem defaults em schemas gerenciados (`storage`, `graphql`, `graphql_public`, `extensions`, `realtime` e `auth`), que não serão alterados nesta etapa.
+
+Migration preparada: `migrations/20261031_016_harden_public_sequence_privileges.sql`.
+- Revoga SELECT e UPDATE de `anon` e `authenticated` nas sequences públicas existentes.
+- Revoga SELECT e UPDATE dos privilégios padrão de sequences criadas pelo papel `postgres` no schema `public`.
+- Mantém USAGE para que inserts legítimos que usam `nextval` continuem funcionando.
+- Não altera defaults de `supabase_admin` nem schemas gerenciados pelo Supabase.
+
+**Atenção:** a migration foi criada no GitHub, mas não foi aplicada nem testada. O default de `supabase_admin` no schema `public` permanece identificado como ponto de atenção; não foi alterado por ser papel administrativo gerenciado. Antes de produção, validar criação de novas sequences por cada fluxo/role, inserts que usam defaults, chamadas a `currval` e funções SQL/RPC existentes.

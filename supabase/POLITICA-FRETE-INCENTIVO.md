@@ -53,3 +53,14 @@ Como o carrinho ultrapassa R$ 300, fica marcado como elegível à campanha. A ca
 - A campanha de R$ 300 é uma regra comercial configurável, não promessa de frete grátis irrestrito.
 - As taxas do provedor, tributos e custos operacionais ainda precisam ser descontados na análise de margem; não aumentam o pool de frete.
 - Não ativar cobrança ou frete até integrar cotador e provedor de pagamento e testar a liquidação.
+
+
+## Regra permanente de saude financeira
+
+- Frete gratis nunca e uma promessa incondicional. A campanha de R$ 300 indica elegibilidade; o beneficio real continua limitado ao subsidio aprovado e ao caixa reservado.
+- Subsidio ordinario maximo: 20% da comissao bruta gerada no checkout, limitado ao frete real cotado.
+- Qualquer incentivo adicional deve sair de reserva promocional separada, previamente financiada e com saldo controlado. Nao criar credito contabil sem caixa.
+- Comissao da plataforma: 20% em venda direta e 30% em leilao, sempre sobre o valor efetivamente vendido/arrematado.
+- Taxas de gateway, tributos, chargebacks, reembolsos, atendimento e custos operacionais devem ser medidos separadamente antes de tratar a comissao como lucro.
+- O saldo do artista fica pendente ate confirmacao valida de entrega; na liberacao, o artista recebe o liquido apos comissao, e a comissao e registrada em livro-razao proprio da plataforma.
+- Nenhuma cotacao, desconto, comissao ou liberacao financeira pode ser confiada a valores enviados pelo navegador. O backend deve recalcular e validar.

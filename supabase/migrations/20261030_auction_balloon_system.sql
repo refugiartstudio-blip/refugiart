@@ -13,6 +13,8 @@ alter table public.atelie_posts
   add column if not exists auction_balloon_count integer not null default 0,
   add column if not exists auction_approved_at timestamptz;
 
+update public.atelie_posts set listing_mode='market' where publicar_mercado=true and preco is not null and listing_mode='community';
+
 create table if not exists public.refugiart_wallets (
   user_id uuid primary key references auth.users(id) on delete cascade,
   available_balance numeric(12,2) not null default 0 check (available_balance >= 0),

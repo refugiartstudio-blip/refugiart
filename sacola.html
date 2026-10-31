@@ -86,7 +86,7 @@ botao.addEventListener("click",async()=>{
   const {data:{user},error:userError}=await sb.auth.getUser();
   if(userError||!user)throw new Error("Faça login para finalizar sua compra.");
   const key=crypto.randomUUID();
-  const {data,error}=await sb.functions.invoke("infinitepay-create-checkout",{body:{post_ids:ids,idempotency_key:key}});
+  const {data,error}=await sb.functions.invoke("infinitepay-create-market-checkout",{body:{post_ids:ids,idempotency_key:key}});
   if(error){let msg=error.message||"Não foi possível iniciar o pagamento.";try{const detail=await error.context?.json?.();if(detail?.message)msg=detail.message;}catch{}throw new Error(msg);}
   if(!data?.checkout_url||!data.checkout_url.startsWith("https://"))throw new Error("A InfinitePay não retornou um endereço de pagamento válido.");
   aviso.textContent="Obras reservadas e valor conferido pelo servidor. Abrindo a página segura da InfinitePay...";

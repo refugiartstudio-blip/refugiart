@@ -123,7 +123,7 @@
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     const supabase = createClient("https://nlqalpiksbqflzxzsgoa.supabase.co", "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
     const grade=document.getElementById("gradeBazar"), busca=document.getElementById("buscaBazar"), ordenar=document.getElementById("ordenarBazar"), contagem=document.getElementById("contagemBazar");
-    let obras=[], categoria="todas";
+    let obras=[], categoria="todas", cicloLeiloes=0;
     const moeda=v=>Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
     function filtrar(){
       const termo=busca.value.trim().toLocaleLowerCase("pt-BR");
@@ -134,6 +134,13 @@
       if(ordenar.value==="menor")lista.sort((a,b)=>Number(a.preco)-Number(b.preco));
       if(ordenar.value==="maior")lista.sort((a,b)=>Number(b.preco)-Number(a.preco));
       if(ordenar.value==="recentes")lista.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+      const leiloesAtivos=lista.filter(o=>o.listing_mode==="auction"&&o.auction_status==="active");
+      if(leiloesAtivos.length>2){
+        const comuns=lista.filter(o=>!(o.listing_mode==="auction"&&o.auction_status==="active"));
+        const inicio=(cicloLeiloes*2)%leiloesAtivos.length;
+        const rotativos=[leiloesAtivos[inicio],leiloesAtivos[(inicio+1)%leiloesAtivos.length]];
+        lista=[...comuns,...rotativos];
+      }
       renderizar(lista);
     }
     function renderizar(lista){
@@ -169,7 +176,7 @@
       atualizarCronometros();
     }
     function atualizarCronometros(){document.querySelectorAll(".produto-cronometro").forEach(el=>{const restante=new Date(el.dataset.ends).getTime()-Date.now();if(restante<=0){el.textContent="Encerrando leilão...";return;}const h=Math.floor(restante/3600000),m=Math.floor(restante%3600000/60000),s=Math.floor(restante%60000/1000);el.textContent="⏱ "+[h,m,s].map(n=>String(n).padStart(2,"0")).join(":");});}
-    setInterval(atualizarCronometros,1000);
+    setInterval(atualizarCronometros,1000);\n    setInterval(()=>{cicloLeiloes++;filtrar();},30000);
     document.getElementById("formBusca").addEventListener("submit",e=>{e.preventDefault();filtrar();});
     busca.addEventListener("input",filtrar);ordenar.addEventListener("change",filtrar);
     document.getElementById("categoriasBazar").addEventListener("click",e=>{

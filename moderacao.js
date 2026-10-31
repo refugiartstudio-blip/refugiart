@@ -12,6 +12,7 @@ const titulo = document.querySelector(".inbox-titulo-linha h2");
 const subtitulo = document.querySelector(".inbox-subtitulo");
 const itensPasta = [...document.querySelectorAll("[data-pasta]")];
 const filtros = [...document.querySelectorAll("[data-filtro]")];
+const indicadorDenuncias = document.getElementById("indicador-denuncias");
 
 let publicacoes = [];
 let pastaAtual = "entrada";
@@ -191,6 +192,7 @@ async function carregar() {
   }
 
   publicacoes = data || [];
+  if (indicadorDenuncias) indicadorDenuncias.textContent = String(publicacoes.length);
   renderizar();
 }
 

@@ -46,7 +46,7 @@
     .historico-filtros{display:flex;gap:7px;flex-wrap:wrap}
     .historico-filtros button{border:1px solid var(--carteira-borda);background:#fff;border-radius:30px;padding:7px 11px;color:#526056;font-size:12px;cursor:pointer}
     .historico-filtros button.ativo{background:var(--carteira-verde);border-color:var(--carteira-verde);color:#fff}
-    .historico-vazio{text-align:center;padding:48px 20px;color:#7a857c}
+    .historico-vazio{text-align:center;padding:48px 20px;color:#7a857c}.lista-transacoes{display:flex;flex-direction:column}.transacao-item{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;border-bottom:1px solid var(--carteira-borda)}.transacao-item:last-child{border-bottom:0}.transacao-info{display:flex;flex-direction:column;gap:5px;min-width:0}.transacao-info strong{font-size:14px;color:var(--carteira-texto)}.transacao-info small{font-size:11px;color:#788078;line-height:1.4}.transacao-valor{white-space:nowrap;color:var(--carteira-verde);font-size:15px}
     .historico-vazio .icone-vazio{font-size:34px;color:#9aaa9c;margin-bottom:10px}
     .historico-vazio strong{display:block;color:#405247;font-size:15px;margin-bottom:6px}
     .historico-vazio p{font-size:13px;max-width:420px;margin:0 auto;line-height:1.6}
@@ -285,7 +285,7 @@
       }
       const tabela=document.createElement("div");tabela.className="lista-transacoes";
       itens.forEach(item=>{
-        const linha=document.createElement("article");linha.className="transacao-item";
+        const linha=document.createElement("article");linha.className="transacao-item";linha.dataset.tipo=item.tipo.toLowerCase();
         const info=document.createElement("div");info.className="transacao-info";
         const titulo=document.createElement("strong");titulo.textContent=item.detalhe;
         const meta=document.createElement("small");meta.textContent=new Date(item.data).toLocaleString("pt-BR")+" • "+item.status;

@@ -125,51 +125,94 @@ declare
   v_balance numeric(12,2);
   v_count integer;
   v_status text;
+  v_required numeric(12,2);
 begin
   if v_user is null then raise exception 'Faça login para manifestar interesse.'; end if;
-  select * into v_post from public.atelie_posts where id::text = p_post_id for update;
+
+  -- Bloqueia a linha da obra para serializar os balões e impedir ultrapassar a meta.
+  select * into v_post
+    from public.atelie_posts
+    where id::text = p_post_id
+    for update;
   if not found then raise exception 'Obra não encontrada.'; end if;
   if v_post.user_id = v_user then raise exception 'Você não pode dar balão na própria obra.'; end if;
-  if v_post.listing_mode not in ('community','auction') then raise exception 'Esta obra não aceita balões.'; end if;
-  if v_post.auction_status in ('pending_artist','active','finished','cancelled') then
-    raise exception 'Esta obra não está recebendo novas manifestações.';
+
+  if v_post.listing_mode = 'auction' then
+    if v_post.publicar_mercado is not true
+       or v_post.preco is null
+       or v_post.auction_status <> 'collecting' then
+      raise exception 'Esta obra não está recebendo balões para leilão.';
+    end if;
+    v_required := coalesce(v_post.auction_initial_price, v_post.preco);
+  elsif v_post.listing_mode = 'community' then
+    if v_post.publicar_comunidade is not true
+       or v_post.auction_status not in ('none','collecting') then
+      raise exception 'Esta obra não está recebendo manifestações da comunidade.';
+    end if;
+    -- Mínimo provisório de R$ 1,00 para demonstrar capacidade de participar.
+    -- O valor não é debitado e pode ser alterado antes da ativação financeira.
+    v_required := coalesce(v_post.auction_initial_price, 1.00);
+  else
+    raise exception 'Esta obra não aceita balões.';
   end if;
 
-  select coalesce(available_balance,0) into v_balance
-    from public.refugiart_wallets where user_id = v_user;
+  select coalesce(available_balance,0)
+    into v_balance
+    from public.refugiart_wallets
+    where user_id = v_user;
   v_balance := coalesce(v_balance,0);
-  if v_post.preco is not null and v_balance < v_post.preco then
-    return jsonb_build_object('needs_wallet',true,'required',v_post.preco,'balance',v_balance);
-  end if;
-  -- Obra comunitária sem preço: exige saldo positivo como filtro mínimo.
-  -- O valor de referência deverá ser definido pelo artista ao aprovar o leilão.
-  if v_post.preco is null and v_post.auction_initial_price is null and v_balance <= 0 then
-    return jsonb_build_object('needs_wallet',true,'required',1,'balance',v_balance);
+
+  if v_balance < v_required then
+    return jsonb_build_object(
+      'needs_wallet',true,
+      'required',v_required,
+      'balance',v_balance
+    );
   end if;
 
   insert into public.refugiart_auction_interests(post_id,user_id)
-    values (p_post_id,v_user) on conflict (post_id,user_id) do nothing;
+    values (p_post_id,v_user)
+    on conflict (post_id,user_id) do nothing;
   if not found then raise exception 'Você já manifestou interesse nesta obra.'; end if;
 
-  select count(*)::integer into v_count from public.refugiart_auction_interests where post_id=p_post_id;
+  select count(*)::integer
+    into v_count
+    from public.refugiart_auction_interests
+    where post_id = p_post_id;
+
   v_status := v_post.auction_status;
+
   if v_post.listing_mode = 'auction' and v_count >= 10 then
     v_status := 'active';
-    update public.atelie_posts set auction_status='active',
-      auction_initial_price=coalesce(auction_initial_price,preco),
-      auction_starts_at=now(), auction_ends_at=now()+interval '24 hours',
-      auction_balloon_count=v_count
+    update public.atelie_posts
+      set auction_status='active',
+          auction_initial_price=v_required,
+          auction_starts_at=now(),
+          auction_ends_at=now()+interval '24 hours',
+          auction_balloon_count=v_count
       where id::text=p_post_id;
+
     insert into public.refugiart_auctions(post_id,artist_id,initial_price,starts_at,ends_at)
-      values(p_post_id,v_post.user_id,coalesce(v_post.auction_initial_price,v_post.preco),now(),now()+interval '24 hours')
+      values(p_post_id,v_post.user_id,v_required,now(),now()+interval '24 hours')
       on conflict(post_id) do nothing;
+
   elsif v_post.listing_mode = 'community' and v_count >= 30 then
     v_status := 'pending_artist';
-    update public.atelie_posts set auction_status='pending_artist', auction_balloon_count=v_count where id::text=p_post_id;
+    update public.atelie_posts
+      set auction_status='pending_artist',
+          auction_balloon_count=v_count
+      where id::text=p_post_id;
   else
-    update public.atelie_posts set auction_balloon_count=v_count where id::text=p_post_id;
+    update public.atelie_posts
+      set auction_balloon_count=v_count
+      where id::text=p_post_id;
   end if;
-  return jsonb_build_object('needs_wallet',false,'count',v_count,'status',v_status);
+
+  return jsonb_build_object(
+    'needs_wallet',false,
+    'count',v_count,
+    'status',v_status
+  );
 end;
 $$;
 

@@ -17,7 +17,7 @@ body{background:#f4f6f2}
 .titulo-coluna-mercado{margin:14px 8px 6px;color:#7b877d;font-size:10px;font-weight:800;letter-spacing:1.2px}
 .divisor-coluna-mercado{height:1px;background:#e1e7df;margin:10px 4px}
 .seta-coluna-mercado{display:flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0 auto 14px;border:0;border-radius:8px;background:#e8eee8;color:#243e35;cursor:pointer;font-size:18px}
-.sacola-main{max-width:980px;margin:30px auto 54px;padding:0 16px;box-sizing:border-box}
+.sacola-main{width:calc(100% - 64px);max-width:916px;margin:30px 0 54px 64px;padding:0 16px;box-sizing:border-box}
 .sacola-main h2{font:34px Georgia,serif;color:#243e35}
 .sacola-lista{display:grid;gap:12px}
 .item-sacola{display:grid;grid-template-columns:100px 1fr auto;gap:14px;align-items:center;background:#fff;border:1px solid #e2e8e0;border-radius:12px;padding:12px}
@@ -30,7 +30,7 @@ body{background:#f4f6f2}
 .sacola-total strong{font-size:22px;color:#243e35}
 .sacola-vazia{text-align:center;padding:45px;background:#fff;border:1px dashed #d8e1d7;border-radius:12px;color:#748074}
 .sacola-vazia a{display:inline-block;margin-top:12px;color:#243e35;font-weight:700}
-@media(max-width:700px){.sacola-layout{padding:0 8px}.coluna-mercado{left:8px;width:48px;min-width:48px;max-width:48px;padding:10px 4px}.coluna-mercado.expandida{width:165px;min-width:165px;max-width:165px;padding:12px 8px}.sacola-main{margin-top:18px;padding:0 10px}}
+@media(max-width:700px){.sacola-layout{padding:0 8px}.coluna-mercado{left:8px;width:48px;min-width:48px;max-width:48px;padding:10px 4px}.coluna-mercado.expandida{width:165px;min-width:165px;max-width:165px;padding:12px 8px}.sacola-main{width:calc(100% - 56px);margin:18px 0 40px 56px;padding:0 10px}}
 @media(max-width:520px){.item-sacola{grid-template-columns:76px 1fr}.item-sacola img{width:76px;height:76px}.item-sacola button{grid-column:2;justify-self:start}.sacola-total{align-items:flex-start;flex-direction:column}}
 </style></head>
 <body>

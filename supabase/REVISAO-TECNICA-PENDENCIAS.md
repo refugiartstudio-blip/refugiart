@@ -168,3 +168,26 @@ Pendências:
 - Não ativar checkout, pagamento, lance financeiro ou saque antes do backend transacional e dos testes reais.
 
 **Status:** análise estática documentada; sem execução de SQL ou teste de políticas no Supabase.
+
+
+## Carteira e leilões — auditoria estática
+
+Documento: `REVISAO-INTEGRIDADE-CARTEIRA-LEILOES.md`
+
+Controles encontrados:
+- Reserva separa saldo disponível de saldo reservado.
+- Lances exigem saldo e leilão válido; aumento do próprio lance reserva somente a diferença.
+- Liquidação do vencedor captura reserva e cria pedido/remessa na mesma transação; saldo do artista fica pendente.
+- Migration 012 libera reservas quando não há vencedor.
+- Repasse exige entrega confirmada e verifica crédito pendente; comissão é registrada separadamente.
+- Casos financeiros abertos/em análise bloqueiam entrega e repasse.
+
+Pendências de alta prioridade:
+- A RPC de lance não aborta explicitamente se a reserva ativa do líder anterior estiver ausente; reforçar a invariante.
+- Bloqueio de carteira atual seguido da carteira do líder anterior pode gerar deadlock entre leilões diferentes; adotar ordem determinística de locks e teste concorrente.
+- Testar rollback integral, concorrência de cron, saldo/reserva divergente e idempotência.
+- Implementar resolução real de refund/chargeback e conciliação com gateway.
+- Migrar hash MD5 do código presencial para hash/HMAC mais forte.
+- Saldo disponível não é saque Pix; saques continuam desabilitados.
+
+**Status:** documentado; nenhuma migration foi executada nem alterada nesta etapa.

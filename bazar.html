@@ -165,7 +165,7 @@
       });
     }
     async function carregar(){
-      const {data,error}=await supabase.from("atelie_posts").select("id,user_id,image_url,caption,category,preco,created_at").eq("publicar_mercado",true).eq("moderation_status","published").not("preco","is",null).order("created_at",{ascending:false});
+      const {data,error}=await supabase.from("atelie_posts").select("id,user_id,image_url,caption,category,preco,created_at,listing_mode,auction_status,auction_starts_at,auction_ends_at,auction_initial_price,auction_balloon_count").eq("publicar_mercado",true).eq("moderation_status","published").not("preco","is",null).order("created_at",{ascending:false});
       if(error){console.error(error);grade.innerHTML='<div class="bazar-vazio"><strong>Não foi possível carregar o Bazar</strong>Tente novamente mais tarde.</div>';contagem.textContent="Não foi possível carregar as obras";return;}
       const ids=[...new Set((data||[]).map(o=>o.user_id).filter(Boolean))];
       let perfis=[];

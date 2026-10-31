@@ -110,8 +110,10 @@ begin
   if v_post.preco is not null and v_balance < v_post.preco then
     return jsonb_build_object('needs_wallet',true,'required',v_post.preco,'balance',v_balance);
   end if;
-  if v_post.preco is null and v_post.auction_initial_price is not null and v_balance < v_post.auction_initial_price then
-    return jsonb_build_object('needs_wallet',true,'required',v_post.auction_initial_price,'balance',v_balance);
+  -- Obra comunitária sem preço: exige saldo positivo como filtro mínimo.
+  -- O valor de referência deverá ser definido pelo artista ao aprovar o leilão.
+  if v_post.preco is null and v_post.auction_initial_price is null and v_balance <= 0 then
+    return jsonb_build_object('needs_wallet',true,'required',1,'balance',v_balance);
   end if;
 
   insert into public.refugiart_auction_interests(post_id,user_id)
@@ -130,6 +132,9 @@ begin
     insert into public.refugiart_auctions(post_id,artist_id,initial_price,starts_at,ends_at)
       values(p_post_id,v_post.user_id,coalesce(v_post.auction_initial_price,v_post.preco),now(),now()+interval '24 hours')
       on conflict(post_id) do nothing;
+  elsif v_post.listing_mode = 'community' and v_count >= 30 then
+    v_status := 'pending_artist';
+    update public.atelie_posts set auction_status='pending_artist', auction_balloon_count=v_count where id::text=p_post_id;
   else
     update public.atelie_posts set auction_balloon_count=v_count where id::text=p_post_id;
   end if;

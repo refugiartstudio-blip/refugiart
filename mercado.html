@@ -340,7 +340,7 @@
     async function carregarMercado() {
       const {data:obras,error}=await supabase.from("atelie_posts")
         .select("id,user_id,image_url,caption,category,preco,created_at,listing_mode,auction_status,auction_initial_price,auction_ends_at,auction_balloon_count")
-        .eq("publicar_mercado",true).not("preco","is",null).order("created_at",{ascending:false});
+        .eq("publicar_mercado",true).eq("moderation_status","published").not("preco","is",null).order("created_at",{ascending:false});
       if(error){lista.replaceChildren(el("p","","Não foi possível carregar os anúncios neste momento."));return;}
       if(!obras?.length){lista.replaceChildren(el("p","","Ainda não há obras anunciadas. Quando um artista publicar no Mercado, elas aparecerão aqui."));return;}
       const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];

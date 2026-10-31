@@ -2331,3 +2331,34 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
     min-height:64px !important;
   }
 }
+
+
+/* Carrossel de banners Kraken: separado do carrossel de obras */
+.pagina-atelie .kraken-banner-carrossel{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  border-radius:10px;
+  scrollbar-width:none;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+}
+.pagina-atelie .kraken-banner-carrossel::-webkit-scrollbar{display:none}
+.pagina-atelie .kraken-banner-trilho{display:flex;width:100%}
+.pagina-atelie .kraken-banner-trilho .marca-janela-kraken{
+  flex:0 0 100%;
+  width:100%;
+  height:170px !important;
+  min-height:170px !important;
+  scroll-snap-align:start;
+}
+.pagina-atelie .kraken-banner-trilho .kraken-preto{background:#050505;color:#fff}
+.pagina-atelie .kraken-banner-trilho .kraken-roxo{background:#542080;color:#fff}
+.pagina-atelie .kraken-banner-trilho .kraken-amarelo{background:#f2cc24;color:#080808}
+.pagina-atelie .kraken-banner-trilho .kraken-vermelho-roxo{background:linear-gradient(120deg,#c51f32 0 50%,#542080 50% 100%);color:#fff}
+@media(max-width:520px){
+  .pagina-atelie .kraken-banner-trilho .marca-janela-kraken{
+    height:64px !important;
+    min-height:64px !important;
+  }
+}

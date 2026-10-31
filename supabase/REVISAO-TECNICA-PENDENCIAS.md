@@ -301,3 +301,17 @@ Migration preparada: `migrations/20261031_016_harden_public_sequence_privileges.
 - Não altera defaults de `supabase_admin` nem schemas gerenciados pelo Supabase.
 
 **Atenção:** a migration foi criada no GitHub, mas não foi aplicada nem testada. O default de `supabase_admin` no schema `public` permanece identificado como ponto de atenção; não foi alterado por ser papel administrativo gerenciado. Antes de produção, validar criação de novas sequences por cada fluxo/role, inserts que usam defaults, chamadas a `currval` e funções SQL/RPC existentes.
+
+
+## Dependências das sequences públicas — 31/10/2026
+
+Consulta de `pg_sequences` e dependências confirmou cinco sequences, todas de propriedade de `postgres` e vinculadas à coluna `id`:
+- `atelie_posts_id_seq` → `atelie_posts.id`
+- `chat_messages_id_seq` → `chat_messages.id`
+- `community_post_comments_id_seq` → `community_post_comments.id`
+- `community_post_interest_id_seq` → `community_post_interest.id`
+- `community_post_likes_id_seq` → `community_post_likes.id`
+
+Isso confirma que USAGE deve ser preservado para o fluxo normal de geração automática de IDs. A migration 016 mantém USAGE e revoga apenas SELECT/UPDATE para `anon` e `authenticated` nas sequences existentes e nos defaults do papel `postgres` no schema `public`.
+
+**Status:** inventário somente leitura. Nenhuma sequence, tabela ou permissão foi alterada no banco.

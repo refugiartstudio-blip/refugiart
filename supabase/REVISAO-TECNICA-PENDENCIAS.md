@@ -148,3 +148,23 @@ Achados:
 - Revisar buckets Storage, uploads, exposição de campos de perfil e ausência de segredos no frontend.
 
 **Status:** auditoria estática documentada; sem mudanças de policy porque o estado real do banco não foi inspecionado. Testes com contas de papéis diferentes e inventário Supabase continuam pendentes.
+
+
+## Integridade de obras, anúncios e checkout — auditoria estática
+
+Documento: `REVISAO-INTEGRIDADE-OBRAS-ANUNCIOS.md`
+
+Controles positivos encontrados:
+- A migration `20261030_auction_balloon_system.sql` revoga UPDATE geral em `atelie_posts` e libera somente a coluna `caption` para authenticated.
+- A migration `20261030_003_orders_shipping_disputes.sql` desenha leitura de pedidos/itens/remessas/disputas apenas para comprador e vendedor e reserva escrita ao service_role.
+- Carteira, reservas e lances têm escrita direta revogada para clientes; lances financeiros seguem bloqueados.
+
+Pendências:
+- Localizar e validar as policies reais de INSERT/DELETE de `atelie_posts`; exigir ownership no banco.
+- Sacola em localStorage é manipulável: checkout futuro deve receber somente IDs/quantidades e recalcular obra, preço, vendedor, disponibilidade, comissão e frete no backend.
+- Criar proteção transacional contra compra simultânea de obra única.
+- Bloquear exclusão física de obras com vínculos financeiros/leilão; preferir arquivamento lógico.
+- Auditar bucket `artwork-images`, policies de Storage, MIME/tamanho e prefixo por usuário.
+- Não ativar checkout, pagamento, lance financeiro ou saque antes do backend transacional e dos testes reais.
+
+**Status:** análise estática documentada; sem execução de SQL ou teste de políticas no Supabase.

@@ -78,11 +78,11 @@ language sql
 stable
 security definer
 set search_path = public
-as $
+as $$
   select exists (
     select 1 from public.refugiart_admins where user_id = p_user_id
   );
-$;
+$$;
 revoke all on function public.refugiart_is_admin_user(uuid) from public, anon;
 grant execute on function public.refugiart_is_admin_user(uuid) to authenticated;
 

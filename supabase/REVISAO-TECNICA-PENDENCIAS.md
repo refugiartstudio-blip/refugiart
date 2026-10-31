@@ -1,7 +1,7 @@
 # RefugiART — revisão técnica da base financeira
 
 Data da revisão: 30/10/2026  
-Escopo: migrations 001, 003, 004, 005, 006 e 007, comparadas entre si no branch `main`.
+Escopo: migrations 001, 003, 004, 005, 006, 007 e 008, comparadas entre si no branch `main`.
 
 ## Resultado geral
 
@@ -24,7 +24,7 @@ A base já contém estrutura relevante para carteiras, reservas de lance, liquid
 
 ### P0 — corrigir antes de liberar qualquer operação financeira
 
-- **Confirmação antecipada de entrega:** a RPC `refugiart_buyer_confirm_delivery` aceita pedidos em `paid` e `awaiting_shipment`, além de `shipped` e `delivered`. Isso permite que uma confirmação acidental ou prematura libere o saldo antes de o pedido ser postado. Restringir a confirmação de transportadora a pedido efetivamente enviado (`shipped`) e manter o código de uso único como caminho de entrega pessoal/retirada.
+- **Confirmação antecipada de entrega:** identificada na 007 e corrigida na migration 008. Para transportadora, a confirmação do comprador agora exige status `shipped` ou `delivered`; entrega pessoal/retirada mantém o código de uso único. A correção está versionada, mas ainda precisa ser aplicada e testada no Supabase.
 - **Homologar a liquidação:** testar concorrência entre confirmações, disputa simultânea, saldos pendentes de vários pedidos do mesmo artista, reexecução e idempotência.
 - **Validar o fluxo de estorno:** ainda não há fluxo completo para reembolso/chargeback após pagamento ao artista, nem regra de recuperação de saldo já disponibilizado.
 - **Validar as migrations no PostgreSQL:** leitura estática não confirma execução, permissões efetivas, triggers, RLS, constraints ou comportamento concorrente.
@@ -54,3 +54,8 @@ A comissão registrada é receita bruta da plataforma, não lucro líquido. Taxa
 ## Critério para considerar concluído
 
 Uma etapa só deve passar para “homologada” após: migration aplicada em ambiente de teste; cenários positivos e negativos executados; RLS/grants conferidos; concorrência testada; saldos e ledger conciliados; e evidência registrada. Arquivo SQL criado no GitHub não significa que a função já esteja ativa no Supabase.
+
+
+## Correção adicionada após esta revisão
+
+A migration `20261030_008_prevent_early_delivery_confirmation.sql` substitui a RPC de confirmação do comprador. Em pedidos por transportadora, impede confirmar recebimento enquanto o pedido estiver apenas pago ou aguardando postagem. A correção foi criada no GitHub, mas não foi aplicada ao Supabase.

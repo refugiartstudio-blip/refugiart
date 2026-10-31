@@ -97,6 +97,12 @@ create trigger trg_refugiart_snapshot_auction_commission
 before insert on public.refugiart_orders
 for each row execute function public.refugiart_snapshot_auction_commission();
 
+-- Atualiza pedidos antigos ainda nao liquidados com a comissao correta.
+update public.refugiart_orders
+set platform_commission_rate = case when auction_id is not null then 0.30 else 0.20 end,
+    platform_commission_amount = round(subtotal * case when auction_id is not null then 0.30 else 0.20 end,2)
+where payout_released_at is null and platform_commission_amount=0 and subtotal>0;
+
 -- Emite codigo de uso unico para o comprador em entrega pessoal/retirada.
 -- O codigo em texto puro retorna somente ao comprador; no banco fica apenas MD5.
 create or replace function public.refugiart_issue_delivery_code(p_order_id bigint)
@@ -276,7 +282,7 @@ begin
   if p_code is null or length(trim(p_code))<>12 or md5(upper(trim(p_code)))<>v_code.code_hash then
     update public.refugiart_delivery_codes set failed_attempts=failed_attempts+1
       where order_id=p_order_id;
-    raise exception 'Codigo de confirmacao invalido.';
+    return jsonb_build_object('success',false,'message','Codigo invalido. Tentativa registrada.');
   end if;
 
   update public.refugiart_delivery_codes set consumed_at=clock_timestamp()

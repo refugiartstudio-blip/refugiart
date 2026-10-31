@@ -2208,3 +2208,32 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
   height: 18px;
   font-size: 12px;
 }
+
+
+/* ---------- Janela Criativa em carrossel ---------- */
+.pagina-atelie .controles-janela-criativa{
+  display:flex;align-items:center;gap:7px;flex-shrink:0;
+}
+.pagina-atelie .botao-carrossel{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border:1px solid var(--atelie-borda);
+  border-radius:50%;background:var(--atelie-branco);color:var(--atelie-verde);
+  font-size:25px;line-height:1;cursor:pointer;
+}
+.pagina-atelie .botao-carrossel:hover{background:var(--atelie-verde-claro)}
+.pagina-atelie #lista-obras{
+  display:flex;flex-direction:row;gap:14px;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scroll-behavior:smooth;overscroll-behavior-x:contain;
+  scrollbar-width:none;padding:1px 1px 8px;
+}
+.pagina-atelie #lista-obras::-webkit-scrollbar{display:none}
+.pagina-atelie #lista-obras > .obra-card{
+  flex:0 0 100%;width:100%;min-width:100%;scroll-snap-align:start;
+}
+.pagina-atelie #lista-obras > .mensagem-feed{flex:0 0 100%;width:100%}
+@media(max-width:520px){
+  .pagina-atelie .titulo-feed{align-items:flex-start}
+  .pagina-atelie .controles-janela-criativa{gap:5px}
+  .pagina-atelie .botao-carrossel{width:30px;height:30px}
+  .pagina-atelie .botao-atualizar{min-height:30px;padding:5px 8px}
+}

@@ -96,18 +96,6 @@
       <div class="bazar-marca-texto"><span>REFUGIART • MERCADO CRIATIVO</span><h2>Bazar de Arte</h2><p>Encontre uma criação que tenha a sua cara.</p></div>
     </div>
   </section>
-  <div class="bazar-categorias-faixa">
-    <nav class="bazar-categorias" id="categoriasBazar" aria-label="Categorias do Bazar">
-      <button type="button" class="ativo" data-categoria="todas">✦ Todas</button>
-      <button type="button" data-categoria="Desenho">✎ Desenho</button>
-      <button type="button" data-categoria="Pintura">▧ Pintura</button>
-      <button type="button" data-categoria="Fotografia">▣ Fotografia</button>
-      <button type="button" data-categoria="Tatuagem">✳ Tatuagem</button>
-      <button type="button" data-categoria="Digital">✦ Digital</button>
-      <button type="button" data-categoria="Leitura">▤ Leitura</button>
-    </nav>
-  </div>
-
   <div class="bazar-layout">
     <aside class="coluna-mercado" id="colunaMercado" aria-label="Menu do Mercado">
       <button type="button" class="seta-coluna-mercado" id="alternarColunaMercado" aria-label="Expandir menu do Mercado" aria-controls="navegacaoMercado" aria-expanded="false"><span id="iconeSetaMercado">➜</span></button>
@@ -131,7 +119,7 @@
         <div class="bazar-contagem" id="contagemBazar">Carregando obras...</div>
         <form class="bazar-busca" id="formBusca"><input id="buscaBazar" type="search" placeholder="Buscar obras..." aria-label="Buscar no Bazar"><button type="submit" aria-label="Pesquisar">⌕</button></form>
         <label class="bazar-ordenacao" for="ordenarBazar">Ordenar por
-          <select id="ordenarBazar"><option value="recentes">Mais recentes</option><option value="menor">Menor preço</option><option value="maior">Maior preço</option></select>
+          <select id="ordenarBazar"><optgroup label="Ordenar por"><option value="recentes">Mais recentes</option><option value="menor">Menor preço</option><option value="maior">Maior preço</option></optgroup><optgroup label="Categorias"><option value="categoria:todas">Todas as categorias</option><option value="categoria:Desenho">Desenho</option><option value="categoria:Pintura">Pintura</option><option value="categoria:Fotografia">Fotografia</option><option value="categoria:Tatuagem">Tatuagem</option><option value="categoria:Digital">Digital</option><option value="categoria:Leitura">Leitura</option></optgroup></select>
         </label>
       </div>
       <div class="bazar-grade" id="gradeBazar" aria-live="polite"><p class="bazar-carregando">Carregando obras disponíveis...</p></div>
@@ -175,9 +163,10 @@
         const texto=[o.caption,o.category,o.artista].filter(Boolean).join(" ").toLocaleLowerCase("pt-BR");
         return (categoria==="todas"||String(o.category||"").toLocaleLowerCase("pt-BR")===categoria.toLocaleLowerCase("pt-BR"))&&texto.includes(termo);
       });
-      if(ordenar.value==="menor")lista.sort((a,b)=>Number(a.preco)-Number(b.preco));
-      if(ordenar.value==="maior")lista.sort((a,b)=>Number(b.preco)-Number(a.preco));
-      if(ordenar.value==="recentes")lista.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+      const criterio=ordenar.value.startsWith("categoria:")?"recentes":ordenar.value;
+      if(criterio==="menor")lista.sort((a,b)=>Number(a.preco)-Number(b.preco));
+      if(criterio==="maior")lista.sort((a,b)=>Number(b.preco)-Number(a.preco));
+      if(criterio==="recentes")lista.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
       const leiloesAtivos=lista.filter(o=>o.listing_mode==="auction"&&o.auction_status==="active");
       if(leiloesAtivos.length>2){
         const comuns=lista.filter(o=>!(o.listing_mode==="auction"&&o.auction_status==="active"));
@@ -222,13 +211,7 @@
     setInterval(atualizarCronometros,1000);
     setInterval(()=>{cicloLeiloes++;filtrar();},30000);
     document.getElementById("formBusca").addEventListener("submit",e=>{e.preventDefault();filtrar();});
-    busca.addEventListener("input",filtrar);ordenar.addEventListener("change",filtrar);
-    document.getElementById("categoriasBazar").addEventListener("click",e=>{
-      const botao=e.target.closest("[data-categoria]");if(!botao)return;
-      categoria=botao.dataset.categoria;
-      document.querySelectorAll("#categoriasBazar button").forEach(b=>b.classList.toggle("ativo",b===botao));
-      filtrar();
-    });
+    busca.addEventListener("input",filtrar);ordenar.addEventListener("change",()=>{categoria=ordenar.value.startsWith("categoria:")?ordenar.value.slice(10):"todas";filtrar();});
     carregar();
   </script>
   <script>

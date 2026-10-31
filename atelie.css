@@ -2322,3 +2322,12 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
   color:#fff;
   font-size:clamp(22px,5vw,34px);
 }
+
+/* Banner Kraken otimizado para telas de celular */
+
+@media(max-width:520px){
+  .pagina-atelie .titulo-feed.janela-kraken-area .marca-janela-kraken{
+    height:120px !important;
+    min-height:120px !important;
+  }
+}

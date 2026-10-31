@@ -272,3 +272,19 @@ A consulta a `information_schema.role_usage_grants` retornou USAGE para `anon` e
 `atelie_posts_id_seq`, `chat_messages_id_seq`, `community_post_comments_id_seq`, `community_post_interest_id_seq` e `community_post_likes_id_seq`.
 
 USAGE permite utilizar a sequência (por exemplo, obter próximo valor com `nextval`); não equivale a permissão UPDATE/SELECT da sequência. A consulta ainda não mostra o conjunto completo de privilégios efetivos, concessões a PUBLIC ou privilégios padrão. Não revogar ainda: primeiro concluir inventário de ACLs e verificar dependências de INSERT que usam valores padrão.
+
+
+## Auditoria de ACLs das sequences — 31/10/2026
+
+A inspeção de `pg_class.relacl` com `aclexplode` confirmou que, nas cinco sequências abaixo, tanto `anon` quanto `authenticated` possuem SELECT, UPDATE e USAGE:
+- `atelie_posts_id_seq`
+- `chat_messages_id_seq`
+- `community_post_comments_id_seq`
+- `community_post_interest_id_seq`
+- `community_post_likes_id_seq`
+
+Também aparecem SELECT, UPDATE e USAGE para `postgres` e `service_role`. Não foram listadas concessões para `PUBLIC` nem concessões com grant option.
+
+UPDATE em sequência permite alterar o estado do contador (por exemplo, via `setval`); SELECT permite consultar seu estado. Essas permissões são mais amplas do que o necessário para o uso comum de IDs por inserts com defaults, que normalmente precisam de USAGE. Isso não concede, por si só, escrita nas linhas das tabelas, mas pode permitir interferir nos contadores e causar saltos ou colisões de IDs se o contador for reposicionado incorretamente.
+
+**Próximo passo:** verificar privilégios padrão de sequences e defaults efetivos antes de preparar uma migration. Não revogar ainda; testar inserts legítimos que dependam de `nextval`, funções e fluxos existentes em homologação. A consulta atual cobre as cinco sequences existentes no schema public que retornaram no inventário.

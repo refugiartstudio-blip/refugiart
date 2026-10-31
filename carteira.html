@@ -129,10 +129,12 @@
             <button type="button" data-filtro="saques">Saques</button>
           </div>
         </div>
-        <div class="historico-vazio" id="historicoVazio">
-          <div class="icone-vazio">▤</div>
-          <strong>Seu histórico aparecerá aqui</strong>
-          <p>Quando houver uma venda, depósito, saque ou outra movimentação confirmada, os detalhes e as taxas serão exibidos nesta área.</p>
+        <div id="historicoLista" aria-live="polite">
+          <div class="historico-vazio" id="historicoVazio">
+            <div class="icone-vazio">▤</div>
+            <strong>Carregando seu histórico...</strong>
+            <p>Buscando compras, vendas e depósitos vinculados à sua conta.</p>
+          </div>
         </div>
       </section>
     </main>
@@ -230,7 +232,70 @@
       }
     });
 
-    (async()=>{const {data:{user}}=await sb.auth.getUser();if(!user)return;const {data,error}=await sb.from("refugiart_wallets").select("available_balance,pending_balance").eq("user_id",user.id).maybeSingle();if(error){console.warn("Carteira indisponível:",error.message);return;}document.getElementById("saldoDisponivel").textContent=fmt(data?.available_balance);document.getElementById("saldoPendente").textContent=fmt(data?.pending_balance);})();
+    (async()=>{const {data:{user}}=await sb.auth.getUser();if(!user)return;carregarHistoricoCarteira(user);const {data,error}=await sb.from("refugiart_wallets").select("available_balance,pending_balance").eq("user_id",user.id).maybeSingle();if(error){console.warn("Carteira indisponível:",error.message);return;}document.getElementById("saldoDisponivel").textContent=fmt(data?.available_balance);document.getElementById("saldoPendente").textContent=fmt(data?.pending_balance);})();
+    
+    async function carregarHistoricoCarteira(user){
+      const lista=document.getElementById("historicoLista");
+      if(!lista)return;
+      const [pedidosResp,depositosResp]=await Promise.all([
+        sb.from("refugiart_orders")
+          .select("id,buyer_id,seller_id,status,subtotal_cents,paid_at,created_at,provider_order_nsu")
+          .or("buyer_id.eq."+user.id+",seller_id.eq."+user.id)
+          .order("created_at",{ascending:false}).limit(100),
+        sb.from("refugiart_payment_intents")
+          .select("id,status,amount_cents,paid_amount_cents,created_at,confirmed_at,order_nsu")
+          .eq("user_id",user.id).order("created_at",{ascending:false}).limit(100)
+      ]);
+      if(pedidosResp.error)console.warn("Não foi possível carregar pedidos da carteira:",pedidosResp.error.message);
+      if(depositosResp.error)console.warn("Não foi possível carregar depósitos da carteira:",depositosResp.error.message);
+      const itens=[];
+      (pedidosResp.data||[]).forEach(p=>{
+        const venda=p.seller_id===user.id;
+        const status={
+          pending_payment:"Aguardando pagamento",paid:"Pagamento confirmado",
+          awaiting_shipment:"Aguardando envio",shipped:"Enviado",
+          delivered:"Entregue",cancelled:"Cancelado",refund_pending:"Reembolso em análise",
+          refunded:"Reembolsado",disputed:"Em disputa"
+        }[p.status]||p.status;
+        itens.push({
+          tipo:venda?"Venda":"Compra",
+          detalhe:venda?"Venda realizada no Mercado RefugiART":"Compra realizada no Mercado RefugiART",
+          valor:Number(p.subtotal_cents||0)/100,
+          data:p.paid_at||p.created_at,
+          status,
+          id:p.id
+        });
+      });
+      (depositosResp.data||[]).forEach(d=>{
+        itens.push({
+          tipo:"Depósito",
+          detalhe:"Depósito de saldo na carteira",
+          valor:Number(d.paid_amount_cents??d.amount_cents??0)/100,
+          data:d.confirmed_at||d.created_at,
+          status:({paid:"Pagamento confirmado",pending:"Aguardando pagamento",expired:"Expirado",canceled:"Cancelado",failed:"Falhou",refunded:"Reembolsado"})[d.status]||d.status,
+          id:d.id
+        });
+      });
+      itens.sort((a,b)=>new Date(b.data)-new Date(a.data));
+      lista.replaceChildren();
+      if(!itens.length){
+        const vazio=document.createElement("div");vazio.className="historico-vazio";
+        vazio.innerHTML='<div class="icone-vazio">▤</div><strong>Nenhuma movimentação encontrada</strong><p>Quando houver compras, vendas ou depósitos vinculados à sua conta, eles aparecerão aqui.</p>';
+        lista.append(vazio);return;
+      }
+      const tabela=document.createElement("div");tabela.className="lista-transacoes";
+      itens.forEach(item=>{
+        const linha=document.createElement("article");linha.className="transacao-item";
+        const info=document.createElement("div");info.className="transacao-info";
+        const titulo=document.createElement("strong");titulo.textContent=item.detalhe;
+        const meta=document.createElement("small");meta.textContent=new Date(item.data).toLocaleString("pt-BR")+" • "+item.status;
+        info.append(titulo,meta);
+        const valor=document.createElement("strong");valor.className="transacao-valor";valor.textContent=fmt(item.valor);
+        linha.append(info,valor);tabela.append(linha);
+      });
+      lista.append(tabela);
+    }
+
     const depositoSolicitado=Number(new URLSearchParams(location.search).get("deposito"));if(Number.isFinite(depositoSolicitado)&&depositoSolicitado>0){document.getElementById("modalTitulo").textContent="Adicionar saldo";document.getElementById("modalDescricao").textContent="Para registrar seu balão, sua carteira precisa ter pelo menos "+fmt(depositoSolicitado)+". O depósito ainda depende da integração de pagamento.";document.getElementById("valorCarteira").value=depositoSolicitado.toFixed(2);document.getElementById("modalCarteira").classList.add("aberto");}
   </script>
   <script src="script.js"></script>

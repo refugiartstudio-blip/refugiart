@@ -42,7 +42,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     pintura: "🎨 Pintura",
     leitura: "📚 Leitura",
     digital: "💻 Digital",
-    tatuagem: "✒️ Tatuagem"
+    tatuagem: "✒️ Tatuagem",
+    artesanato: "🧶 Artesanato"
   };
 
   const historicoPrivado = {};
@@ -355,7 +356,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   const comunidadeInicial = new URLSearchParams(window.location.search).get("comunidade");
-  const comunidadesDisponiveis = ["desenho", "pintura", "leitura", "digital", "tatuagem"];
+  const comunidadesDisponiveis = ["desenho", "pintura", "leitura", "digital", "tatuagem", "artesanato"];
   let salaAtual = comunidadesDisponiveis.includes(comunidadeInicial) ? comunidadeInicial : "desenho";
 
   if (comunidadeInicial && comunidadesDisponiveis.includes(comunidadeInicial)) {

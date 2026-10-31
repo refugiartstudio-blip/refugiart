@@ -561,6 +561,61 @@ function criarCartaoObra(obra) {
 
   conteudo.append(categoria, legenda);
 
+  if (obra.listing_mode === "community" || obra.listing_mode === "auction") {
+    const areaBaloes = criarElemento("div", "obra-acoes-moderacao");
+    const contador = criarElemento("span", "contador-baloes-obra", "🎈 " + (obra.auction_balloon_count || 0) + (obra.listing_mode === "community" ? " / 30" : " / 10"));
+    areaBaloes.appendChild(contador);
+    obterUsuario().then(async usuario => {
+      if (!usuario || usuario.id === obra.user_id || obra.auction_status === "active" || obra.auction_status === "pending_artist" || obra.auction_status === "finished") return;
+      const botaoBalao = criarElemento("button", "botao-denunciar-obra", "🎈 Manifestar interesse");
+      botaoBalao.type = "button";
+      botaoBalao.addEventListener("click", async () => {
+        const confirmou = window.confirm("Este balão representa intenção real de participar de um possível leilão. Ele não é uma curtida e não garante a compra. Para registrar, sua carteira precisa ter saldo compatível. Deseja continuar?");
+        if (!confirmou) return;
+        botaoBalao.disabled = true;
+        try {
+          const { data, error } = await supabase.rpc("refugiart_give_balloon", { p_post_id: String(obra.id) });
+          if (error) throw error;
+          if (data?.needs_wallet) {
+            window.alert("Saldo insuficiente. É necessário ter pelo menos " + Number(data.required).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}) + " na carteira. O balão não foi registrado.");
+            window.location.href = "carteira.html";
+            return;
+          }
+          obra.auction_balloon_count = data.count;
+          contador.textContent = "🎈 " + data.count + (obra.listing_mode === "community" ? " / 30" : " / 10");
+          window.alert(data.status === "active" ? "Meta alcançada! O leilão foi iniciado." : data.status === "pending_artist" ? "Meta alcançada! A obra aguarda a aprovação do artista." : "Seu balão foi registrado. Obrigado por manifestar interesse!");
+          if (data.status === "active" || data.status === "pending_artist") carregarObras();
+        } catch (erro) {
+          window.alert("Não foi possível registrar o balão: " + (erro.message || "tente novamente."));
+          botaoBalao.disabled = false;
+        }
+      });
+      areaBaloes.appendChild(botaoBalao);
+    });
+    if (obra.listing_mode === "community" && obra.auction_status === "pending_artist" && souDonoDoAtelie) {
+      const aprovar = criarElemento("button", "botao-denunciar-obra", "Definir lance inicial e aprovar leilão");
+      aprovar.type = "button";
+      aprovar.addEventListener("click", async () => {
+        const valor = window.prompt("Informe o lance inicial da obra (R$):", "");
+        if (valor === null) return;
+        const precoInicial = Number(valor.trim().replace(",", "."));
+        if (!Number.isFinite(precoInicial) || precoInicial <= 0) return window.alert("Informe um valor válido.");
+        aprovar.disabled = true;
+        try {
+          const { error } = await supabase.rpc("refugiart_artist_approve_auction", { p_post_id: String(obra.id), p_initial_price: precoInicial });
+          if (error) throw error;
+          window.alert("Leilão aprovado! A obra ficará disponível por 24 horas.");
+          carregarObras();
+        } catch (erro) {
+          window.alert("Não foi possível aprovar: " + (erro.message || "tente novamente."));
+          aprovar.disabled = false;
+        }
+      });
+      areaBaloes.appendChild(aprovar);
+    }
+    artigo.appendChild(areaBaloes);
+  }
+
   obterUsuario().then(usuario => {
     if (!usuario || usuario.id === obra.user_id || obra.moderation_status !== "published") return;
     const denunciar = criarElemento("button", "botao-denunciar-obra", "⚑ Denunciar");
@@ -702,7 +757,7 @@ async function carregarObras() {
 
     const { data: obras, error } = await supabase
       .from("atelie_posts")
-      .select("id, user_id, image_url, caption, category, created_at, moderation_status, content_sensitive")
+      .select("id, user_id, image_url, caption, category, created_at, moderation_status, content_sensitive, publicar_comunidade, publicar_mercado, preco, listing_mode, auction_status, auction_balloon_count, auction_initial_price")
       .eq("user_id", perfilIdAtelie)
       .order("created_at", { ascending: false })
       .limit(50);

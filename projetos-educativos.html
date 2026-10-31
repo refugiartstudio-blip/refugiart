@@ -70,6 +70,45 @@
     const fecharMenu=document.getElementById("fecharMenu");
     const menu=document.getElementById("menuLateral");
     const fundo=document.getElementById("fundoMenu");
+
+    const itemPerfil = document.getElementById("itemPerfil");
+    const linkLogin = document.getElementById("linkLogin");
+
+    async function atualizarNavegacaoPorSessao() {
+      try {
+        const { createClient } = await import(
+          "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        );
+        const cliente = createClient(
+          "https://nlqalpiksbqflzxzsgoa.supabase.co",
+          "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP"
+        );
+
+        const { data, error } = await cliente.auth.getUser();
+
+        function aplicarEstado(usuarioLogado) {
+          document.body.dataset.logado = String(usuarioLogado);
+          if (itemPerfil) {
+            itemPerfil.hidden = !usuarioLogado;
+            itemPerfil.style.display = usuarioLogado ? "" : "none";
+          }
+          if (linkLogin) {
+            linkLogin.textContent = usuarioLogado ? "Ateliê" : "Login";
+            linkLogin.href = usuarioLogado ? "atelie.html" : "login.html";
+          }
+        }
+
+        aplicarEstado(!error && Boolean(data.user));
+
+        cliente.auth.onAuthStateChange((evento, sessao) => {
+          aplicarEstado(Boolean(sessao?.user));
+        });
+      } catch (erro) {
+        console.error("Não foi possível verificar a sessão:", erro);
+      }
+    }
+
+    atualizarNavegacaoPorSessao();
     function abrirPainel(){menu.inert=false;menu.setAttribute("aria-hidden","false");menu.classList.add("menu-aberto");fundo.classList.add("fundo-visivel");document.body.classList.add("menu-bloqueio");abrirMenu.setAttribute("aria-expanded","true");fecharMenu.focus();}
     function fecharPainel(){menu.classList.remove("menu-aberto");fundo.classList.remove("fundo-visivel");document.body.classList.remove("menu-bloqueio");menu.setAttribute("aria-hidden","true");menu.inert=true;abrirMenu.setAttribute("aria-expanded","false");abrirMenu.focus();}
     abrirMenu.addEventListener("click",abrirPainel);fecharMenu.addEventListener("click",fecharPainel);fundo.addEventListener("click",fecharPainel);

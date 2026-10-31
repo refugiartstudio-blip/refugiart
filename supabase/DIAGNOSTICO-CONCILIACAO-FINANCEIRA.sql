@@ -42,43 +42,47 @@ order by o.created_at;
 -- 4) Pedidos marcados como liberados: conferir lancamento liquido e comissao.
 select
   o.id as order_id,o.seller_id,o.subtotal,
-  o.platform_commission_amount,
-  o.payout_released_at,
-  count(tx.id) filter (
-    where tx.idempotency_key='seller-payout-net:'||o.id
-      and tx.status='confirmed'
-  ) as net_credit_entries,
-  coalesce(sum(tx.amount) filter (
-    where tx.idempotency_key='seller-payout-net:'||o.id
-      and tx.status='confirmed'
-  ),0) as net_credit_amount,
-  count(tx.id) filter (
-    where tx.idempotency_key='seller-platform-commission:'||o.id
-      and tx.status='confirmed'
-  ) as commission_debit_entries,
-  count(pl.id) as platform_commission_entries,
-  coalesce(sum(pl.amount),0) as platform_commission_ledger_amount
+  o.platform_commission_amount,o.payout_released_at,
+  (select count(*) from public.refugiart_wallet_transactions tx
+   where tx.related_order_id=o.id
+     and tx.idempotency_key='seller-payout-net:'||o.id
+     and tx.status='confirmed') as net_credit_entries,
+  (select coalesce(sum(tx.amount),0) from public.refugiart_wallet_transactions tx
+   where tx.related_order_id=o.id
+     and tx.idempotency_key='seller-payout-net:'||o.id
+     and tx.status='confirmed') as net_credit_amount,
+  (select count(*) from public.refugiart_wallet_transactions tx
+   where tx.related_order_id=o.id
+     and tx.idempotency_key='seller-platform-commission:'||o.id
+     and tx.status='confirmed') as commission_debit_entries,
+  (select count(*) from public.refugiart_platform_ledger pl
+   where pl.order_id=o.id and pl.entry_type='commission') as platform_commission_entries,
+  (select coalesce(sum(pl.amount),0) from public.refugiart_platform_ledger pl
+   where pl.order_id=o.id and pl.entry_type='commission') as platform_commission_ledger_amount
 from public.refugiart_orders o
-left join public.refugiart_wallet_transactions tx on tx.related_order_id=o.id
-left join public.refugiart_platform_ledger pl
-  on pl.order_id=o.id and pl.entry_type='commission'
 where o.payout_released_at is not null
-group by o.id,o.seller_id,o.subtotal,o.platform_commission_amount,o.payout_released_at
-having
-  count(tx.id) filter (
-    where tx.idempotency_key='seller-payout-net:'||o.id
-      and tx.status='confirmed'
-  ) <> 1
-  or count(tx.id) filter (
-    where tx.idempotency_key='seller-platform-commission:'||o.id
-      and tx.status='confirmed'
-  ) <> case when o.platform_commission_amount>0 then 1 else 0 end
-  or count(pl.id) <> case when o.platform_commission_amount>0 then 1 else 0 end
-  or coalesce(sum(tx.amount) filter (
-    where tx.idempotency_key='seller-payout-net:'||o.id
-      and tx.status='confirmed'
-  ),0) <> o.subtotal-o.platform_commission_amount
-  or coalesce(sum(pl.amount),0) <> o.platform_commission_amount
+  and (
+    (select count(*) from public.refugiart_wallet_transactions tx
+     where tx.related_order_id=o.id
+       and tx.idempotency_key='seller-payout-net:'||o.id
+       and tx.status='confirmed') <> 1
+    or (select count(*) from public.refugiart_wallet_transactions tx
+        where tx.related_order_id=o.id
+          and tx.idempotency_key='seller-platform-commission:'||o.id
+          and tx.status='confirmed')
+       <> case when o.platform_commission_amount>0 then 1 else 0 end
+    or (select count(*) from public.refugiart_platform_ledger pl
+        where pl.order_id=o.id and pl.entry_type='commission')
+       <> case when o.platform_commission_amount>0 then 1 else 0 end
+    or (select coalesce(sum(tx.amount),0) from public.refugiart_wallet_transactions tx
+        where tx.related_order_id=o.id
+          and tx.idempotency_key='seller-payout-net:'||o.id
+          and tx.status='confirmed')
+       <> o.subtotal-o.platform_commission_amount
+    or (select coalesce(sum(pl.amount),0) from public.refugiart_platform_ledger pl
+        where pl.order_id=o.id and pl.entry_type='commission')
+       <> o.platform_commission_amount
+  )
 order by o.payout_released_at desc;
 
 -- 5) Casos de reembolso/chargeback abertos ou em revisao.

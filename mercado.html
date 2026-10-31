@@ -104,28 +104,9 @@
     <!-- CATEGORIAS -->
 
     <section class="secao-mercado" id="obras">
-      <div class="titulo-secao-mercado">
-        <div>
-          <span class="etiqueta-mercado">EXPLORE</span>
-          <h2>Um mercado de possibilidades</h2>
-        </div>
-      </div>
 
-      <div class="categorias-mercado" id="categorias-mercado" aria-label="Filtrar obras por categoria">
-        <button type="button" class="categoria-mercado" data-categoria="Desenho"><span>✎</span><strong>Desenho</strong></button>
-        <button type="button" class="categoria-mercado" data-categoria="Pintura"><span>▧</span><strong>Pintura</strong></button>
-        <button type="button" class="categoria-mercado" data-categoria="Fotografia"><span>▣</span><strong>Foto</strong></button>
-        <button type="button" class="categoria-mercado" data-categoria="Tatuagem"><span>✳</span><strong>Tatuagem</strong></button>
-        <button type="button" class="categoria-mercado" data-categoria="Digital"><span>✦</span><strong>Digital</strong></button>
-        <button type="button" class="categoria-mercado" data-categoria="Leitura"><span>▤</span><strong>Leitura</strong></button>
-      </div>
-    
 
-      <div class="titulo-secao-mercado vitrine-obras-titulo">
-        <div><span class="etiqueta-mercado">ANÚNCIOS DOS ARTISTAS</span><h2>Obras disponíveis</h2><p>Criações anunciadas pelos artistas da RefugiART.</p></div>
-      </div>
       <div class="controles-vitrine-mercado" aria-label="Navegar pelas obras">
-        <button type="button" id="obras-anterior" aria-label="Obras anteriores">‹</button>
         <button type="button" id="obras-proxima" aria-label="Próximas obras">›</button>
       </div>
       <div id="lista-obras-mercado" class="grade-obras vitrine-carrossel-mercado" aria-live="polite"><p>Carregando obras...</p></div>
@@ -331,22 +312,13 @@
     const botaoProxima = document.getElementById("obras-proxima");
     function atualizarControlesVitrine(){
       const limite = trilhoObras.scrollWidth - trilhoObras.clientWidth;
-      botaoAnterior.disabled = trilhoObras.scrollLeft <= 2;
-      botaoProxima.disabled = trilhoObras.scrollLeft >= limite - 2;
+      if (botaoProxima) botaoProxima.disabled = trilhoObras.scrollLeft >= limite - 2;
     }
-    botaoAnterior.addEventListener("click",()=>trilhoObras.scrollBy({left:-trilhoObras.clientWidth*0.8,behavior:"smooth"}));
-    botaoProxima.addEventListener("click",()=>trilhoObras.scrollBy({left:trilhoObras.clientWidth*0.8,behavior:"smooth"}));
+    if (botaoProxima) botaoProxima.addEventListener("click",()=>trilhoObras.scrollBy({left:trilhoObras.clientWidth*0.8,behavior:"smooth"}));
     trilhoObras.addEventListener("scroll",atualizarControlesVitrine);
     window.addEventListener("resize",atualizarControlesVitrine);
     const observarObras = new MutationObserver(atualizarControlesVitrine);
     observarObras.observe(trilhoObras,{childList:true});
-    document.getElementById("categorias-mercado").addEventListener("click",evento=>{
-      const botao=evento.target.closest("[data-categoria]");
-      if(!botao)return;
-      categoriaSelecionada=botao.dataset.categoria;
-      document.querySelectorAll("#categorias-mercado .categoria-mercado").forEach(item=>item.classList.toggle("selecionada",item===botao));
-      document.querySelectorAll("#lista-obras-mercado .cartao-obra").forEach(card=>{card.hidden=card.dataset.categoria!==categoriaSelecionada;});
-    });
     carregarMercado();
   </script>
 

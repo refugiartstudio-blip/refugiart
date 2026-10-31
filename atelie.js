@@ -690,19 +690,19 @@ function renderizarObras() {
 
   listaObras.replaceChildren();
 
+  // Primeiro slide fixo da Janela Criativa: banner da Kraken Tattoo.
+  const bannerKraken = criarElemento("div", "janela-banner-kraken");
+  bannerKraken.setAttribute("role", "img");
+  bannerKraken.setAttribute("aria-label", "KRAKEN TATTOO");
+  bannerKraken.appendChild(criarElemento("span", "", "KRAKEN TATTOO"));
+  listaObras.appendChild(bannerKraken);
+
   if (!filtradas.length) {
-    const existemObras = obrasCarregadas.length > 0;
-
-    let mensagem;
-
-    if (existemObras) {
-      mensagem = "Nenhuma obra encontrada com esses filtros.";
-    } else {
-      // Feed vazio: não exibe balão ou mensagem de convite.
-      return;
+    if (obrasCarregadas.length) {
+      listaObras.appendChild(
+        criarElemento("p", "mensagem-feed", "Nenhuma obra encontrada com esses filtros.")
+      );
     }
-
-    mostrarMensagemFeed(mensagem);
     return;
   }
 

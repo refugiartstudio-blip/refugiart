@@ -134,3 +134,17 @@ Arquivo: `SAQUES-PAGAMENTOS-ARTISTAS-PIX.md`
 ## Observação da auditoria de leilões
 
 A primeira migration de reservas (004) foi substituída pela liquidação mais segura em 005, e 012 preserva essa lógica ao corrigir a liberação de reservas em leilões sem vencedor. A rotina de fechamento deve continuar sendo comparada com 005 sempre que houver alteração; não executar migrations isoladamente fora da ordem.
+
+
+## Segurança de contas, dados e moderação — auditoria estática
+
+Documento: `REVISAO-SEGURANCA-CONTAS-E-DADOS.md`
+
+Achados:
+- A migration `moderacao-comunidade.sql` remove todas as policies SELECT de `atelie_posts`; precisa inventário e substituição seletiva para não apagar permissões legítimas.
+- O limiar automático de 10 denúncias pode ser abusado por contas coordenadas; precisa rate limit, critérios de gravidade e revisão humana.
+- Falta trilha de auditoria imutável e estruturada das decisões administrativas.
+- Grants e policies de notificações precisam ser validados no banco para detectar permissões adicionais.
+- Revisar buckets Storage, uploads, exposição de campos de perfil e ausência de segredos no frontend.
+
+**Status:** auditoria estática documentada; sem mudanças de policy porque o estado real do banco não foi inspecionado. Testes com contas de papéis diferentes e inventário Supabase continuam pendentes.

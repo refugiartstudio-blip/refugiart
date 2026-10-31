@@ -59,3 +59,18 @@ Uma etapa só deve passar para “homologada” após: migration aplicada em amb
 ## Correção adicionada após esta revisão
 
 A migration `20261030_008_prevent_early_delivery_confirmation.sql` substitui a RPC de confirmação do comprador. Em pedidos por transportadora, impede confirmar recebimento enquanto o pedido estiver apenas pago ou aguardando postagem. A correção foi criada no GitHub, mas não foi aplicada ao Supabase.
+
+
+## Migration 009 — custos e margem da plataforma
+
+Criada `20261030_009_platform_costs_and_promo_reserve.sql` para registrar custos reais separadamente da comissão. Inclui categorias de gateway, tributos, subsídio de frete, reembolso, chargeback e despesas operacionais, além de reserva promocional com saldo financiado e bloqueio de gasto acima do disponível. Cria visão mensal de resultado de contribuição antes de custos não registrados.
+
+**Limite atual:** os registros ainda dependem de integração do backend; criar a tabela não lança automaticamente taxas, tributos ou subsídios. O relatório não deve ser chamado de lucro líquido enquanto custos estiverem faltando. A migration precisa ser aplicada e testada em homologação.
+
+### Pendências financeiras adicionais
+
+- Integrar cada evento de pagamento/cotação/reembolso ao lançamento idempotente correspondente no livro de custos.
+- Não contar aporte da reserva promocional como receita operacional; contar somente o gasto promocional como custo.
+- Criar painel interno que mostre comissão bruta, custos por categoria, resultado de contribuição, saldo da reserva promocional e margem percentual.
+- Definir limites de aprovação para despesas manuais e trilha de auditoria.
+- Validar o relatório mensal com conciliação de pedidos, ledger de comissão e extratos do provedor.

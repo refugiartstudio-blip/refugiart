@@ -1294,3 +1294,25 @@ async function inicializarAtelie() {
 }
 
 inicializarAtelie();
+
+
+/* Carrossel automático dos banners Kraken — não interfere nas obras */
+(() => {
+  const area = document.getElementById("kraken-banner-carrossel");
+  const trilho = area?.querySelector(".kraken-banner-trilho");
+  if (!area || !trilho || trilho.children.length < 2) return;
+  let indice = 0;
+  let pausaAte = 0;
+  const total = trilho.children.length;
+  const avancar = () => {
+    if (Date.now() < pausaAte) return;
+    indice = (indice + 1) % total;
+    area.scrollTo({ left: indice * area.clientWidth, behavior: "smooth" });
+  };
+  area.addEventListener("touchstart", () => { pausaAte = Date.now() + 7000; }, {passive:true});
+  area.addEventListener("pointerdown", () => { pausaAte = Date.now() + 7000; });
+  area.addEventListener("scroll", () => {
+    indice = Math.round(area.scrollLeft / Math.max(area.clientWidth, 1));
+  }, {passive:true});
+  window.setInterval(avancar, 4500);
+})();

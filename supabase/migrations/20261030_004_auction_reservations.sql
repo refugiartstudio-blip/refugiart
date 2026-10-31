@@ -2,6 +2,13 @@
 -- Esta migration NAO libera lances na interface. Validar em ambiente de teste antes.
 begin;
 
+-- Pedido unico para cada leilao liquidado internamente pela carteira.
+alter table public.refugiart_orders
+  add column if not exists auction_id bigint
+  references public.refugiart_auctions(id) on delete restrict;
+create unique index if not exists refugiart_orders_auction_unique
+  on public.refugiart_orders(auction_id) where auction_id is not null;
+
 -- available_balance representa saldo livre para novas operacoes.
 -- Ao reservar, o valor sai do disponivel e passa para reserved_balance.
 alter table public.refugiart_wallets
@@ -155,6 +162,8 @@ declare
   a record;
   v_winner public.refugiart_auction_bids%rowtype;
   v_res public.refugiart_auction_reservations%rowtype;
+  v_post public.atelie_posts%rowtype;
+  v_order_id bigint;
   v_count integer:=0;
 begin
   for a in
@@ -198,6 +207,29 @@ begin
       (a.artist_id,'sale','credit',v_winner.amount,'pending',
        'auction-capture-seller:'||a.id,v_winner.user_id,a.post_id,a.id,
        'Venda em leilao aguardando regras de entrega e liberacao',null);
+
+      -- Registra pedido e prazo de postagem na mesma transacao da captura.
+      select * into v_post from public.atelie_posts where id=a.post_id for update;
+      if not found then raise exception 'Obra do leilao nao encontrada.'; end if;
+      insert into public.refugiart_orders(
+        buyer_id,seller_id,status,subtotal,shipping_amount,total_amount,
+        paid_at,shipment_due_at,auction_id
+      ) values (
+        v_winner.user_id,a.artist_id,'awaiting_shipment',
+        v_winner.amount,0,v_winner.amount,clock_timestamp(),
+        public.refugiart_add_business_days(clock_timestamp(),3),a.id
+      ) returning id into v_order_id;
+
+      insert into public.refugiart_order_items(
+        order_id,post_id,title_snapshot,unit_price,quantity
+      ) values (
+        v_order_id,a.post_id,
+        coalesce(nullif(btrim(v_post.caption),''),'Obra RefugiART #'||a.post_id),
+        v_winner.amount,1
+      );
+
+      insert into public.refugiart_shipments(order_id,status)
+        values(v_order_id,'awaiting_post');
 
       update public.refugiart_wallets w
         set available_balance=available_balance+r.amount,

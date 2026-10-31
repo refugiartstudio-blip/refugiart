@@ -2271,3 +2271,17 @@ footer {
     font-size: 14px;
   }
 }
+
+
+/* Navegação principal: destaque da página atual */
+.navegacao-principal a[aria-current="page"] {
+  color: #7136a8 !important;
+  background: #f1e9fb;
+  border-radius: 8px;
+  padding: 7px 12px;
+  box-shadow: inset 0 -3px 0 #8b45c6;
+}
+.navegacao-principal a[aria-current="page"]:hover {
+  color: #7136a8 !important;
+  background: #eadcf8;
+}

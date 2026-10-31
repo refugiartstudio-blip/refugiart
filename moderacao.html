@@ -50,19 +50,127 @@ body.pagina-moderacao{background:var(--mod-bg);color:#28342d;font-family:Arial,s
 .acoes-moderacao button:disabled{opacity:.5;cursor:wait}
 @media(max-width:700px){.mod-layout{grid-template-columns:1fr;margin-top:15px;gap:12px}.mod-sidebar{display:flex;align-items:center;gap:5px;padding:8px;overflow-x:auto}.mod-sidebar-label,.mod-side-note{display:none}.mod-side-item{white-space:nowrap;padding:10px}.topo-mod{flex-wrap:wrap}.topo-mod>a{font-size:12px}.inbox-topo{padding:19px 16px 15px}.item-moderacao{grid-template-columns:58px minmax(0,1fr);gap:0 12px;padding:16px}.item-moderacao img{width:58px;height:58px}#status-admin{padding:11px 16px}}
 @media(max-width:390px){.item-moderacao{grid-template-columns:1fr}.item-moderacao img{grid-column:1;grid-row:auto;width:100%;height:145px;margin-bottom:12px}.item-moderacao h3,.item-moderacao p,.acoes-moderacao{grid-column:1}.acoes-moderacao button{flex:1}}
-button.mod-side-item,button.inbox-filtro{appearance:none;-webkit-appearance:none;font-family:inherit;line-height:1.3;touch-action:manipulation;position:relative;z-index:1}\n.mod-sidebar,.inbox-filtros{position:relative;z-index:2}\n</style>
+button.mod-side-item,button.inbox-filtro{appearance:none;-webkit-appearance:none;font-family:inherit;line-height:1.3;touch-action:manipulation;position:relative;z-index:1}\n.mod-sidebar,.inbox-filtros{position:relative;z-index:2}\n
+/* PAINEL ADMINISTRATIVO */
+.painel-geral{width:min(1180px,calc(100% - 32px));margin:25px auto 0}
+.painel-boas-vindas{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:17px}
+.painel-boas-vindas span{display:block;color:#718174;font-size:10px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase}
+.painel-boas-vindas h2{margin:5px 0 4px;color:#243e35;font:500 clamp(25px,4vw,32px) Georgia,serif}
+.painel-boas-vindas p{margin:0;color:#778078;font-size:13px;line-height:1.6}
+.painel-data{color:#778078;font-size:11px;white-space:nowrap}
+.painel-indicadores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.painel-indicador{padding:17px;background:#fff;border:1px solid #e4e8df;border-radius:13px;box-shadow:0 5px 20px rgba(31,52,39,.035);min-width:0}
+.painel-indicador small{display:block;color:#788278;font-size:11px;line-height:1.4}
+.painel-indicador strong{display:block;margin-top:9px;color:#243e35;font:500 clamp(19px,3vw,25px) Georgia,serif;overflow-wrap:anywhere}
+.painel-indicador em{display:block;margin-top:5px;color:#8a9389;font-size:10px;font-style:normal;line-height:1.45}
+.painel-grafico{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(220px,.8fr);gap:14px;margin-bottom:22px}
+.grafico-vendas,.painel-resumo{background:#fff;border:1px solid #e4e8df;border-radius:15px;box-shadow:0 5px 20px rgba(31,52,39,.035);min-width:0}
+.grafico-cabecalho{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 21px 8px}
+.grafico-cabecalho h3,.painel-resumo h3{margin:0;color:#263c30;font:500 19px Georgia,serif}
+.grafico-cabecalho p{margin:5px 0 0;color:#818a80;font-size:11px;line-height:1.5}
+.grafico-legenda{padding:6px 10px;border-radius:20px;background:#f1f4ef;color:#617364;font-size:10px;white-space:nowrap}
+.grafico-area{position:relative;padding:8px 14px 13px}
+.grafico-area svg{display:block;width:100%;height:auto;min-height:145px}
+.grafico-vazio{position:absolute;inset:12px 14px 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
+.grafico-vazio b{color:#526456;font-size:13px}
+.grafico-vazio span{max-width:330px;margin-top:5px;color:#879087;font-size:10px;line-height:1.5}
+.painel-resumo{padding:20px}
+.painel-resumo h3{margin-bottom:14px}
+.resumo-linha{display:flex;gap:11px;align-items:flex-start;padding:12px 0;border-top:1px solid #edf0e9}
+.resumo-icone{display:grid;place-items:center;flex:0 0 32px;height:32px;border-radius:9px;background:#edf2eb;color:#47634f;font-size:16px}
+.resumo-linha strong{display:block;color:#405348;font-size:12px}
+.resumo-linha small{display:block;margin-top:4px;color:#879087;font-size:10px;line-height:1.5}
+.painel-aviso{margin:0 0 20px;padding:12px 15px;border:1px solid #eadfc9;border-radius:10px;background:#fbf7ee;color:#766344;font-size:11px;line-height:1.6}
+.mod-layout{margin-top:0}
+@media(max-width:850px){.painel-indicadores{grid-template-columns:repeat(2,minmax(0,1fr))}.painel-grafico{grid-template-columns:1fr}}
+@media(max-width:480px){.painel-geral{width:calc(100% - 20px);margin-top:18px}.painel-boas-vindas{align-items:flex-start;flex-direction:column}.painel-indicadores{gap:8px}.painel-indicador{padding:13px}.grafico-cabecalho{padding:17px 15px 5px}.grafico-area{padding:4px 7px 10px}.painel-resumo{padding:17px}}
+
+</style>
 </head>
 <body class="pagina-moderacao">
 <header class="topo-mod">
   <a href="perfil.html">← Meu perfil</a>
   <div class="marca-mod">
     <span class="marca-mod-simbolo">✉</span>
-    <div><h1>RefugiART</h1><small>Central de moderação</small></div>
+    <div><h1>RefugiART</h1><small>Central administrativa</small></div>
   </div>
 </header>
+
+<section class="painel-geral" aria-label="Visão geral administrativa">
+  <div class="painel-boas-vindas">
+    <div>
+      <span>ESCRITÓRIO DIGITAL · REFUGIART</span>
+      <h2>Painel administrativo</h2>
+      <p>Visão geral da plataforma, movimentações e gestão da comunidade.</p>
+    </div>
+    <small class="painel-data">Central de controle</small>
+  </div>
+
+  <div class="painel-indicadores">
+    <article class="painel-indicador">
+      <small>Denúncias aguardando análise</small>
+      <strong id="indicador-denuncias">—</strong>
+      <em>Atualizado ao carregar a fila</em>
+    </article>
+    <article class="painel-indicador">
+      <small>Vendas confirmadas</small>
+      <strong>—</strong>
+      <em>Dados financeiros ainda não disponíveis</em>
+    </article>
+    <article class="painel-indicador">
+      <small>Pedidos registrados</small>
+      <strong>—</strong>
+      <em>Checkout ainda não está ativo</em>
+    </article>
+    <article class="painel-indicador">
+      <small>Operação do marketplace</small>
+      <strong style="font-size:18px">Em implantação</strong>
+      <em>Pagamentos e conciliação pendentes</em>
+    </article>
+  </div>
+
+  <div class="painel-grafico">
+    <section class="grafico-vendas" aria-label="Gráfico de vendas">
+      <div class="grafico-cabecalho">
+        <div>
+          <h3>Movimentação de vendas</h3>
+          <p>Acompanhamento financeiro do Mercado RefugiART</p>
+        </div>
+        <span class="grafico-legenda">Vendas confirmadas</span>
+      </div>
+      <div class="grafico-area">
+        <svg viewBox="0 0 680 205" role="img" aria-label="Gráfico aguardando dados reais de vendas">
+          <g stroke="#e9eee7" stroke-width="1">
+            <line x1="48" y1="25" x2="660" y2="25"/><line x1="48" y1="65" x2="660" y2="65"/>
+            <line x1="48" y1="105" x2="660" y2="105"/><line x1="48" y1="145" x2="660" y2="145"/>
+          </g>
+          <g fill="#a0a99f" font-size="10">
+            <text x="8" y="29">R$</text><text x="48" y="174">Jan</text><text x="148" y="174">Fev</text>
+            <text x="248" y="174">Mar</text><text x="348" y="174">Abr</text><text x="448" y="174">Mai</text><text x="548" y="174">Jun</text>
+          </g>
+          <line x1="48" y1="145" x2="660" y2="145" stroke="#dce4da" stroke-width="1.5"/>
+        </svg>
+        <div class="grafico-vazio">
+          <b>Aguardando os primeiros dados de vendas</b>
+          <span>O gráfico será preenchido quando o checkout registrar pagamentos confirmados no sistema.</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="painel-resumo">
+      <h3>Central de operações</h3>
+      <div class="resumo-linha"><span class="resumo-icone">▣</span><div><strong>Comunidade e denúncias</strong><small>Análise de publicações sinalizadas e ocorrências.</small></div></div>
+      <div class="resumo-linha"><span class="resumo-icone">▤</span><div><strong>Mercado e pedidos</strong><small>Gestão de obras, vendas, pagamentos e entregas.</small></div></div>
+      <div class="resumo-linha"><span class="resumo-icone">✎</span><div><strong>Conteúdo e projetos</strong><small>Organização de eventos, exposições e iniciativas educativas.</small></div></div>
+      <div class="resumo-linha"><span class="resumo-icone">♙</span><div><strong>Contas e usuários</strong><small>Área planejada para suporte e administração de perfis.</small></div></div>
+    </aside>
+  </div>
+  <p class="painel-aviso"><strong>Transparência dos indicadores:</strong> os campos financeiros não exibem valores estimados ou fictícios. O checkout e a confirmação de pagamentos ainda precisam ser integrados antes de apresentar vendas reais.</p>
+</section>
+
 <main class="mod-layout">
   <aside class="mod-sidebar" aria-label="Pastas da moderação">
-    <div class="mod-sidebar-label">Caixa de mensagens</div>
+    <div class="mod-sidebar-label">Atendimento e moderação</div>
     <button type="button" class="mod-side-item ativo" data-pasta="entrada"><span class="mod-side-icon">▣</span> Caixa de entrada</button>
     <button type="button" class="mod-side-item" data-pasta="denuncias"><span class="mod-side-icon">⚑</span> Denúncias</button>
     <button type="button" class="mod-side-item" data-pasta="reclamacoes"><span class="mod-side-icon">✉</span> Reclamações</button>

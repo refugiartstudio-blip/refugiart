@@ -570,17 +570,12 @@ function criarCartaoObra(obra) {
       const botaoBalao = criarElemento("button", "botao-denunciar-obra", "🎈 Manifestar interesse");
       botaoBalao.type = "button";
       botaoBalao.addEventListener("click", async () => {
-        const confirmou = window.confirm("Este balão representa intenção real de participar de um possível leilão. Ele não é uma curtida e não garante a compra. Para registrar, sua carteira precisa ter pelo menos R$ 10,00 disponíveis. Esse valor não será descontado. Deseja continuar?");
+        const confirmou = window.confirm("Dar um balão é como curtir esta obra: sua manifestação é definitiva e não poderá ser retirada. Deseja confirmar?");
         if (!confirmou) return;
         botaoBalao.disabled = true;
         try {
           const { data, error } = await supabase.rpc("refugiart_give_balloon", { p_post_id: String(obra.id) });
           if (error) throw error;
-          if (data?.needs_wallet) {
-            window.alert("Saldo insuficiente. É necessário ter pelo menos " + Number(data.required).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}) + " na carteira. O balão não foi registrado.");
-            window.location.href = "carteira.html?deposito=" + encodeURIComponent(data.required);
-            return;
-          }
           obra.auction_balloon_count = data.count;
           contador.textContent = "🎈 " + data.count + (obra.listing_mode === "community" ? " / 30" : " / 10");
           window.alert(data.status === "active" ? "Meta alcançada! O leilão foi iniciado." : data.status === "pending_artist" ? "Meta alcançada! A obra aguarda a aprovação do artista." : "Seu balão foi registrado. Obrigado por manifestar interesse!");

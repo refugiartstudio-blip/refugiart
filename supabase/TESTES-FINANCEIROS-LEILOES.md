@@ -9,7 +9,8 @@ Este roteiro é para ambiente de desenvolvimento/homologação. Não usar dinhei
 3. `migrations/20261030_003_orders_shipping_disputes.sql`.
 4. `migrations/20261030_004_auction_reservations.sql`.
 5. `migrations/20261030_005_auction_settlement_safety.sql`.
-6. `agendar-encerramento-leiloes.sql` somente depois de validar a função e confirmar que pg_cron está habilitado.
+6. `migrations/20261030_006_shipping_subsidy_policy.sql`.
+7. `agendar-encerramento-leiloes.sql` somente depois de validar a função e confirmar que pg_cron está habilitado.
 
 A ordem deve ser confirmada contra o estado real do projeto antes de executar. Os arquivos não foram executados neste repositório remoto.
 
@@ -57,3 +58,19 @@ A ordem deve ser confirmada contra o estado real do projeto antes de executar. O
 - Ainda não existe processo de reembolso via provedor nem tratamento completo de chargeback.
 - O cron job precisa ser instalado e monitorado.
 - A função de lance ainda não deve ser ligada à interface pública antes da revisão técnica e dos testes de concorrência, RLS e saldos.
+
+
+## Cenários da política de frete (migration 006)
+
+- Venda direta: comissão registrada em 20% do preço efetivamente vendido.
+- Leilão: comissão registrada em 30% do valor final arrematado.
+- O orçamento de subsídio é 20% da soma das comissões do checkout.
+- O subsídio total nunca supera o frete total cotado.
+- Se o frete total for menor que o orçamento, o comprador recebe frete grátis.
+- Se o frete total superar o orçamento, o comprador paga a diferença.
+- A campanha de R$ 300 considera o subtotal de todas as obras do carrinho; a elegibilidade não aumenta o teto financeiro de subsídio.
+- Carrinho com três artistas deve gerar três cotações/remessas separadas, mas um grupo de checkout consolidado.
+- O subsídio deve ser distribuído proporcionalmente entre os fretes dos pacotes; o backend ajusta centavos residuais para a soma fechar exatamente.
+- CEP de destino, CEP de origem, peso e dimensões precisam ser usados na cotação real. Sem cotação, não confirmar valor nem pagamento.
+- Rejeitar qualquer tentativa do navegador de definir comissão, frete cotado ou subsídio; todos os valores devem ser recalculados e gravados pelo backend confiável.
+- Conferir que a soma de shipping_amount dos pedidos seja igual ao frete pago pelo comprador e que cada pedido respeite total_amount = subtotal + shipping_amount.

@@ -31,13 +31,13 @@ returns trigger
 language plpgsql
 security definer
 set search_path = public
-as $
+as $$
 begin
   insert into public.refugiart_wallets(user_id) values(new.id)
   on conflict(user_id) do nothing;
   return new;
 end;
-$;
+$$;
 
 drop trigger if exists trg_refugiart_create_wallet on auth.users;
 create trigger trg_refugiart_create_wallet

@@ -10,7 +10,8 @@ Este roteiro é para ambiente de desenvolvimento/homologação. Não usar dinhei
 4. `migrations/20261030_004_auction_reservations.sql`.
 5. `migrations/20261030_005_auction_settlement_safety.sql`.
 6. `migrations/20261030_006_shipping_subsidy_policy.sql`.
-7. `agendar-encerramento-leiloes.sql` somente depois de validar a função e confirmar que pg_cron está habilitado.
+7. `migrations/20261030_008_prevent_early_delivery_confirmation.sql`.
+8. `agendar-encerramento-leiloes.sql` somente depois de validar a função e confirmar que pg_cron está habilitado.
 
 A ordem deve ser confirmada contra o estado real do projeto antes de executar. Os arquivos não foram executados neste repositório remoto.
 
@@ -91,3 +92,11 @@ A ordem deve ser confirmada contra o estado real do projeto antes de executar. O
 - Disputa aberta suspende liberacao ate revisao. Nunca liberar somente porque o artista digitou um rastreio.
 - Testar concorrencia (duas confirmacoes simultaneas), codigo expirado, codigo incorreto, 10 tentativas, codigo reutilizado, disputa antes da confirmacao, saldo pendente divergente, pedido duplicado e reexecucao da liberacao.
 - A migration cria estrutura/RPCs, mas nao integra rastreamento automatico, gateway, saque Pix nem painel administrativo. Nao ativar dinheiro real antes de testes no Supabase e revisao de RLS/permissoes.
+
+
+## Migration 008 — bloqueio de confirmacao antecipada
+
+- Pedido com entrega por transportadora em `paid` ou `awaiting_shipment`: confirmacao do comprador deve falhar e nao liberar saldo.
+- Pedido por transportadora em `shipped`: comprador pode confirmar recebimento explicitamente; a liquidacao continua bloqueada se houver disputa ou credito pendente divergente.
+- Pedido por entrega pessoal/retirada: fluxo de codigo de uso unico continua disponivel.
+- Testar tambem pedido inexistente, comprador diferente, pedido cancelado, disputa aberta e confirmacao repetida.

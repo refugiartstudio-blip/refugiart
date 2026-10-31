@@ -403,7 +403,7 @@ function criarCartaoObra(obra) {
 
       const opcoes = criarElemento("div", "modal-obra-opcoes");
       const botaoEditar = criarElemento("button", "modal-obra-opcao", "✏️  Editar legenda");
-      const botaoExcluir = criarElemento("button", "modal-obra-opcao modal-obra-excluir", "🗑️  Excluir obra");
+      const botaoExcluir = criarElemento("button", "modal-obra-opcao modal-obra-excluir", "🗑️  Remover do portfólio");
       botaoEditar.type = botaoExcluir.type = "button";
       opcoes.append(botaoEditar, botaoExcluir);
 
@@ -423,10 +423,10 @@ function criarCartaoObra(obra) {
 
       const confirmacao = criarElemento("div", "modal-obra-confirmacao");
       confirmacao.hidden = true;
-      const aviso = criarElemento("p", "", "Tem certeza? Esta ação apagará a publicação permanentemente.");
+      const aviso = criarElemento("p", "", "Deseja remover esta obra do seu portfólio? Ela deixará de aparecer nas áreas públicas, mas os registros de compras e vendas serão preservados.");
       const acoesExcluir = criarElemento("div", "modal-obra-acoes");
       const cancelarExclusao = criarElemento("button", "modal-obra-secundario", "Manter obra");
-      const confirmarExclusao = criarElemento("button", "modal-obra-perigo", "Sim, excluir");
+      const confirmarExclusao = criarElemento("button", "modal-obra-perigo", "Sim, remover");
       cancelarExclusao.type = confirmarExclusao.type = "button";
       acoesExcluir.append(cancelarExclusao, confirmarExclusao);
       confirmacao.append(aviso, acoesExcluir);

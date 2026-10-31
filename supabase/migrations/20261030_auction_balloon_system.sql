@@ -201,28 +201,16 @@ begin
 end;
 $$;
 
+-- Lances financeiros ficam bloqueados até existir reserva atômica do saldo.
+-- Esta trava evita aceitar ofertas sem separar o dinheiro do participante.
 create or replace function public.refugiart_place_auction_bid(p_auction_id bigint,p_amount numeric)
 returns jsonb
 language plpgsql
 security definer
 set search_path = public
 as $$
-declare v_auction public.refugiart_auctions%rowtype; v_balance numeric(12,2); v_highest numeric(12,2);
 begin
-  if auth.uid() is null then raise exception 'Faça login para dar um lance.'; end if;
-  select * into v_auction from public.refugiart_auctions where id=p_auction_id for update;
-  if not found or v_auction.status <> 'active' or now() >= v_auction.ends_at then
-    raise exception 'Este leilão já foi encerrado.';
-  end if;
-  if v_auction.artist_id=auth.uid() then raise exception 'O artista não pode dar lance na própria obra.'; end if;
-  select coalesce(available_balance,0) into v_balance from public.refugiart_wallets where user_id=auth.uid();
-  if coalesce(v_balance,0) < p_amount then raise exception 'Saldo insuficiente para este lance.'; end if;
-  select coalesce(max(amount),v_auction.initial_price) into v_highest
-    from public.refugiart_auction_bids where auction_id=p_auction_id;
-  if p_amount <= v_highest then raise exception 'O lance precisa superar a oferta atual.'; end if;
-  insert into public.refugiart_auction_bids(auction_id,user_id,amount) values(p_auction_id,auth.uid(),p_amount);
-  update public.refugiart_auctions set winning_user_id=auth.uid(),winning_bid=p_amount where id=p_auction_id;
-  return jsonb_build_object('accepted',true,'amount',p_amount,'created_at',now());
+  raise exception 'Lances estão temporariamente indisponíveis. A reserva segura de saldo ainda está em implantação.';
 end;
 $$;
 

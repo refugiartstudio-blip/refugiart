@@ -199,11 +199,49 @@
         itemPerfil.style.display = estaLogado ? "" : "none";
       }
 
-      // Ajusta o link de acesso conforme o estado de teste.
-      if (linkLogin && estaLogado) {
-        linkLogin.textContent = "Minha conta";
-        linkLogin.href = "perfil.html";
+      // Confere a sessão real do Supabase e atualiza a navegação.
+      async function atualizarNavegacaoPorSessao() {
+        try {
+          const { createClient } = await import(
+            "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+          );
+          const cliente = createClient(
+            "https://nlqalpiksbqflzxzsgoa.supabase.co",
+            "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP"
+          );
+          const { data, error } = await cliente.auth.getUser();
+          const usuarioLogado = !error && Boolean(data.user);
+
+          document.body.dataset.logado = String(usuarioLogado);
+
+          if (itemPerfil) {
+            itemPerfil.hidden = !usuarioLogado;
+            itemPerfil.style.display = usuarioLogado ? "" : "none";
+          }
+
+          if (linkLogin) {
+            linkLogin.textContent = usuarioLogado ? "Ateliê" : "Login";
+            linkLogin.href = usuarioLogado ? "atelie.html" : "login.html";
+          }
+
+          cliente.auth.onAuthStateChange((evento, sessao) => {
+            const continuaLogado = Boolean(sessao?.user);
+            document.body.dataset.logado = String(continuaLogado);
+            if (itemPerfil) {
+              itemPerfil.hidden = !continuaLogado;
+              itemPerfil.style.display = continuaLogado ? "" : "none";
+            }
+            if (linkLogin) {
+              linkLogin.textContent = continuaLogado ? "Ateliê" : "Login";
+              linkLogin.href = continuaLogado ? "atelie.html" : "login.html";
+            }
+          });
+        } catch (erro) {
+          console.error("Não foi possível verificar a sessão:", erro);
+        }
       }
+
+      atualizarNavegacaoPorSessao();
 
       function abrirPainel() {
         menuLateral.inert = false;

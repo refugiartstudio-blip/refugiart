@@ -151,6 +151,33 @@ create table if not exists public.refugiart_auction_bids (
   created_at timestamptz not null default now()
 );
 
+-- Completa as referencias depois que as tabelas relacionadas existem.
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conrelid='public.refugiart_wallet_transactions'::regclass
+      and conname='refugiart_wallet_transactions_auction_fk'
+  ) then
+    alter table public.refugiart_wallet_transactions
+      add constraint refugiart_wallet_transactions_auction_fk
+      foreign key (related_auction_id)
+      references public.refugiart_auctions(id) on delete set null;
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint
+    where conrelid='public.refugiart_auction_reservations'::regclass
+      and conname='refugiart_auction_reservations_bid_fk'
+  ) then
+    alter table public.refugiart_auction_reservations
+      add constraint refugiart_auction_reservations_bid_fk
+      foreign key (bid_id)
+      references public.refugiart_auction_bids(id) on delete set null;
+  end if;
+end;
+$$;
+
 create index if not exists refugiart_auction_bids_rank_idx
   on public.refugiart_auction_bids(auction_id, amount desc, created_at asc);
 create index if not exists refugiart_auctions_active_idx

@@ -88,3 +88,31 @@ A migration `20261030_012_release_no_winner_auction_reservations.sql` substitui 
 **Homologacao obrigatoria:** testar leilao sem lances; leilao com varios participantes e sem vencedor elegivel; reserva ativa com carteira consistente; reserva ativa com carteira inconsistente (espera-se rollback integral); execucao repetida apos encerramento (nao deve devolver duas vezes).
 
 A migration ainda nao foi executada no Supabase nem testada em PostgreSQL real.
+
+
+## Migration 013 — casos financeiros (reembolso/chargeback)
+
+Arquivo: `migrations/20261030_013_refund_chargeback_cases.sql`
+
+- Cria `refugiart_financial_cases` com tipo, status, valor, provedor, referência externa, chave idempotente, evidência e indicação se o repasse já ocorreu.
+- RPC `refugiart_register_financial_case` restrita a `service_role`, valida pedido/valor e impede duplicidade conflitante.
+- Se o repasse ainda não ocorreu, marca o pedido como `refund_pending` e `delivery_status='disputed'`.
+- Trigger adicional bloqueia confirmação de entrega e liberação de repasse enquanto houver caso aberto/em revisão.
+- Não faz débito automático na carteira nem presume que o gateway já devolveu o dinheiro.
+
+**Pendências deliberadas (não liberar para produção ainda):**
+1. Implementar resolução administrativa autenticada e auditável (aceitar/rejeitar/encerrar), com papéis administrativos reais; não existe RPC administrativa nesta migration.
+2. Definir fluxo financeiro separado para reembolso aprovado antes do repasse e recuperação após repasse.
+3. Após repasse, não há bloqueio de saque ou compensação de recebíveis futuros. A obrigação de recuperação precisa ser modelada sem permitir saldo negativo artificial.
+4. Integrar webhooks assinados do gateway, validar eventos e reconciliar valores efetivamente pagos, taxas, estornos e chargebacks.
+5. Revisar se o provedor permite reembolso parcial e múltiplos chargebacks por pedido; a regra atual aceita um caso aberto por pedido de cada vez.
+6. Confirmar no PostgreSQL real a compatibilidade de constraints, permissões, triggers e estados existentes.
+
+## Diagnóstico de conciliação
+
+Arquivo: `DIAGNOSTICO-CONCILIACAO-FINANCEIRA.sql`
+
+- Consultas somente leitura para localizar pedidos sem referência de pagamento, créditos pendentes, repasses sem lançamentos correspondentes, casos financeiros abertos e despesas sem pedido associado.
+- A consulta não tenta inferir saldo bancário somando indiscriminadamente transações de tipos diferentes.
+- A conciliação definitiva depende dos extratos/eventos do gateway e de integração ainda não implementada.
+- Executar somente depois de aplicar e validar as migrations; não altera dados.

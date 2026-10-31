@@ -35,3 +35,18 @@ O cadastro Auth pode ser criado com sucesso, mas isso não prova que o perfil p�
 ## Status
 
 **Auditoria estática e consultas de leitura concluídas para os pontos descritos.** Nenhuma alteração foi feita no Supabase. Nenhuma correção de código foi publicada nesta etapa. Não considerar autenticação/perfis homologados até aplicar correções e testar no ambiente Supabase.
+
+
+## Correções preparadas no GitHub — 31/10/2026
+
+Após a revisão, foram publicados:
+- `perfil.html`: campo obrigatório “Como você participa da RefugiART?” com opções apreciador, artista ou educador.
+- `perfil.js`: carrega o valor salvo em `profiles.area_atuacao`, usando `user_metadata.tipo_conta` como preenchimento inicial quando ainda não há valor salvo, e envia `area_atuacao` no upsert.
+- `migrations/20261031_017_profiles_minimal_client_grants.sql`: concede SELECT a anon/authenticated e INSERT/UPDATE somente a authenticated. A migration depende das policies RLS já verificadas para limitar a escrita ao próprio perfil.
+
+Commits:
+- perfil.html: `9ff683e05a5790a0d4abbd54b6f376bd1247d381`
+- perfil.js: `9b47fc9c760c70043de3321869fa754ff1622f93`
+- migration 017: `7913b14091d6a044d0e0531969e4975d2ec9deee`
+
+**Importante:** os arquivos estão no GitHub, mas a migration 017 ainda não foi executada no Supabase. As mudanças de interface/código também precisam ser testadas no site publicado. Nenhuma alteração foi feita diretamente no banco.

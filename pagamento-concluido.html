@@ -1,12 +1,59 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#243e35"><title>Pagamento | RefugiART"><link rel="stylesheet" href="style.css">
-<style>
-body{min-height:100vh;background:#f4f6f2;display:flex;flex-direction:column}.retorno-pagamento{width:min(92%,560px);margin:auto;padding:42px 28px;text-align:center;background:#fff;border:1px solid #e1e7df;border-radius:18px;box-shadow:0 12px 35px rgba(36,62,53,.08)}.retorno-icone{width:64px;height:64px;margin:0 auto 18px;display:grid;place-items:center;border-radius:50%;background:#e8eee8;color:#243e35;font-size:30px}.retorno-pagamento h2{margin:0 0 12px;color:#243e35;font:30px Georgia,serif}.retorno-pagamento p{color:#68766d;line-height:1.65}.voltar-mercado{display:inline-block;margin-top:18px;padding:13px 24px;border-radius:9px;background:#243e35;color:#fff;text-decoration:none;font-weight:700}.voltar-mercado:hover{background:#34584a}
-</style></head>
-<body>
-<header class="cabecalho"><img src="imagens/logo.png" alt="Símbolo da RefugiART" class="logo"><div class="identidade"><h1>RefugiART</h1><p>A arte nos aproxima.</p></div></header>
-<main class="retorno-pagamento"><div class="retorno-icone" aria-hidden="true">✓</div><h2>Obrigado pela sua compra!</h2><p>Você concluiu a etapa de pagamento na InfinitePay. A confirmação do pedido é validada pelo sistema RefugiART.</p><a class="voltar-mercado" href="mercado.html">← Voltar ao mercado</a></main>
-<footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
-</body></html>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#243e35">
+  <meta name="description" content="Agradecemos pela sua compra. Obrigado por valorizar a arte independente com a RefugiART.">
+  <title>Obrigado pela sua compra | RefugiART</title>
+  <link rel="stylesheet" href="style.css?v=nav-texto-2">
+  <style>
+    body.pagina-pagamento{min-height:100vh;display:flex;flex-direction:column;background:#f4f1e9}
+    .pagina-pagamento .cabecalho{justify-content:flex-start;padding:16px 5%;background:#fff;gap:12px}
+    .pagina-pagamento .identidade h1{margin:0;color:#243e35;font-family:Georgia,serif}
+    .pagina-pagamento .identidade p{margin:3px 0 0;color:#68766d;font-size:13px}
+    .pagina-pagamento .navegacao-principal{justify-content:center;gap:8px;padding:12px 16px;background:#243e35}
+    .pagina-pagamento .navegacao-principal a{display:inline-block;padding:9px 15px;border-radius:7px;color:#fff;text-decoration:none;font-size:14px;font-weight:600;transition:background .2s}
+    .pagina-pagamento .navegacao-principal a:hover,.pagina-pagamento .navegacao-principal a[aria-current="page"]{background:#3b5b4b}
+    .agradecimento-pagamento{width:min(900px,90%);box-sizing:border-box;margin:auto;padding:76px 24px 82px;text-align:center}
+    .agradecimento-simbolo{width:68px;height:68px;margin:0 auto 22px;display:grid;place-items:center;border-radius:50%;background:#e1eadf;color:#294638;font-size:34px}
+    .agradecimento-pagamento .etiqueta{display:block;margin-bottom:13px;color:#8b704b;font-size:11px;font-weight:800;letter-spacing:2px}
+    .agradecimento-pagamento h2{max-width:700px;margin:0 auto 18px;color:#243e35;font:clamp(30px,5vw,46px)/1.15 Georgia,serif}
+    .agradecimento-pagamento p{max-width:660px;margin:0 auto 14px;color:#5f6b62;font-size:16px;line-height:1.85}
+    .agradecimento-assinatura{margin-top:28px!important;color:#294638!important;font-family:Georgia,serif;font-size:18px!important;font-style:italic}
+    .pagina-pagamento footer{margin-top:auto}
+    @media(max-width:560px){.pagina-pagamento .cabecalho{padding:12px 5%}.pagina-pagamento .logo{width:52px;height:52px}.pagina-pagamento .identidade h1{font-size:1.8rem}.pagina-pagamento .navegacao-principal{gap:3px;padding:9px 5px}.pagina-pagamento .navegacao-principal a{padding:9px 8px;font-size:12px}.agradecimento-pagamento{padding:58px 12px 64px}.agradecimento-pagamento p{font-size:15px}}
+  </style>
+</head>
+<body class="pagina-pagamento">
+  <header class="cabecalho">
+    <img src="imagens/logo.png" alt="Símbolo da RefugiART" class="logo">
+    <div class="identidade">
+      <h1>RefugiART</h1>
+      <p>A arte nos aproxima.</p>
+    </div>
+  </header>
+
+  <nav class="navegacao-principal" aria-label="Navegação principal">
+    <a href="inicio.html">Início</a>
+    <a href="mercado.html">Mercado</a>
+    <a href="galeria.html">Galeria</a>
+    <a href="comunidades.html">Comunidades</a>
+    <a href="chat.html">Chat</a>
+  </nav>
+
+  <main class="agradecimento-pagamento">
+    <div class="agradecimento-simbolo" aria-hidden="true">✦</div>
+    <span class="etiqueta">OBRIGADO POR APOIAR A ARTE</span>
+    <h2>Sua compra faz parte de algo maior.</h2>
+    <p>Em nome de toda a RefugiART, agradecemos por escolher adquirir uma obra e apoiar o trabalho de artistas independentes.</p>
+    <p>Cada compra ajuda a valorizar a criação artística, fortalece quem transforma ideias em arte e mantém viva uma rede de encontros, expressão e cultura.</p>
+    <p>Esperamos que sua obra leve inspiração e significado para o seu dia a dia. Será sempre um prazer receber você novamente em nosso espaço.</p>
+    <p class="agradecimento-assinatura">Com carinho,<br>Equipe RefugiART</p>
+  </main>
+
+  <footer>
+    <p>RefugiART © 2026 — Criar é Sentir.</p>
+  </footer>
+</body>
+</html>

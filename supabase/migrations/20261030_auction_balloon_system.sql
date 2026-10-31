@@ -52,6 +52,42 @@ create trigger trg_refugiart_create_wallet
 after insert on auth.users
 for each row execute function public.refugiart_create_wallet_for_user();
 
+-- Livro-razão imutável da carteira. Nenhum cliente pode criar ou alterar
+-- movimentações; somente o backend confiável/provedor financeiro poderá fazê-lo.
+create table if not exists public.refugiart_wallet_transactions (
+  id bigint generated always as identity primary key,
+  user_id uuid not null references auth.users(id) on delete restrict,
+  transaction_type text not null check (transaction_type in (
+    'deposit','withdrawal','sale','purchase','refund','auction_reserve',
+    'auction_release','fee','adjustment'
+  )),
+  direction text not null check (direction in ('credit','debit')),
+  amount numeric(12,2) not null check (amount > 0),
+  status text not null default 'pending' check (status in ('pending','confirmed','cancelled','reversed')),
+  idempotency_key text not null unique,
+  provider_reference text unique,
+  related_user_id uuid references auth.users(id) on delete set null,
+  related_post_id bigint references public.atelie_posts(id) on delete set null,
+  related_auction_id bigint,
+  description text,
+  created_at timestamptz not null default now(),
+  confirmed_at timestamptz
+);
+
+create index if not exists refugiart_wallet_transactions_user_idx
+  on public.refugiart_wallet_transactions(user_id, created_at desc);
+create index if not exists refugiart_wallet_transactions_status_idx
+  on public.refugiart_wallet_transactions(status, created_at);
+
+alter table public.refugiart_wallet_transactions enable row level security;
+revoke all on public.refugiart_wallet_transactions from public, anon, authenticated;
+grant select on public.refugiart_wallet_transactions to authenticated;
+drop policy if exists "wallet_transactions_owner_read" on public.refugiart_wallet_transactions;
+create policy "wallet_transactions_owner_read"
+  on public.refugiart_wallet_transactions for select to authenticated
+  using (auth.uid() = user_id);
+grant all on public.refugiart_wallet_transactions to service_role;
+
 create table if not exists public.refugiart_auction_interests (
   id bigint generated always as identity primary key,
   post_id bigint not null references public.atelie_posts(id) on delete cascade,

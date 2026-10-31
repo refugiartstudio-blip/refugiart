@@ -27,7 +27,7 @@ const CATEGORIAS = [
   "Desenho",
   "Pintura",
   "Fotografia",
-  "Escultura",
+  "Artesanato",
   "Tatuagem",
   "Digital",
   "Leitura",

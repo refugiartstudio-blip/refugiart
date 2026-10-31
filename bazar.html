@@ -32,7 +32,6 @@
     .bazar-banner-selo{position:relative;z-index:1;border:1px solid rgba(255,255,255,.45);padding:12px 16px;border-radius:8px;font-size:12px;white-space:nowrap}
     .bazar-ferramentas{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#fff;padding:14px 17px;border:1px solid #e8ece6;border-radius:9px;margin-bottom:18px}
     .bazar-contagem{font-size:13px;color:#6d786f}.bazar-contagem strong{color:var(--verde-bazar)}
-    .bazar-ordenacao{display:flex;align-items:center;gap:8px;font-size:13px;color:#667168}
     .bazar-ordenacao{position:relative;display:flex;align-items:center;gap:8px;font-size:13px;color:#667168}
     .bazar-seletor{position:relative}
     .bazar-seletor-botao{border:1px solid #dce3da;border-radius:6px;padding:8px 11px;background:#fff;color:#34483a;font:inherit;font-size:12px;min-width:145px;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
@@ -52,7 +51,7 @@
     .produto-info{padding:10px 13px;display:flex;flex-direction:column;flex:1}
     .produto-titulo{font-size:14px;line-height:1.4;color:#34463a;font-weight:650;margin:0 0 3px;display:flex;align-items:flex-start;gap:5px;min-height:0}.produto-titulo-texto{min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.produto-icone-balao{flex:0 0 auto;font-size:13px;line-height:1.4}
     .produto-artista,.produto-categoria{display:none!important}
-.produto-artista{font-size:11px;color:#879087;margin:0 0 11px}
+    .produto-artista{font-size:11px;color:#879087;margin:0 0 11px}
     .produto-descricao{font-size:12px;line-height:1.5;color:#737d74;margin:0 0 12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .produto-preco{font-size:20px;font-weight:800;color:var(--verde-bazar);margin:2px 0 10px}.produto-tipo-leilao{display:inline-block;margin:0 0 8px;padding:5px 8px;border-radius:5px;background:#fff1e9;color:#9b432b;font-size:10px;font-weight:800;letter-spacing:.5px}.produto-cronometro{font-size:13px;font-weight:800;color:#9b432b;margin:0 0 10px}.produto-baloes{font-size:12px;color:#6b776d;margin:0 0 10px}
     .produto-acoes{display:flex;align-items:center;justify-content:space-between;gap:7px;width:100%}
@@ -65,27 +64,27 @@
     .bazar-modal-fechar{position:absolute;right:9px;top:9px;z-index:2;width:38px;height:38px;border:0;border-radius:50%;background:rgba(20,30,23,.85);color:#fff;font-size:27px;line-height:1;cursor:pointer}
     .bazar-modal-imagem{width:100%;max-height:calc(92vh - 95px);object-fit:contain;border-radius:7px;background:#eef0ec}
     .bazar-modal-titulo{margin:0;padding:0 42px 2px 2px;color:#29352e;font-size:15px}
-/* MENU LATERAL DO MERCADO — mesmo comportamento da Galeria */
-.bazar-layout{display:flex;flex-direction:row;align-items:flex-start;gap:12px;width:100%;min-width:0;padding:0 18px;box-sizing:border-box}
-.coluna-mercado{position:relative;display:flex;flex-direction:column;align-items:stretch;flex:0 0 52px;width:52px;min-width:52px;max-width:52px;box-sizing:border-box;padding:12px 5px;background:#fff;border:1px solid #e1e7df;border-radius:14px;overflow:hidden;transition:flex-basis .25s ease,width .25s ease,max-width .25s ease;z-index:2}
-.coluna-mercado.expandida{flex-basis:190px;width:190px;min-width:190px;max-width:190px;padding:14px 10px}
-.conteudo-coluna-mercado{display:flex;flex-direction:column;align-items:stretch;width:100%;min-width:0;overflow:hidden}
-.coluna-mercado a.link-coluna-mercado{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;width:100%;min-width:0;gap:10px;margin:4px 0;padding:12px 8px;color:#294438;background:transparent;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;line-height:1.4;white-space:nowrap;box-sizing:border-box;transition:background .2s ease,color .2s ease}
-.coluna-mercado a.link-coluna-mercado:hover,.coluna-mercado a.link-coluna-mercado.ativo{color:#243e35;background:#e8eee8}
-.icone-coluna-mercado{display:inline-flex;align-items:center;justify-content:center;flex:0 0 24px;width:24px;font-size:19px}
-.texto-coluna-mercado{overflow:hidden}
-.coluna-mercado:not(.expandida) .titulo-coluna-mercado,.coluna-mercado:not(.expandida) .texto-coluna-mercado,.coluna-mercado:not(.expandida) .divisor-coluna-mercado{display:none!important}
-.coluna-mercado:not(.expandida) a.link-coluna-mercado{justify-content:center;padding:12px 2px}
-.titulo-coluna-mercado{margin:14px 8px 6px;color:#7b877d;font-size:10px;font-weight:800;letter-spacing:1.2px}
-.divisor-coluna-mercado{height:1px;background:#e1e7df;margin:10px 4px}
-.seta-coluna-mercado{display:flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0 auto 14px;border:0;border-radius:8px;background:#e8eee8;color:#243e35;cursor:pointer;font-size:18px}
-.pagina-bazar{flex:1 1 0;min-width:0;width:0;padding-left:0;padding-right:0}
-@media(max-width:700px){.bazar-layout{gap:8px;padding:0 8px}.coluna-mercado{flex-basis:48px;width:48px;min-width:48px;max-width:48px;padding:10px 4px}.coluna-mercado.expandida{flex-basis:165px;width:165px;min-width:165px;max-width:165px;padding:12px 8px}}
+    /* Menu interno sobreposto: abrir/fechar sem deslocar o conteúdo */
+    .bazar-layout{position:relative;display:block;width:100%;min-width:0;padding:0 18px;box-sizing:border-box}
+    .coluna-mercado{position:absolute;left:18px;top:0;display:flex;flex-direction:column;align-items:stretch;width:52px;min-width:52px;max-width:52px;box-sizing:border-box;padding:12px 5px;background:#fff;border:1px solid #e1e7df;border-radius:14px;overflow:hidden;transition:width .25s ease,max-width .25s ease;z-index:20}
+    .coluna-mercado.expandida{width:190px;min-width:190px;max-width:190px;padding:14px 10px;box-shadow:0 8px 24px rgba(20,40,28,.14)}
+    .conteudo-coluna-mercado{display:flex;flex-direction:column;align-items:stretch;width:100%;min-width:0;overflow:hidden}
+    .coluna-mercado a.link-coluna-mercado{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;width:100%;min-width:0;gap:10px;margin:4px 0;padding:12px 8px;color:#294438;background:transparent;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;line-height:1.4;white-space:nowrap;box-sizing:border-box;transition:background .2s ease,color .2s ease}
+    .coluna-mercado a.link-coluna-mercado:hover,.coluna-mercado a.link-coluna-mercado.ativo{color:#243e35;background:#e8eee8}
+    .icone-coluna-mercado{display:inline-flex;align-items:center;justify-content:center;flex:0 0 24px;width:24px;font-size:19px}
+    .texto-coluna-mercado{overflow:hidden}
+    .coluna-mercado:not(.expandida) .titulo-coluna-mercado,.coluna-mercado:not(.expandida) .texto-coluna-mercado,.coluna-mercado:not(.expandida) .divisor-coluna-mercado{display:none!important}
+    .coluna-mercado:not(.expandida) a.link-coluna-mercado{justify-content:center;padding:12px 2px}
+    .titulo-coluna-mercado{margin:14px 8px 6px;color:#7b877d;font-size:10px;font-weight:800;letter-spacing:1.2px}
+    .divisor-coluna-mercado{height:1px;background:#e1e7df;margin:10px 4px}
+    .seta-coluna-mercado{display:flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0 auto 14px;border:0;border-radius:8px;background:#e8eee8;color:#243e35;cursor:pointer;font-size:18px}
+    .pagina-bazar{width:100%;min-width:0;max-width:1300px;margin:24px auto 54px;padding:0 18px;box-sizing:border-box}
+    @media(max-width:700px){.bazar-layout{padding:0 8px}.coluna-mercado{left:8px;width:48px;min-width:48px;max-width:48px;padding:10px 4px}.coluna-mercado.expandida{width:165px;min-width:165px;max-width:165px;padding:12px 8px}.pagina-bazar{padding:0 10px;margin-top:15px}}
     .bazar-vazio{grid-column:1/-1;background:#fff;border:1px dashed #d5ded3;border-radius:10px;text-align:center;padding:50px 20px;color:#788278}
     .bazar-vazio strong{display:block;color:var(--verde-bazar);font-family:Georgia,serif;font-size:22px;margin-bottom:8px}
     .bazar-carregando{grid-column:1/-1;text-align:center;padding:35px;color:#748074}
     @media(max-width:1000px){.bazar-grade{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    @media(max-width:700px){.bazar-conteudo{padding:0 10px;margin-top:15px}.bazar-grade{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.produto-info{padding:10px}.produto-titulo{font-size:13px}.produto-preco{font-size:18px}.produto-acoes a{font-size:11px}.bazar-banner-selo{display:none}.bazar-ferramentas{align-items:flex-start}}
+    @media(max-width:700px){.bazar-grade{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.produto-info{padding:10px}.produto-titulo{font-size:13px}.produto-preco{font-size:18px}.produto-acoes a{font-size:11px}.bazar-banner-selo{display:none}.bazar-ferramentas{align-items:flex-start}}
     @media(max-width:380px){.bazar-grade{grid-template-columns:1fr 1fr;gap:7px}.produto-info{padding:8px}.produto-preco{font-size:16px}}
   </style>
 </head>
@@ -98,7 +97,6 @@
   <nav class="navegacao-principal">
     <a href="inicio.html">Início</a><a href="mercado.html" aria-current="page">Mercado</a><a href="comunidades.html">Comunidades</a><a href="galeria.html">Galeria</a><a id="linkLogin" href="login.html">Login</a>
   </nav>
-
   <section class="bazar-cabecalho">
     <div class="bazar-marca">
       <div class="bazar-marca-texto"><span>REFUGIART • MERCADO CRIATIVO</span><h2>Bazar de Arte</h2><p>Encontre uma criação que tenha a sua cara.</p></div>
@@ -151,7 +149,6 @@
     </section>
   </main>
   </div>
-
   <footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
   <div class="bazar-modal-obra" id="modalObra" role="dialog" aria-modal="true" aria-labelledby="modalObraTitulo"><div class="bazar-modal-conteudo"><button class="bazar-modal-fechar" id="fecharModalObra" type="button" aria-label="Fechar">×</button><h2 class="bazar-modal-titulo" id="modalObraTitulo"></h2><img class="bazar-modal-imagem" id="imagemModalObra" alt="Obra ampliada"></div></div>
   <div class="fundo-menu" id="fundoMenu"></div>
@@ -169,7 +166,6 @@
     </nav>
     <div class="rodape-menu"><p>RefugiART — Criar é Sentir.</p></div>
   </aside>
-
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     const supabase = createClient("https://nlqalpiksbqflzxzsgoa.supabase.co", "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
@@ -241,7 +237,6 @@
     botaoOpcoes.addEventListener("click",()=>{const aberto=painelOpcoes.classList.toggle("aberto");botaoOpcoes.setAttribute("aria-expanded",String(aberto));});
     painelOpcoes.addEventListener("click",e=>{const opcao=e.target.closest("[data-valor]");if(!opcao)return;ordenar.value=opcao.dataset.valor;textoOpcao.textContent=opcao.textContent.trim();painelOpcoes.querySelectorAll(".bazar-opcao").forEach(b=>b.classList.toggle("selecionada",b===opcao));categoria=ordenar.value.startsWith("categoria:")?ordenar.value.slice(10):"todas";painelOpcoes.classList.remove("aberto");botaoOpcoes.setAttribute("aria-expanded","false");filtrar();});
     document.addEventListener("click",e=>{if(!e.target.closest(".bazar-seletor")){painelOpcoes.classList.remove("aberto");botaoOpcoes.setAttribute("aria-expanded","false");}});
-
     carregar();
   </script>
   <script>

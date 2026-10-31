@@ -2362,3 +2362,11 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
     min-height:64px !important;
   }
 }
+
+
+/* Cores específicas dos quatro banners — prioridade sobre o estilo-base */
+.pagina-atelie .kraken-banner-trilho .marca-janela-kraken.kraken-preto{background:#050505 !important;color:#fff !important}
+.pagina-atelie .kraken-banner-trilho .marca-janela-kraken.kraken-roxo{background:#542080 !important;color:#fff !important}
+.pagina-atelie .kraken-banner-trilho .marca-janela-kraken.kraken-amarelo{background:#f2cc24 !important;color:#080808 !important}
+.pagina-atelie .kraken-banner-trilho .marca-janela-kraken.kraken-vermelho-roxo{background:linear-gradient(120deg,#c51f32 0 50%,#542080 50% 100%) !important;color:#fff !important}
+.pagina-atelie .kraken-banner-trilho .marca-janela-kraken{flex-shrink:0}

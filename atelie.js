@@ -862,7 +862,10 @@ form?.addEventListener("submit", async (evento) => {
     }
 
     const publicarComunidade = document.getElementById("publicar-comunidade")?.checked || false;
-    const publicarMercado = document.getElementById("publicar-mercado")?.checked || false;
+    const publicarMercadoDireto = document.getElementById("publicar-mercado")?.checked || false;
+    const publicarLeilao = document.getElementById("publicar-leilao")?.checked || false;
+    const publicarMercado = publicarMercadoDireto || publicarLeilao;
+    const listingMode = publicarLeilao ? "auction" : publicarMercadoDireto ? "market" : "community";
     const conteudoSensivel = document.getElementById("conteudo-sensivel-obra")?.checked || false;
     const campoPreco = document.getElementById("preco-obra");
     const precoTexto = (campoPreco?.value || "").trim().replace(",", ".");
@@ -926,6 +929,10 @@ form?.addEventListener("submit", async (evento) => {
         publicar_comunidade: publicarComunidade,
         publicar_mercado: publicarMercado,
         preco: publicarMercado ? preco : null,
+        listing_mode: listingMode,
+        auction_status: publicarLeilao ? "collecting" : "none",
+        auction_initial_price: publicarLeilao ? preco : null,
+        auction_balloon_count: 0,
         content_sensitive: conteudoSensivel
       });
 
@@ -969,12 +976,23 @@ form?.addEventListener("submit", async (evento) => {
 
 /* ---------- Opções de destino da publicação ---------- */
 const checkboxMercado = document.getElementById("publicar-mercado");
+const checkboxLeilao = document.getElementById("publicar-leilao");
 const campoPrecoMercado = document.getElementById("campo-preco-mercado");
 const inputPrecoMercado = document.getElementById("preco-obra");
+function atualizarCampoPrecoPublicacao() {
+  const exigePreco = Boolean(checkboxMercado?.checked || checkboxLeilao?.checked);
+  if (campoPrecoMercado) campoPrecoMercado.hidden = !exigePreco;
+  if (inputPrecoMercado) inputPrecoMercado.required = exigePreco;
+}
 checkboxMercado?.addEventListener("change", () => {
-  if (campoPrecoMercado) campoPrecoMercado.hidden = !checkboxMercado.checked;
-  if (inputPrecoMercado) inputPrecoMercado.required = checkboxMercado.checked;
+  if (checkboxMercado.checked && checkboxLeilao) checkboxLeilao.checked = false;
+  atualizarCampoPrecoPublicacao();
 });
+checkboxLeilao?.addEventListener("change", () => {
+  if (checkboxLeilao.checked && checkboxMercado) checkboxMercado.checked = false;
+  atualizarCampoPrecoPublicacao();
+});
+atualizarCampoPrecoPublicacao();
 
 /* ---------- Eventos das categorias ---------- */
 

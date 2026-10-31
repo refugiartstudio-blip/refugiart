@@ -27,6 +27,19 @@ create table if not exists public.refugiart_delivery_codes (
   created_at timestamptz not null default clock_timestamp()
 );
 
+-- Livro-razão separado da receita da plataforma: nao confundir com saldo do artista.
+create table if not exists public.refugiart_platform_ledger (
+  id bigint generated always as identity primary key,
+  order_id bigint not null references public.refugiart_orders(id) on delete restrict,
+  entry_type text not null check (entry_type in ('commission')),
+  amount numeric(12,2) not null check (amount > 0),
+  idempotency_key text not null unique,
+  created_at timestamptz not null default clock_timestamp()
+);
+alter table public.refugiart_platform_ledger enable row level security;
+revoke all on public.refugiart_platform_ledger from public,anon,authenticated;
+grant all on public.refugiart_platform_ledger to service_role;
+
 create table if not exists public.refugiart_delivery_events (
   id bigint generated always as identity primary key,
   order_id bigint not null references public.refugiart_orders(id) on delete restrict,
@@ -68,10 +81,12 @@ as $$
 begin
   if new.auction_id is not null then
     new.platform_commission_rate := 0.30;
-    new.platform_commission_amount := round(new.subtotal * 0.30,2);
-    if new.checkout_group_subtotal = 0 then
-      new.checkout_group_subtotal := new.subtotal;
-    end if;
+  else
+    new.platform_commission_rate := 0.20;
+  end if;
+  new.platform_commission_amount := round(new.subtotal * new.platform_commission_rate,2);
+  if new.checkout_group_subtotal = 0 then
+    new.checkout_group_subtotal := new.subtotal;
   end if;
   return new;
 end;
@@ -203,6 +218,8 @@ begin
   );
 
   if v_fee > 0 then
+    insert into public.refugiart_platform_ledger(order_id,entry_type,amount,idempotency_key)
+      values(p_order_id,'commission',v_fee,'platform-commission:'||p_order_id);
     insert into public.refugiart_wallet_transactions(
       user_id,transaction_type,direction,amount,status,idempotency_key,
       related_user_id,related_post_id,related_auction_id,related_order_id,

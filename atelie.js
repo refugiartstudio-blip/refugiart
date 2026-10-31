@@ -1296,23 +1296,50 @@ async function inicializarAtelie() {
 inicializarAtelie();
 
 
-/* Carrossel automático dos banners Kraken — não interfere nas obras */
+/* Carrossel infinito dos banners Kraken — independente do feed de obras */
 (() => {
   const area = document.getElementById("kraken-banner-carrossel");
   const trilho = area?.querySelector(".kraken-banner-trilho");
-  if (!area || !trilho || trilho.children.length < 2) return;
+  if (!area || !trilho || trilho.dataset.inicializado === "true") return;
+  trilho.dataset.inicializado = "true";
+
+  const originais = Array.from(trilho.children);
+  const total = originais.length;
+  if (total < 2) return;
+
+  // Clone do primeiro banner para fazer a passagem do último ao primeiro sem salto visível.
+  trilho.appendChild(originais[0].cloneNode(true));
   let indice = 0;
   let pausaAte = 0;
-  const total = trilho.children.length;
-  const avancar = () => {
-    if (Date.now() < pausaAte) return;
-    indice = (indice + 1) % total;
-    area.scrollTo({ left: indice * area.clientWidth, behavior: "smooth" });
+  let ajustando = false;
+
+  const largura = () => area.clientWidth;
+  const irPara = (n, comportamento = "smooth") => {
+    area.scrollTo({ left: n * largura(), behavior: comportamento });
   };
-  area.addEventListener("touchstart", () => { pausaAte = Date.now() + 7000; }, {passive:true});
-  area.addEventListener("pointerdown", () => { pausaAte = Date.now() + 7000; });
+
   area.addEventListener("scroll", () => {
-    indice = Math.round(area.scrollLeft / Math.max(area.clientWidth, 1));
-  }, {passive:true});
-  window.setInterval(avancar, 4500);
+    if (ajustando) return;
+    const posicao = Math.round(area.scrollLeft / Math.max(largura(), 1));
+    if (posicao === total) {
+      ajustando = true;
+      indice = 0;
+      area.scrollTo({ left: 0, behavior: "instant" });
+      requestAnimationFrame(() => { ajustando = false; });
+    } else {
+      indice = Math.min(posicao, total - 1);
+    }
+  }, { passive: true });
+
+  const pausar = () => { pausaAte = Date.now() + 6500; };
+  area.addEventListener("touchstart", pausar, { passive: true });
+  area.addEventListener("pointerdown", pausar);
+
+  window.setInterval(() => {
+    if (Date.now() < pausaAte) return;
+    indice += 1;
+    irPara(indice);
+  }, 4500);
+
+  window.addEventListener("resize", () => irPara(indice, "instant"));
 })();

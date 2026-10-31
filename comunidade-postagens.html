@@ -61,7 +61,7 @@ async function carregarComentarios(postId){
 }
 async function carregar(){
  if(!comunidade){estado("Esta comunidade não foi encontrada.");return;}
- const {data:obras,error}=await supabase.from("atelie_posts").select("id,user_id,image_url,caption,category,created_at,listing_mode,auction_status,auction_balloon_count,preco").eq("category",comunidade.categoria).eq("publicar_comunidade",true).eq("moderation_status","published").order("created_at",{ascending:false});
+ const {data:obras,error}=await supabase.from("atelie_posts").select("id,user_id,image_url,caption,category,created_at,preco").eq("category",comunidade.categoria).eq("publicar_comunidade",true).eq("moderation_status","published").order("created_at",{ascending:false});
  if(error){estado("Não foi possível carregar as publicações agora.");return;}
  if(!obras?.length){estado("Ainda não há publicações nesta comunidade. Seja a primeira pessoa a compartilhar uma obra!");return;}
  const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];let perfis=[];

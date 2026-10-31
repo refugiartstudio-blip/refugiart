@@ -61,14 +61,16 @@ function atualizarCabecalho() {
   };
   titulo.textContent = nomes[pastaAtual] || "Caixa de entrada";
 
-  if (pastaAtual === "financeiro") {
-    subtitulo.textContent = "Depósitos, compras, vendas, entregas e repasses registrados pelo sistema.";
-  } else if (pastaAtual === "reclamacoes" || filtroAtual === "reclamacoes") {
-    subtitulo.textContent = "Espaço destinado às reclamações enviadas pela comunidade.";
-  } else if (pastaAtual === "arquivadas") {
-    subtitulo.textContent = "Consulte aqui as ocorrências já analisadas pela equipe.";
-  } else {
-    subtitulo.textContent = "Avisos de denúncias e conteúdos sinalizados pela comunidade.";
+  if (subtitulo) {
+    if (pastaAtual === "financeiro") {
+      subtitulo.textContent = "Depósitos, compras, vendas, entregas e repasses registrados pelo sistema.";
+    } else if (pastaAtual === "reclamacoes") {
+      subtitulo.textContent = "Espaço destinado às reclamações enviadas pela comunidade.";
+    } else if (pastaAtual === "arquivadas") {
+      subtitulo.textContent = "Consulte aqui as ocorrências já analisadas pela equipe.";
+    } else {
+      subtitulo.textContent = "Avisos de denúncias e conteúdos sinalizados pela comunidade.";
+    }
   }
 }
 

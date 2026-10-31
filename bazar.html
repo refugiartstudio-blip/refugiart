@@ -15,9 +15,9 @@
     .bazar-marca-texto span{font-size:11px;letter-spacing:1.5px;font-weight:800;color:#7a887b}
     .bazar-marca-texto h2{font-family:Georgia,serif;color:var(--verde-bazar);font-size:clamp(25px,3vw,34px);margin:3px 0}
     .bazar-marca-texto p{margin:0;color:#788078;font-size:13px}
-    .bazar-busca{display:flex;flex:1 1 360px;max-width:700px;margin-left:auto;border:2px solid var(--verde-bazar);border-radius:8px;overflow:hidden;background:#fff}
-    .bazar-busca input{flex:1;min-width:0;border:0;outline:0;padding:14px 16px;font:inherit;font-size:14px}
-    .bazar-busca button{border:0;background:var(--verde-bazar);color:white;padding:0 24px;font-size:20px;cursor:pointer}
+    .bazar-busca{display:flex;flex:0 1 230px;width:230px;max-width:100%;margin:0;border:1px solid #e1e7df;border-radius:7px;overflow:hidden;background:#fff}
+    .bazar-busca input{flex:1;min-width:0;width:100%;border:0;outline:0;padding:7px 10px;font:inherit;font-size:12px}
+    .bazar-busca button{border:0;background:transparent;color:var(--verde-bazar);padding:0 10px;font-size:17px;cursor:pointer}
     .bazar-categorias-faixa{background:#fff;border-bottom:1px solid #e7ebe5;padding:0 16px}
     .bazar-categorias{max-width:1300px;margin:auto;display:flex;gap:6px;overflow-x:auto;padding:9px 0;scrollbar-width:none}
     .bazar-categorias button{flex:0 0 auto;border:1px solid #e5e9e4;background:transparent;color:#526258;padding:6px 10px;border-radius:999px;font:inherit;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
@@ -130,6 +130,7 @@
     <section aria-label="Produtos disponíveis">
       <div class="bazar-ferramentas">
         <div class="bazar-contagem" id="contagemBazar">Carregando obras...</div>
+        <form class="bazar-busca" id="formBusca"><input id="buscaBazar" type="search" placeholder="Buscar obras..." aria-label="Buscar no Bazar"><button type="submit" aria-label="Pesquisar">⌕</button></form>
         <label class="bazar-ordenacao" for="ordenarBazar">Ordenar por
           <select id="ordenarBazar"><option value="recentes">Mais recentes</option><option value="menor">Menor preço</option><option value="maior">Maior preço</option></select>
         </label>

@@ -33,7 +33,15 @@
     .bazar-ferramentas{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#fff;padding:14px 17px;border:1px solid #e8ece6;border-radius:9px;margin-bottom:18px}
     .bazar-contagem{font-size:13px;color:#6d786f}.bazar-contagem strong{color:var(--verde-bazar)}
     .bazar-ordenacao{display:flex;align-items:center;gap:8px;font-size:13px;color:#667168}
-    .bazar-ordenacao select{border:1px solid #dce3da;border-radius:6px;padding:9px 30px 9px 10px;background:#fff;color:#34483a;font:inherit}
+    .bazar-ordenacao{position:relative;display:flex;align-items:center;gap:8px;font-size:13px;color:#667168}
+    .bazar-seletor{position:relative}
+    .bazar-seletor-botao{border:1px solid #dce3da;border-radius:6px;padding:8px 11px;background:#fff;color:#34483a;font:inherit;font-size:12px;min-width:145px;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+    .bazar-opcoes{display:none;position:absolute;right:0;top:calc(100% + 5px);z-index:30;min-width:190px;max-height:260px;overflow-y:auto;background:#fff;border:1px solid #e1e7df;border-radius:8px;box-shadow:0 8px 24px rgba(20,40,28,.14);padding:5px}
+    .bazar-opcoes.aberto{display:block}
+    .bazar-opcoes-titulo{padding:7px 9px 4px;font-size:10px;font-weight:800;letter-spacing:.7px;color:#89938b;text-transform:uppercase}
+    .bazar-opcao{display:block;width:100%;padding:8px 9px;border:0;border-radius:5px;background:transparent;text-align:left;color:#34483a;font:inherit;font-size:12px;cursor:pointer}
+    .bazar-opcao:hover,.bazar-opcao.selecionada{background:#edf2eb;color:#243e35}
+    .bazar-ordenacao select{display:none}
     .bazar-grade{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
     .produto-bazar{background:#fff;border:1px solid #e8ece6;border-radius:9px;overflow:hidden;min-width:0;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease}
     .produto-bazar:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(30,55,38,.10)}
@@ -118,9 +126,26 @@
       <div class="bazar-ferramentas">
         <div class="bazar-contagem" id="contagemBazar">Carregando obras...</div>
         <form class="bazar-busca" id="formBusca"><input id="buscaBazar" type="search" placeholder="Buscar obras..." aria-label="Buscar no Bazar"><button type="submit" aria-label="Pesquisar">⌕</button></form>
-        <label class="bazar-ordenacao" for="ordenarBazar">Ordenar por
-          <select id="ordenarBazar"><optgroup label="Ordenar por"><option value="recentes">Mais recentes</option><option value="menor">Menor preço</option><option value="maior">Maior preço</option></optgroup><optgroup label="Categorias"><option value="categoria:todas">Todas as categorias</option><option value="categoria:Desenho">Desenho</option><option value="categoria:Pintura">Pintura</option><option value="categoria:Fotografia">Fotografia</option><option value="categoria:Tatuagem">Tatuagem</option><option value="categoria:Digital">Digital</option><option value="categoria:Leitura">Leitura</option></optgroup></select>
-        </label>
+        <div class="bazar-ordenacao">Ordenar por
+          <div class="bazar-seletor">
+            <button type="button" class="bazar-seletor-botao" id="abrirOpcoesBazar" aria-expanded="false" aria-controls="opcoesBazar"><span id="textoOpcaoBazar">Mais recentes</span><span>⌄</span></button>
+            <div class="bazar-opcoes" id="opcoesBazar" role="group" aria-label="Ordenação e categorias">
+              <div class="bazar-opcoes-titulo">Ordenação</div>
+              <button type="button" class="bazar-opcao selecionada" data-valor="recentes">Mais recentes</button>
+              <button type="button" class="bazar-opcao" data-valor="menor">Menor preço</button>
+              <button type="button" class="bazar-opcao" data-valor="maior">Maior preço</button>
+              <div class="bazar-opcoes-titulo">Categorias</div>
+              <button type="button" class="bazar-opcao" data-valor="categoria:todas">Todas</button>
+              <button type="button" class="bazar-opcao" data-valor="categoria:Desenho">Desenho</button>
+              <button type="button" class="bazar-opcao" data-valor="categoria:Pintura">Pintura</button>
+              <button type="button" class="bazar-opcao" data-valor="categoria:Fotografia">Foto</button>
+              <button type="button" class="bazar-opcao" data-valor="categoria:Tatuagem">Tatuagem</button>
+              <button type="button" class="bazar-opcao" data-valor="categoria:Digital">Digital</button>
+              <button type="button" class="bazar-opcao" data-valor="categoria:Leitura">Leitura</button>
+            </div>
+            <select id="ordenarBazar" aria-hidden="true"><option value="recentes">Mais recentes</option><option value="menor">Menor preço</option><option value="maior">Maior preço</option><option value="categoria:todas">Todas</option><option value="categoria:Desenho">Desenho</option><option value="categoria:Pintura">Pintura</option><option value="categoria:Fotografia">Foto</option><option value="categoria:Tatuagem">Tatuagem</option><option value="categoria:Digital">Digital</option><option value="categoria:Leitura">Leitura</option></select>
+          </div>
+        </div>
       </div>
       <div class="bazar-grade" id="gradeBazar" aria-live="polite"><p class="bazar-carregando">Carregando obras disponíveis...</p></div>
     </section>
@@ -211,7 +236,12 @@
     setInterval(atualizarCronometros,1000);
     setInterval(()=>{cicloLeiloes++;filtrar();},30000);
     document.getElementById("formBusca").addEventListener("submit",e=>{e.preventDefault();filtrar();});
-    busca.addEventListener("input",filtrar);ordenar.addEventListener("change",()=>{categoria=ordenar.value.startsWith("categoria:")?ordenar.value.slice(10):"todas";filtrar();});
+    busca.addEventListener("input",filtrar);
+    const botaoOpcoes=document.getElementById("abrirOpcoesBazar"), painelOpcoes=document.getElementById("opcoesBazar"), textoOpcao=document.getElementById("textoOpcaoBazar");
+    botaoOpcoes.addEventListener("click",()=>{const aberto=painelOpcoes.classList.toggle("aberto");botaoOpcoes.setAttribute("aria-expanded",String(aberto));});
+    painelOpcoes.addEventListener("click",e=>{const opcao=e.target.closest("[data-valor]");if(!opcao)return;ordenar.value=opcao.dataset.valor;textoOpcao.textContent=opcao.textContent.trim();painelOpcoes.querySelectorAll(".bazar-opcao").forEach(b=>b.classList.toggle("selecionada",b===opcao));categoria=ordenar.value.startsWith("categoria:")?ordenar.value.slice(10):"todas";painelOpcoes.classList.remove("aberto");botaoOpcoes.setAttribute("aria-expanded","false");filtrar();});
+    document.addEventListener("click",e=>{if(!e.target.closest(".bazar-seletor")){painelOpcoes.classList.remove("aberto");botaoOpcoes.setAttribute("aria-expanded","false");}});
+
     carregar();
   </script>
   <script>

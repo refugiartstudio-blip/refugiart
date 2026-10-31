@@ -74,3 +74,20 @@ A ordem deve ser confirmada contra o estado real do projeto antes de executar. O
 - CEP de destino, CEP de origem, peso e dimensões precisam ser usados na cotação real. Sem cotação, não confirmar valor nem pagamento.
 - Rejeitar qualquer tentativa do navegador de definir comissão, frete cotado ou subsídio; todos os valores devem ser recalculados e gravados pelo backend confiável.
 - Conferir que a soma de shipping_amount dos pedidos seja igual ao frete pago pelo comprador e que cada pedido respeite total_amount = subtotal + shipping_amount.
+
+
+## Confirmacao de entrega e liberacao do artista (migration 007)
+
+- Pedido novo de venda direta recebe snapshot de comissao de 20%; pedido de leilao recebe 30% sobre o valor final arrematado.
+- O valor bruto da venda permanece em saldo pendente ate confirmacao valida de entrega.
+- Entrega por transportadora: codigo de rastreio sozinho nao libera dinheiro. A liberacao exige confirmacao do comprador ou revisao administrativa baseada em evidencia confiavel.
+- Entrega pessoal/retirada: comprador emite codigo aleatorio de uso unico, valido por 48 horas; o banco armazena somente hash. Artista informa o codigo recebido presencialmente. Codigo errado incrementa tentativas; apos 10, novo codigo deve ser emitido pelo comprador.
+- O comprador tambem pode confirmar recebimento diretamente na conta, inclusive em envio/retirada.
+- Confirmacao de entrega nao libera pedido com disputa aberta.
+- A liberacao e idempotente: pedido liberado nao pode ser pago novamente.
+- Antes de liberar, backend exige credito pendente de venda vinculado ao pedido e confere valor bruto com subtotal.
+- Na liquidacao, saldo pendente bruto e substituido por saldo disponivel liquido; comissao e registrada como debito do artista e receita no livro-razao da plataforma.
+- Venda direta: artista recebe 80% do subtotal; RefugiART registra 20%. Leilao: artista recebe 70% do valor final; RefugiART registra 30%. Frete e subsidio permanecem contabilizados separadamente.
+- Disputa aberta suspende liberacao ate revisao. Nunca liberar somente porque o artista digitou um rastreio.
+- Testar concorrencia (duas confirmacoes simultaneas), codigo expirado, codigo incorreto, 10 tentativas, codigo reutilizado, disputa antes da confirmacao, saldo pendente divergente, pedido duplicado e reexecucao da liberacao.
+- A migration cria estrutura/RPCs, mas nao integra rastreamento automatico, gateway, saque Pix nem painel administrativo. Nao ativar dinheiro real antes de testes no Supabase e revisao de RLS/permissoes.

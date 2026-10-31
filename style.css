@@ -918,6 +918,11 @@ footer {
   margin-bottom: 22px;
 }
 
+/* Título principal da seção de obras no Mercado */
+.secao-mercado#obras > .titulo-secao-mercado h2 {
+  font-size: 22px;
+}
+
 .titulo-secao-mercado h2 {
   margin: 8px 0;
   color: #243e35;

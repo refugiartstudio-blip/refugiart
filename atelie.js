@@ -1031,6 +1031,21 @@ campoBusca?.addEventListener("input", () => {
   temporizadorBusca = setTimeout(aplicarPesquisa, 250);
 });
 
+/* ---------- Navegação do carrossel da Janela Criativa ---------- */
+const listaCarrossel = document.getElementById("lista-obras");
+const anteriorJanela = document.getElementById("anterior-janela");
+const proximoJanela = document.getElementById("proximo-janela");
+
+function moverCarrosselJanela(direcao) {
+  if (!listaCarrossel) return;
+  const primeiroSlide = listaCarrossel.querySelector(".obra-card");
+  if (!primeiroSlide) return;
+  const distancia = primeiroSlide.getBoundingClientRect().width + 14;
+  listaCarrossel.scrollBy({ left: direcao * distancia, behavior: "smooth" });
+}
+anteriorJanela?.addEventListener("click", () => moverCarrosselJanela(-1));
+proximoJanela?.addEventListener("click", () => moverCarrosselJanela(1));
+
 /* ---------- Atualização manual ---------- */
 
 botaoAtualizar?.addEventListener("click", async () => {

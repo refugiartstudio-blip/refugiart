@@ -2300,3 +2300,24 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
   .pagina-atelie .titulo-feed{align-items:center;gap:8px}
   .pagina-atelie .marca-janela-kraken{min-height:34px;padding:6px 8px;font-size:clamp(14px,4vw,19px);letter-spacing:.045em}
 }
+
+
+/* Janela Criativa: banner Kraken ocupa sozinho a faixa acima das obras */
+.pagina-atelie .titulo-feed.janela-kraken-area{
+  display:block;
+  width:100%;
+  margin:0 0 17px;
+  padding:0;
+}
+.pagina-atelie .titulo-feed.janela-kraken-area .marca-janela-kraken{
+  display:flex;
+  width:100%;
+  min-height:96px;
+  box-sizing:border-box;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  background:#050505;
+  color:#fff;
+  font-size:clamp(22px,5vw,34px);
+}

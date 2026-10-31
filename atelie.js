@@ -757,7 +757,7 @@ async function carregarObras() {
 
     const { data: obras, error } = await supabase
       .from("atelie_posts")
-      .select("id, user_id, image_url, caption, category, created_at, moderation_status, content_sensitive, publicar_comunidade, publicar_mercado, preco, listing_mode, auction_status, auction_balloon_count, auction_initial_price")
+      .select("id, user_id, image_url, caption, category, created_at, moderation_status, content_sensitive, publicar_comunidade, publicar_mercado, preco")
       .eq("user_id", perfilIdAtelie)
       .order("created_at", { ascending: false })
       .limit(50);
@@ -929,10 +929,6 @@ form?.addEventListener("submit", async (evento) => {
         publicar_comunidade: publicarComunidade,
         publicar_mercado: publicarMercado,
         preco: publicarMercado ? preco : null,
-        listing_mode: listingMode,
-        auction_status: publicarLeilao ? "collecting" : "none",
-        auction_initial_price: publicarLeilao ? preco : null,
-        auction_balloon_count: 0,
         content_sensitive: conteudoSensivel
       });
 

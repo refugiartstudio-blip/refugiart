@@ -37,9 +37,9 @@
 #lista-obras-mercado .link-artista-mercado{display:inline-block;color:#243e35;font-weight:700;text-decoration:none;margin-top:8px}
 
 /* MENU LATERAL DO MERCADO — mesmo comportamento da Galeria */
-.mercado-layout{display:flex;flex-direction:row;align-items:flex-start;gap:12px;width:100%;min-width:0;padding:0 18px;box-sizing:border-box}
-.coluna-mercado{position:relative;display:flex;flex-direction:column;align-items:stretch;flex:0 0 52px;width:52px;min-width:52px;max-width:52px;box-sizing:border-box;padding:12px 5px;background:#fff;border:1px solid #e1e7df;border-radius:14px;overflow:hidden;transition:flex-basis .25s ease,width .25s ease,max-width .25s ease;z-index:2}
-.coluna-mercado.expandida{flex-basis:190px;width:190px;min-width:190px;max-width:190px;padding:14px 10px}
+.mercado-layout{position:relative;display:block;width:100%;min-width:0;padding:0 18px;box-sizing:border-box}
+.coluna-mercado{position:absolute;left:18px;top:0;display:flex;flex-direction:column;align-items:stretch;width:52px;min-width:52px;max-width:52px;box-sizing:border-box;padding:12px 5px;background:#fff;border:1px solid #e1e7df;border-radius:14px;overflow:hidden;transition:width .25s ease,max-width .25s ease;z-index:20}
+.coluna-mercado.expandida{width:190px;min-width:190px;max-width:190px;padding:14px 10px;box-shadow:0 8px 24px rgba(20,40,28,.14)}
 .conteudo-coluna-mercado{display:flex;flex-direction:column;align-items:stretch;width:100%;min-width:0;overflow:hidden}
 .coluna-mercado a.link-coluna-mercado{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;width:100%;min-width:0;gap:10px;margin:4px 0;padding:12px 8px;color:#294438;background:transparent;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;line-height:1.4;white-space:nowrap;box-sizing:border-box;transition:background .2s ease,color .2s ease}
 .coluna-mercado a.link-coluna-mercado:hover,.coluna-mercado a.link-coluna-mercado.ativo{color:#243e35;background:#e8eee8}
@@ -50,8 +50,8 @@
 .titulo-coluna-mercado{margin:14px 8px 6px;color:#7b877d;font-size:10px;font-weight:800;letter-spacing:1.2px}
 .divisor-coluna-mercado{height:1px;background:#e1e7df;margin:10px 4px}
 .seta-coluna-mercado{display:flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0 auto 14px;border:0;border-radius:8px;background:#e8eee8;color:#243e35;cursor:pointer;font-size:18px}
-.pagina-mercado{flex:1 1 0;min-width:0;width:0;padding-left:0;padding-right:0}
-@media(max-width:700px){.mercado-layout{gap:8px;padding:0 8px}.coluna-mercado{flex-basis:48px;width:48px;min-width:48px;max-width:48px;padding:10px 4px}.coluna-mercado.expandida{flex-basis:165px;width:165px;min-width:165px;max-width:165px;padding:12px 8px}}
+.pagina-mercado{width:100%;min-width:0;max-width:1300px;margin:24px auto 54px;padding:0 18px;box-sizing:border-box}
+@media(max-width:700px){.mercado-layout{padding:0 8px}.coluna-mercado{left:8px;width:48px;min-width:48px;max-width:48px;padding:10px 4px}.coluna-mercado.expandida{width:165px;min-width:165px;max-width:165px;padding:12px 8px}.pagina-mercado{margin:15px auto 40px;padding:0 10px}}
 
 </style>
 </head>

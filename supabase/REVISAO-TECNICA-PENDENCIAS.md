@@ -232,3 +232,18 @@ Limites:
 - Migration requer revisão e testes reais de PostgreSQL, concorrência, idempotência, RLS e grants antes de execução.
 
 **Status:** etapa de código/documentação criada no GitHub. Não executada no Supabase; checkout continua desativado.
+
+
+## Auditoria real do Supabase — grants e privilégios padrão (31/10/2026)
+
+Foi realizada consulta somente leitura no projeto Supabase pelo SQL Editor. Resultado observado:
+- 13 tabelas no schema `public`, todas com RLS ativado.
+- Em 11 tabelas listadas, `anon` e `authenticated` possuíam grants amplos, incluindo `TRUNCATE`, `REFERENCES`, `TRIGGER` e `MAINTAIN`.
+- As concessões de tabela observadas foram feitas diretamente por `postgres`.
+- Os privilégios padrão de `postgres` no schema `public` também concediam privilégios amplos a papéis do navegador em novas tabelas.
+- `anon` e `authenticated` não possuem `BYPASSRLS`, não são superusuários e não têm `CREATE` no schema `public`.
+- Os privilégios padrão do schema `storage` também foram observados, mas não serão alterados nesta correção.
+
+Correção preparada em `migrations/20261031_015_harden_public_table_privileges.sql`: revoga somente `TRUNCATE`, `REFERENCES`, `TRIGGER` e `MAINTAIN` para `anon` e `authenticated` nas tabelas públicas existentes e nos privilégios padrão de futuras tabelas criadas por `postgres`. Mantém CRUD e RLS. A migration ainda **não foi aplicada**. Ver detalhes em `REVISAO-GRANTS-E-PRIVILEGIOS-PADRAO.md`.
+
+Pendências: homologar a migration; testar fluxos da comunidade e ateliê; revisar privilégios padrão de sequences; auditar Storage separadamente; avaliar policies duplicadas sem removê-las às cegas.

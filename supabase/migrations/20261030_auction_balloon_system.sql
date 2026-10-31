@@ -149,9 +149,9 @@ begin
        or v_post.auction_status not in ('none','collecting') then
       raise exception 'Esta obra não está recebendo manifestações da comunidade.';
     end if;
-    -- Mínimo provisório de R$ 1,00 para demonstrar capacidade de participar.
-    -- O valor não é debitado e pode ser alterado antes da ativação financeira.
-    v_required := coalesce(v_post.auction_initial_price, 1.00);
+    -- Saldo mínimo provisório de R$ 10,00 para obras da comunidade.
+    -- O valor não é debitado; obras já em leilão exigem o lance inicial.
+    v_required := 10.00;
   else
     raise exception 'Esta obra não aceita balões.';
   end if;

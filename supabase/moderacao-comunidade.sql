@@ -70,6 +70,22 @@ $$;
 revoke all on function public.refugiart_is_admin() from public, anon;
 grant execute on function public.refugiart_is_admin() to authenticated;
 
+-- Permite exibir o selo administrativo de outros perfis sem liberar
+-- leitura direta da tabela privada refugiart_admins.
+create or replace function public.refugiart_is_admin_user(p_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $
+  select exists (
+    select 1 from public.refugiart_admins where user_id = p_user_id
+  );
+$;
+revoke all on function public.refugiart_is_admin_user(uuid) from public, anon;
+grant execute on function public.refugiart_is_admin_user(uuid) to authenticated;
+
 -- Remove políticas SELECT permissivas anteriores para que o status seja respeitado.
 do $$
 declare p record;
@@ -89,7 +105,8 @@ create policy "Published posts public and owners see own"
 -- Denúncias não podem ser lidas ou alteradas diretamente pelo navegador.
 revoke all on public.atelie_post_reports from anon, authenticated;
 revoke all on public.refugiart_admins from anon, authenticated;
-grant select, update on public.refugiart_notifications to authenticated;
+grant select on public.refugiart_notifications to authenticated;
+grant update (read_at) on public.refugiart_notifications to authenticated;
 
 create or replace function public.refugiart_submit_post_report(
   p_post_id bigint,

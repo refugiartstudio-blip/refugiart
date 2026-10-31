@@ -690,13 +690,6 @@ function renderizarObras() {
 
   listaObras.replaceChildren();
 
-  // Primeiro slide fixo da Janela Criativa: banner da Kraken Tattoo.
-  const bannerKraken = criarElemento("div", "janela-banner-kraken");
-  bannerKraken.setAttribute("role", "img");
-  bannerKraken.setAttribute("aria-label", "KRAKEN TATTOO");
-  bannerKraken.appendChild(criarElemento("span", "", "KRAKEN TATTOO"));
-  listaObras.appendChild(bannerKraken);
-
   if (!filtradas.length) {
     if (obrasCarregadas.length) {
       listaObras.appendChild(

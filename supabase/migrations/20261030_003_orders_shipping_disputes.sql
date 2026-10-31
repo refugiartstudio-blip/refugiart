@@ -156,6 +156,7 @@ grant all on public.refugiart_order_items to service_role;
 grant all on public.refugiart_shipments to service_role;
 grant all on public.refugiart_order_disputes to service_role;
 grant all on public.refugiart_business_holidays to service_role;
+revoke all on function public.refugiart_add_business_days(timestamptz,integer) from public,anon,authenticated;
 grant execute on function public.refugiart_add_business_days(timestamptz,integer) to service_role;
 
 commit;

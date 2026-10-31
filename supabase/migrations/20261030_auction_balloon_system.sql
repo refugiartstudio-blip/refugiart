@@ -22,6 +22,28 @@ create table if not exists public.refugiart_wallets (
   updated_at timestamptz not null default now()
 );
 
+insert into public.refugiart_wallets(user_id)
+select id from auth.users
+on conflict (user_id) do nothing;
+
+create or replace function public.refugiart_create_wallet_for_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $
+begin
+  insert into public.refugiart_wallets(user_id) values(new.id)
+  on conflict(user_id) do nothing;
+  return new;
+end;
+$;
+
+drop trigger if exists trg_refugiart_create_wallet on auth.users;
+create trigger trg_refugiart_create_wallet
+after insert on auth.users
+for each row execute function public.refugiart_create_wallet_for_user();
+
 create table if not exists public.refugiart_auction_interests (
   id bigint generated always as identity primary key,
   post_id text not null,

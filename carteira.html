@@ -253,7 +253,7 @@
         const venda=p.seller_id===user.id;
         const status={
           pending_payment:"Aguardando pagamento",paid:"Pagamento confirmado",
-          awaiting_shipment:"Aguardando envio",shipped:"Enviado",
+          awaiting_shipment:"Pagamento confirmado • Aguardando envio",shipped:"Enviado",
           delivered:"Entregue",cancelled:"Cancelado",refund_pending:"Reembolso em análise",
           refunded:"Reembolsado",disputed:"Em disputa"
         }[p.status]||p.status;
@@ -266,7 +266,7 @@
           id:p.id
         });
       });
-      (depositosResp.data||[]).forEach(d=>{
+      (depositosResp.data||[]).filter(d=>!String(d.order_nsu||"").startsWith("REFUGIART-MKT-")).forEach(d=>{
         itens.push({
           tipo:"Depósito",
           detalhe:"Depósito de saldo na carteira",

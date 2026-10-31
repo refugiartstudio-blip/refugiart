@@ -17,6 +17,7 @@ const indicadorDenuncias = document.getElementById("indicador-denuncias");
 let publicacoes = [];
 let notificacoesFinanceiras = [];
 let canalFinanceiro = null;
+let erroCarregamentoFinanceiro = null;
 let pastaAtual = "entrada";
 let filtroAtual = "todas";
 
@@ -128,12 +129,13 @@ async function carregarFinanceiro() {
     .limit(150);
 
   if (error) {
-    status.textContent = "Não foi possível carregar o financeiro: " + error.message;
+    erroCarregamentoFinanceiro = error.message;
     notificacoesFinanceiras = [];
     renderizarFinanceiro();
     return;
   }
 
+  erroCarregamentoFinanceiro = null;
   notificacoesFinanceiras = data || [];
   renderizarFinanceiro();
 }
@@ -142,6 +144,12 @@ async function renderizarFinanceiro() {
   fila.replaceChildren();
   atualizarAbas();
   atualizarCabecalho();
+  if (erroCarregamentoFinanceiro) {
+    status.textContent = "Não foi possível carregar o financeiro: " + erroCarregamentoFinanceiro;
+    mostrarMensagem("Verifique sua conexão e tente atualizar a central financeira novamente.");
+    return;
+  }
+
   const termo = (busca?.value || "").trim().toLocaleLowerCase("pt-BR");
   const lista = notificacoesFinanceiras.filter(evento => {
     const texto = [

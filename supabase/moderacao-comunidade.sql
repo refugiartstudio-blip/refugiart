@@ -175,7 +175,7 @@ $$;
 
 create or replace function public.refugiart_admin_queue()
 returns table(
-  id uuid, user_id uuid, image_url text, caption text, category text,
+  id bigint, user_id uuid, image_url text, caption text, category text,
   created_at timestamptz, report_count bigint, reasons jsonb
 )
 language plpgsql
@@ -196,6 +196,9 @@ begin
 end;
 $$;
 
+revoke all on function public.refugiart_submit_post_report(bigint,text,text) from public, anon;
+revoke all on function public.refugiart_review_post(bigint,text,text) from public, anon;
+revoke all on function public.refugiart_admin_queue() from public, anon;
 grant execute on function public.refugiart_submit_post_report(bigint,text,text) to authenticated;
 grant execute on function public.refugiart_review_post(bigint,text,text) to authenticated;
 grant execute on function public.refugiart_admin_queue() to authenticated;

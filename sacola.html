@@ -47,7 +47,7 @@ body{background:#f4f6f2}
 <div class="divisor-coluna-mercado"></div><p class="titulo-coluna-mercado">INTERAÇÕES</p>
 <a href="balao.html" class="link-coluna-mercado" title="Balão"><span class="icone-coluna-mercado">◉</span><span class="texto-coluna-mercado">Balão</span></a>
 </nav></aside>
-<main class="sacola-main"><small>REFUGIART • COMPRA DIRETA</small><h2>Minha sacola</h2><p>Revise as obras escolhidas para compra direta. Obras em leilão não podem ser adicionadas à sacola.</p><div id="listaSacola" class="sacola-lista"></div><div id="totalSacola" class="sacola-total" hidden><span>Total dos itens<strong id="valorTotal">R$ 0,00</strong></span><button id="continuarCompra" type="button" disabled>Finalizar compra</button></div><p id="avisoSacola" style="font-size:12px;color:#7a847c">O checkout e o pagamento ainda dependem da integração com o provedor financeiro. Nenhum valor será cobrado nesta etapa.</p></main>
+<main class="sacola-main"><small>REFUGIART • COMPRA DIRETA</small><h2>Minha sacola</h2><p>Revise as obras escolhidas para compra direta. Obras em leilão não podem ser adicionadas à sacola.</p><div id="listaSacola" class="sacola-lista"></div><div id="totalSacola" class="sacola-total" hidden><span>Total dos itens<strong id="valorTotal">R$ 0,00</strong></span><button id="continuarCompra" type="button" disabled>Finalizar compra</button></div><p id="avisoSacola" style="font-size:12px;color:#7a847c" role="status" aria-live="polite">Os preços exibidos são informativos. O total definitivo será conferido pelo servidor antes de gerar a cobrança.</p></main>
 </div>
 <footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
 <div class="fundo-menu" id="fundoMenu"></div>
@@ -63,8 +63,37 @@ body{background:#f4f6f2}
 <a href="projetos-educativos.html" class="item-menu"><span class="icone-menu">✎</span><span class="texto-menu"><strong>Projetos educativos</strong><small>Oficinas, cursos e formação</small></span><span class="seta-menu">›</span></a>
 <a href="perfil.html" class="item-menu"><span class="icone-menu">♙</span><span class="texto-menu"><strong>Meu perfil</strong><small>Editar meus dados e informações</small></span><span class="seta-menu">›</span></a>
 </nav><div class="rodape-menu"><p>RefugiART — Criar é Sentir.</p></div></aside>
-<script>
-const chave="refugiart_sacola";const lista=document.getElementById("listaSacola"),total=document.getElementById("totalSacola"),valor=document.getElementById("valorTotal");const moeda=v=>Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});function ler(){try{return JSON.parse(localStorage.getItem(chave)||"[]")}catch{return []}}function salvar(itens){localStorage.setItem(chave,JSON.stringify(itens));renderizar()}function renderizar(){const itens=ler().filter(item=>item.listing_mode==="market");lista.replaceChildren();if(!itens.length){const vazio=document.createElement("div");vazio.className="sacola-vazia";vazio.innerHTML='<strong>Sua sacola está vazia.</strong><br>Explore o Bazar e encontre uma obra para levar para casa.<br><a href="bazar.html">Voltar ao Bazar →</a>';lista.append(vazio);total.hidden=true;return;}let soma=0;itens.forEach(item=>{soma+=Number(item.preco)||0;const card=document.createElement("article");card.className="item-sacola";const img=document.createElement("img");img.src=item.image_url;img.alt=item.caption||"Obra";const info=document.createElement("div");const h=document.createElement("h3");h.textContent=item.caption||"Obra de arte";const p=document.createElement("p");p.textContent=item.artista||"Artista RefugiART";const preco=document.createElement("strong");preco.textContent=moeda(item.preco);info.append(h,p,preco);const remover=document.createElement("button");remover.type="button";remover.textContent="Remover";remover.addEventListener("click",()=>salvar(ler().filter(x=>String(x.id)!==String(item.id))));card.append(img,info,remover);lista.append(card);});valor.textContent=moeda(soma);total.hidden=false;}document.getElementById("continuarCompra").addEventListener("click",()=>alert("O checkout será habilitado após a integração segura com o provedor de pagamentos."));renderizar();
+<script type="module">
+import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
+const sb=createClient("https://nlqalpiksbqflzxzsgoa.supabase.co","sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
+const chave="refugiart_sacola",lista=document.getElementById("listaSacola"),total=document.getElementById("totalSacola"),valor=document.getElementById("valorTotal");
+const aviso=document.getElementById("avisoSacola"),botao=document.getElementById("continuarCompra");
+const moeda=v=>Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+function ler(){try{return JSON.parse(localStorage.getItem(chave)||"[]")}catch{return []}}
+function salvar(itens){localStorage.setItem(chave,JSON.stringify(itens));renderizar()}
+function renderizar(){
+ const itens=ler().filter(item=>item.listing_mode==="market");lista.replaceChildren();
+ if(!itens.length){const vazio=document.createElement("div");vazio.className="sacola-vazia";vazio.innerHTML='<strong>Sua sacola está vazia.</strong><br>Explore o Bazar e encontre uma obra para levar para casa.<br><a href="bazar.html">Voltar ao Bazar →</a>';lista.append(vazio);total.hidden=true;botao.disabled=true;return;}
+ let soma=0;itens.forEach(item=>{soma+=Number(item.preco)||0;const card=document.createElement("article");card.className="item-sacola";const img=document.createElement("img");img.src=item.image_url;img.alt=item.caption||"Obra";const info=document.createElement("div");const h=document.createElement("h3");h.textContent=item.caption||"Obra de arte";const p=document.createElement("p");p.textContent=item.artista||"Artista RefugiART";const preco=document.createElement("strong");preco.textContent=moeda(item.preco);info.append(h,p,preco);const remover=document.createElement("button");remover.type="button";remover.textContent="Remover";remover.addEventListener("click",()=>salvar(ler().filter(x=>String(x.id)!==String(item.id))));card.append(img,info,remover);lista.append(card);});
+ valor.textContent=moeda(soma);total.hidden=false;botao.disabled=false;
+}
+botao.addEventListener("click",async()=>{
+ const itens=ler().filter(item=>item.listing_mode==="market");
+ const ids=itens.map(item=>Number(item.id));
+ if(!ids.length||ids.some(id=>!Number.isSafeInteger(id)||id<=0)){aviso.textContent="A sacola contém uma obra inválida. Remova os itens e adicione-os novamente.";return;}
+ botao.disabled=true;botao.textContent="Validando obras...";aviso.textContent="O RefugiART está conferindo preços, vendedores e disponibilidade diretamente no banco de dados.";
+ try{
+  const {data:{user},error:userError}=await sb.auth.getUser();
+  if(userError||!user)throw new Error("Faça login para finalizar sua compra.");
+  const key=crypto.randomUUID();
+  const {data,error}=await sb.functions.invoke("infinitepay-create-checkout",{body:{post_ids:ids,idempotency_key:key}});
+  if(error){let msg=error.message||"Não foi possível iniciar o pagamento.";try{const detail=await error.context?.json?.();if(detail?.message)msg=detail.message;}catch{}throw new Error(msg);}
+  if(!data?.checkout_url||!data.checkout_url.startsWith("https://"))throw new Error("A InfinitePay não retornou um endereço de pagamento válido.");
+  aviso.textContent="Obras reservadas e valor conferido pelo servidor. Abrindo a página segura da InfinitePay...";
+  window.location.assign(data.checkout_url);
+ }catch(err){aviso.textContent=err.message||"Não foi possível finalizar a compra. Tente novamente.";botao.disabled=false;botao.textContent="Finalizar compra";}
+});
+renderizar();
 </script>
 <script>(function(){const coluna=document.getElementById("colunaMercado"),botao=document.getElementById("alternarColunaMercado"),icone=document.getElementById("iconeSetaMercado");if(!coluna||!botao||!icone)return;botao.addEventListener("click",function(){const expandida=coluna.classList.toggle("expandida");botao.setAttribute("aria-expanded",String(expandida));botao.setAttribute("aria-label",expandida?"Recolher menu do Mercado":"Expandir menu do Mercado");icone.textContent=expandida?"⬅":"➜";});})();</script>
 <script src="script.js"></script></body></html>

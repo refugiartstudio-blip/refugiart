@@ -135,3 +135,39 @@ grant execute on function public.refugiart_register_financial_case(
 ) to service_role;
 
 commit;
+
+
+-- Defesa em profundidade: mesmo que outra RPC tente confirmar entrega ou
+-- liberar repasse, um caso financeiro aberto mantem o bloqueio.
+create or replace function public.refugiart_block_payout_with_financial_case()
+returns trigger
+language plpgsql
+security definer
+set search_path=public
+as $$
+begin
+  if exists (
+    select 1 from public.refugiart_financial_cases c
+    where c.order_id=new.id and c.status in ('open','under_review')
+  ) then
+    if new.delivery_status='confirmed' and
+       coalesce(old.delivery_status,'') is distinct from 'confirmed' then
+      raise exception 'Existe caso financeiro aberto; a entrega nao pode liberar o repasse.';
+    end if;
+    if new.payout_released_at is not null and old.payout_released_at is null then
+      raise exception 'Existe caso financeiro aberto; o repasse permanece bloqueado.';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_refugiart_block_payout_with_financial_case on public.refugiart_orders;
+create trigger trg_refugiart_block_payout_with_financial_case
+before update on public.refugiart_orders
+for each row execute function public.refugiart_block_payout_with_financial_case();
+
+revoke all on function public.refugiart_block_payout_with_financial_case()
+  from public,anon,authenticated;
+grant execute on function public.refugiart_block_payout_with_financial_case()
+  to service_role;

@@ -103,7 +103,22 @@ botao.addEventListener("click",async()=>{
   window.location.assign(data.checkout_url);
  }catch(err){aviso.textContent=err.message||"Não foi possível finalizar a compra. Tente novamente.";botao.disabled=false;botao.textContent="Finalizar compra";}
 });
-renderizar();
+async function sincronizarSacolaComMercado(){
+ const itens=ler().filter(item=>item.listing_mode==="market");
+ const ids=itens.map(item=>Number(item.id)).filter(id=>Number.isSafeInteger(id)&&id>0);
+ if(!ids.length){renderizar();return;}
+ const {data:disponiveis,error}=await sb.from("atelie_posts")
+  .select("id")
+  .in("id",ids)
+  .eq("publicar_mercado",true)
+  .eq("moderation_status","published");
+ if(error){renderizar();return;}
+ const ativos=new Set((disponiveis||[]).map(item=>String(item.id)));
+ const atualizados=ler().filter(item=>item.listing_mode!=="market"||ativos.has(String(item.id)));
+ localStorage.setItem(chave,JSON.stringify(atualizados));
+ renderizar();
+}
+sincronizarSacolaComMercado();
 </script>
 <script>(function(){const coluna=document.getElementById("colunaMercado"),botao=document.getElementById("alternarColunaMercado"),icone=document.getElementById("iconeSetaMercado");if(!coluna||!botao||!icone)return;botao.addEventListener("click",function(){const expandida=coluna.classList.toggle("expandida");botao.setAttribute("aria-expanded",String(expandida));botao.setAttribute("aria-label",expandida?"Recolher menu do Mercado":"Expandir menu do Mercado");icone.textContent=expandida?"⬅":"➜";});})();</script>
 <script src="script.js"></script></body></html>

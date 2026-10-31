@@ -264,3 +264,11 @@ Consultas somente leitura confirmaram:
 - Os buckets não têm limite de tamanho nem MIME types configurados. O frontend limita uploads a 5 MB; obras aceitam JPEG/PNG/WEBP e fotos também aceitam GIF. Limite no navegador não substitui validação no servidor.
 
 **Status:** auditoria somente leitura concluída para os resultados coletados. Nenhum bucket, objeto, grant ou policy foi alterado. Pendências: configurar limites e MIME types após testes; avaliar remoção/substituição de fotos e objetos órfãos; confirmar se `Public` é legado; homologar qualquer alteração de grants/policies. 
+
+
+## Auditoria de sequences — primeira consulta (31/10/2026)
+
+A consulta a `information_schema.role_usage_grants` retornou USAGE para `anon` e `authenticated` nas sequências:
+`atelie_posts_id_seq`, `chat_messages_id_seq`, `community_post_comments_id_seq`, `community_post_interest_id_seq` e `community_post_likes_id_seq`.
+
+USAGE permite utilizar a sequência (por exemplo, obter próximo valor com `nextval`); não equivale a permissão UPDATE/SELECT da sequência. A consulta ainda não mostra o conjunto completo de privilégios efetivos, concessões a PUBLIC ou privilégios padrão. Não revogar ainda: primeiro concluir inventário de ACLs e verificar dependências de INSERT que usam valores padrão.

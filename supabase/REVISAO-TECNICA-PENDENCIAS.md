@@ -116,3 +116,21 @@ Arquivo: `DIAGNOSTICO-CONCILIACAO-FINANCEIRA.sql`
 - A consulta não tenta inferir saldo bancário somando indiscriminadamente transações de tipos diferentes.
 - A conciliação definitiva depende dos extratos/eventos do gateway e de integração ainda não implementada.
 - Executar somente depois de aplicar e validar as migrations; não altera dados.
+
+
+## Saques Pix — arquitetura documentada, implementação pendente
+
+Arquivo: `SAQUES-PAGAMENTOS-ARTISTAS-PIX.md`
+
+- A carteira atual distingue saldo disponível, pendente e reservado para leilões.
+- O tipo de transação `withdrawal` já existe no ledger, mas não existe fluxo de saque Pix integrado.
+- Não foi criada RPC nem migration de saque, para não simular transferência sem provedor.
+- A futura reserva de saque deve ser segregada da reserva de leilão; não reutilizar `reserved_balance` sem separar contabilmente os compromissos.
+- Estados propostos cobrem solicitação, análise, processamento, pagamento confirmado, falha e conciliação pendente.
+- Webhooks precisam de assinatura validada, idempotência e conciliação com transferência real.
+
+**Dependência externa:** selecionar provedor compatível com marketplace e Pix para terceiros, definir KYC/titularidade, tarifas, limites e regras de split. Até lá, saques permanecem desabilitados.
+
+## Observação da auditoria de leilões
+
+A primeira migration de reservas (004) foi substituída pela liquidação mais segura em 005, e 012 preserva essa lógica ao corrigir a liberação de reservas em leilões sem vencedor. A rotina de fechamento deve continuar sendo comparada com 005 sempre que houver alteração; não executar migrations isoladamente fora da ordem.

@@ -61,7 +61,7 @@ async function carregarComentarios(postId){
 }
 async function carregar(){
  if(!comunidade){estado("Esta comunidade não foi encontrada.");return;}
- const {data:obras,error}=await supabase.from("atelie_posts").select("id,user_id,image_url,caption,category,created_at,preco").eq("category",comunidade.categoria).eq("publicar_comunidade",true).eq("moderation_status","published").order("created_at",{ascending:false});
+ const {data:obras,error}=await supabase.from("atelie_posts").select("id,user_id,image_url,caption,category,created_at").eq("category",comunidade.categoria).eq("publicar_comunidade",true).eq("moderation_status","published").order("created_at",{ascending:false});
  if(error){estado("Não foi possível carregar as publicações agora.");return;}
  if(!obras?.length){estado("Ainda não há publicações nesta comunidade. Seja a primeira pessoa a compartilhar uma obra!");return;}
  const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];let perfis=[];
@@ -84,9 +84,7 @@ async function carregar(){
   const {data:{user}}=await supabase.auth.getUser();
   const listaLikes=curtidas.data||[];
   like.textContent=(listaLikes.some(x=>x.user_id===user?.id)?"♥ ":"♡ ")+listaLikes.length;
-  const aceitaBalao=obra.listing_mode==="community"||obra.listing_mode==="auction";
-  interesse.hidden=!aceitaBalao;
-   interesse.textContent="🎈 "+(obra.auction_balloon_count||0);
+  interesse.hidden=true;
   if(listaLikes.some(x=>x.user_id===user?.id))like.classList.add("ativo");
 
   like.addEventListener("click",async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user){alert("Entre na sua conta para curtir.");return;}const ja=like.classList.contains("ativo");const res=ja?await supabase.from("community_post_likes").delete().eq("post_id",postId).eq("user_id",user.id):await supabase.from("community_post_likes").insert({post_id:postId,user_id:user.id});if(res.error){alert("Não foi possível registrar a curtida. Verifique a configuração do Supabase.");return;}like.classList.toggle("ativo",!ja);like.textContent=(ja?"♡ ":"♥ ")+(Number(like.textContent.replace(/\D/g,""))+(ja?-1:1));});

@@ -2237,3 +2237,32 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
   .pagina-atelie .botao-carrossel{width:30px;height:30px}
   .pagina-atelie .botao-atualizar{min-height:30px;padding:5px 8px}
 }
+
+/* Banner tipográfico da Kraken Tattoo na Janela Criativa */
+.pagina-atelie .janela-banner-kraken{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-height:112px;
+  margin:0 0 18px;
+  padding:22px 16px;
+  overflow:hidden;
+  border-radius:14px;
+  background:#050505;
+  color:#fff;
+  text-align:center;
+}
+.pagina-atelie .janela-banner-kraken span{
+  color:#fff;
+  font-family:Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size:clamp(28px, 5vw, 54px);
+  font-weight:900;
+  letter-spacing:.09em;
+  line-height:1.1;
+  text-transform:uppercase;
+}
+@media(max-width:520px){
+  .pagina-atelie .janela-banner-kraken{min-height:86px;padding:18px 10px;border-radius:11px}
+  .pagina-atelie .janela-banner-kraken span{letter-spacing:.055em}
+}

@@ -48,7 +48,7 @@ for each row execute function public.refugiart_create_wallet_for_user();
 
 create table if not exists public.refugiart_auction_interests (
   id bigint generated always as identity primary key,
-  post_id text not null,
+  post_id bigint not null references public.atelie_posts(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
   created_at timestamptz not null default now(),
   unique(post_id,user_id)
@@ -56,7 +56,7 @@ create table if not exists public.refugiart_auction_interests (
 
 create table if not exists public.refugiart_auctions (
   id bigint generated always as identity primary key,
-  post_id text not null unique,
+  post_id bigint not null unique references public.atelie_posts(id) on delete cascade,
   artist_id uuid not null references auth.users(id),
   status text not null default 'active' check (status in ('active','finished','cancelled')),
   initial_price numeric(12,2) not null check (initial_price > 0),
@@ -183,14 +183,14 @@ begin
   end if;
 
   insert into public.refugiart_auction_interests(post_id,user_id)
-    values (p_post_id,v_user)
+    values (p_post_id::bigint,v_user)
     on conflict (post_id,user_id) do nothing;
   if not found then raise exception 'Você já manifestou interesse nesta obra.'; end if;
 
   select count(*)::integer
     into v_count
     from public.refugiart_auction_interests
-    where post_id = p_post_id;
+    where post_id = p_post_id::bigint;
 
   v_status := v_post.auction_status;
 
@@ -205,7 +205,7 @@ begin
       where id::text=p_post_id;
 
     insert into public.refugiart_auctions(post_id,artist_id,initial_price,starts_at,ends_at)
-      values(p_post_id,v_post.user_id,v_required,now(),now()+interval '24 hours')
+      values(p_post_id::bigint,v_post.user_id,v_required,now(),now()+interval '24 hours')
       on conflict(post_id) do nothing;
 
   elsif v_post.listing_mode = 'community' and v_count >= 30 then
@@ -262,7 +262,7 @@ begin
 
   select count(*)::integer into v_interest_count
     from public.refugiart_auction_interests
-    where post_id=p_post_id;
+    where post_id=p_post_id::bigint;
   if v_interest_count < 30 then
     raise exception 'A obra ainda não atingiu os 30 balões necessários.';
   end if;
@@ -281,7 +281,7 @@ begin
     where id::text=p_post_id;
 
   insert into public.refugiart_auctions(post_id,artist_id,initial_price,starts_at,ends_at)
-    values(p_post_id,v_post.user_id,p_initial_price,now(),v_ends_at)
+    values(p_post_id::bigint,v_post.user_id,p_initial_price,now(),v_ends_at)
     on conflict(post_id) do update
       set status='active',
           initial_price=excluded.initial_price,

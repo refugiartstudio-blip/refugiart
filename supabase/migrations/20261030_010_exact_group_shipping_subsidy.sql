@@ -78,7 +78,7 @@ begin
   ),
   ranked as (
     select b.*,
-           row_number() over(order by fractional_cent desc, package_id asc, ordinality asc) as remainder_rank,
+           row_number() over(order by case when shipping>base_share then 0 else 1 end, fractional_cent desc, package_id asc, ordinality asc) as remainder_rank,
            r.cents
     from base_shares b cross join residual r
   ),

@@ -339,8 +339,8 @@
     const el = (tag, cls, text) => { const n=document.createElement(tag); if(cls)n.className=cls; if(text!==undefined)n.textContent=text; return n; };
     async function carregarMercado() {
       const {data:obras,error}=await supabase.from("atelie_posts")
-        .select("id,user_id,image_url,caption,category,preco,created_at")
-        .eq("publicar_mercado",true).eq("publicar_comunidade",true).not("preco","is",null).order("created_at",{ascending:false});
+        .select("id,user_id,image_url,caption,category,preco,created_at,listing_mode,auction_status,auction_initial_price,auction_ends_at,auction_balloon_count")
+        .eq("publicar_mercado",true).not("preco","is",null).order("created_at",{ascending:false});
       if(error){lista.replaceChildren(el("p","","Não foi possível carregar os anúncios neste momento."));return;}
       if(!obras?.length){lista.replaceChildren(el("p","","Ainda não há obras anunciadas. Quando um artista publicar no Mercado, elas aparecerão aqui."));return;}
       const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];
@@ -355,7 +355,7 @@
         dados.append(el("span","categoria-obra",(obra.category||"ARTE").toUpperCase()));
         dados.append(el("h3","","Obra de "+(nomes.get(obra.user_id)||"Artista RefugiART")));
         if(obra.caption)dados.append(el("p","",obra.caption));
-        dados.append(el("p","preco-mercado",Number(obra.preco).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})));
+        dados.append(el("p","preco-mercado",(obra.listing_mode==="auction"?"Lance inicial: ":"")+Number(obra.auction_initial_price||obra.preco).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})));if(obra.listing_mode==="auction"){dados.append(el("span","categoria-obra",obra.auction_status==="active"?"LEILÃO EM ANDAMENTO":"AGUARDANDO INTERESSE"));dados.append(el("p","","🎈 "+(obra.auction_balloon_count||0)+" manifestações de interesse"));if(obra.auction_status==="active"&&obra.auction_ends_at){const tempo=el("p","preco-mercado","⏱ Leilão aberto");tempo.dataset.ends=obra.auction_ends_at;dados.append(tempo);}}
         const link=el("a","link-artista-mercado","Conhecer Ateliê →");link.href="atelie.html?id="+encodeURIComponent(obra.user_id);dados.append(link);
         card.append(foto,dados);lista.append(card);
       });

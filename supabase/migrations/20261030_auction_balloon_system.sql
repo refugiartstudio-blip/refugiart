@@ -293,6 +293,10 @@ begin
 end;
 $$;
 
+-- Remove a permissão padrão de execução para PUBLIC/anon em funções SECURITY DEFINER.
+revoke all on function public.refugiart_give_balloon(text) from public, anon;
+revoke all on function public.refugiart_artist_approve_auction(text,numeric) from public, anon;
+revoke all on function public.refugiart_place_auction_bid(bigint,numeric) from public, anon;
 grant execute on function public.refugiart_give_balloon(text) to authenticated;
 grant execute on function public.refugiart_artist_approve_auction(text,numeric) to authenticated;
 grant execute on function public.refugiart_place_auction_bid(bigint,numeric) to authenticated;

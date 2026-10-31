@@ -257,7 +257,37 @@
       }
     });
 
-    (async()=>{const {data:{user}}=await sb.auth.getUser();if(!user)return;carregarHistoricoCarteira(user);const {data,error}=await sb.from("refugiart_wallets").select("available_balance,pending_balance").eq("user_id",user.id).maybeSingle();if(error){console.warn("Carteira indisponível:",error.message);return;}document.getElementById("saldoDisponivel").textContent=fmt(data?.available_balance);document.getElementById("saldoPendente").textContent=fmt(data?.pending_balance);})();
+    (async()=>{
+      const {data:{user}}=await sb.auth.getUser();
+      if(!user)return;
+      carregarHistoricoCarteira(user);
+
+      // Nesta etapa, o saldo pendente é calculado pelos valores líquidos
+      // das vendas pagas que ainda não foram entregues.
+      const {data:vendasPendentes,error:erroPendentes}=await sb
+        .from("refugiart_orders")
+        .select("seller_net_cents")
+        .eq("seller_id",user.id)
+        .in("status",["awaiting_shipment","shipped"]);
+
+      if(erroPendentes){
+        console.warn("Não foi possível calcular o saldo pendente:",erroPendentes.message);
+      }else{
+        const totalPendente=(vendasPendentes||[])
+          .reduce((total,pedido)=>total+Number(pedido.seller_net_cents||0),0);
+        document.getElementById("saldoPendente").textContent=fmt(totalPendente/100);
+      }
+
+      // O saldo disponível permanece sem alteração nesta etapa.
+      const {data,error}=await sb.from("refugiart_wallets")
+        .select("available_balance")
+        .eq("user_id",user.id).maybeSingle();
+      if(error){
+        console.warn("Saldo disponível ainda não pôde ser consultado:",error.message);
+        return;
+      }
+      document.getElementById("saldoDisponivel").textContent=fmt(data?.available_balance);
+    })();
     
     async function carregarHistoricoCarteira(user){
       const lista=document.getElementById("historicoLista");

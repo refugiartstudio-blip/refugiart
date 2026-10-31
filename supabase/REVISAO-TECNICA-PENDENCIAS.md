@@ -74,3 +74,8 @@ Criada `20261030_009_platform_costs_and_promo_reserve.sql` para registrar custos
 - Criar painel interno que mostre comissão bruta, custos por categoria, resultado de contribuição, saldo da reserva promocional e margem percentual.
 - Definir limites de aprovação para despesas manuais e trilha de auditoria.
 - Validar o relatório mensal com conciliação de pedidos, ledger de comissão e extratos do provedor.
+
+
+## Migration 010 — rateio exato do subsídio
+
+Criada `20261030_010_exact_group_shipping_subsidy.sql`. A função recebe a lista de pacotes e fretes, calcula o teto global de 20% da comissão e distribui os centavos residuais por maiores restos. O objetivo é evitar que arredondamentos independentes por artista excedam ou deixem saldo do orçamento de subsídio sem alocação. A execução real ainda precisa de homologação PostgreSQL.

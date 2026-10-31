@@ -15,6 +15,7 @@ const filtros = [...document.querySelectorAll("[data-filtro]")];
 const indicadorDenuncias = document.getElementById("indicador-denuncias");
 
 let publicacoes = [];
+let notificacoesFinanceiras = [];
 let pastaAtual = "entrada";
 let filtroAtual = "todas";
 
@@ -53,16 +54,127 @@ function atualizarCabecalho() {
     entrada: "Caixa de entrada",
     denuncias: "Denúncias",
     reclamacoes: "Reclamações",
-    arquivadas: "Arquivadas"
+    arquivadas: "Arquivadas",
+    financeiro: "Central financeira"
   };
   titulo.textContent = nomes[pastaAtual] || "Caixa de entrada";
 
-  if (pastaAtual === "reclamacoes" || filtroAtual === "reclamacoes") {
+  if (pastaAtual === "financeiro") {
+    subtitulo.textContent = "Depósitos, compras, vendas, entregas e repasses registrados pelo sistema.";
+  } else if (pastaAtual === "reclamacoes" || filtroAtual === "reclamacoes") {
     subtitulo.textContent = "Espaço destinado às reclamações enviadas pela comunidade.";
   } else if (pastaAtual === "arquivadas") {
     subtitulo.textContent = "Consulte aqui as ocorrências já analisadas pela equipe.";
   } else {
     subtitulo.textContent = "Avisos de denúncias e conteúdos sinalizados pela comunidade.";
+  }
+}
+
+
+function formatarDinheiroCentavos(centavos) {
+  if (centavos === null || centavos === undefined) return "Valor não informado";
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(centavos) / 100);
+}
+
+function rotuloStatusFinanceiro(statusEvento) {
+  const rotulos = {
+    new: "Novo",
+    pending: "Pendente",
+    action_required: "Ação necessária",
+    completed: "Concluído",
+    canceled: "Cancelado",
+    failed: "Falhou"
+  };
+  return rotulos[statusEvento] || statusEvento || "Não informado";
+}
+
+async function carregarFinanceiro() {
+  status.textContent = "Carregando movimentações financeiras...";
+  const { data, error } = await supabase
+    .from("refugiart_financial_notifications")
+    .select("id,event_type,status,summary,description,actor_label,counterparty_label,amount_cents,currency,source_reference,related_order_id,created_at,read_at,archived_at")
+    .is("archived_at", null)
+    .order("created_at", { ascending: false })
+    .limit(150);
+
+  if (error) {
+    status.textContent = "Não foi possível carregar o financeiro: " + error.message;
+    notificacoesFinanceiras = [];
+    renderizarFinanceiro();
+    return;
+  }
+
+  notificacoesFinanceiras = data || [];
+  renderizarFinanceiro();
+}
+
+async function renderizarFinanceiro() {
+  fila.replaceChildren();
+  atualizarAbas();
+  atualizarCabecalho();
+  const termo = (busca?.value || "").trim().toLocaleLowerCase("pt-BR");
+  const lista = notificacoesFinanceiras.filter(evento => {
+    const texto = [
+      evento.summary, evento.description, evento.actor_label,
+      evento.counterparty_label, evento.event_type, evento.status,
+      evento.source_reference, evento.related_order_id,
+      formatarDinheiroCentavos(evento.amount_cents)
+    ].join(" ").toLocaleLowerCase("pt-BR");
+    return !termo || texto.includes(termo);
+  });
+
+  if (!lista.length) {
+    status.textContent = termo ? "Nenhuma movimentação corresponde à pesquisa." : "Central financeira pronta. Ainda não há movimentações registradas.";
+    mostrarMensagem(termo
+      ? "Tente pesquisar por nome, tipo de movimentação ou valor."
+      : "Quando houver depósitos, compras, vendas, confirmações de entrega ou repasses, cada ocorrência aparecerá aqui automaticamente.");
+    return;
+  }
+
+  status.textContent = lista.length + " movimentação(ões) financeira(s).";
+  for (const evento of lista) {
+    const card = el("article", "financeiro-item" + (evento.read_at ? "" : " financeiro-nao-lida"));
+    const topo = el("div", "financeiro-item-topo");
+    const tituloEvento = el("h3", "", evento.summary || "Movimentação financeira");
+    const selo = el("span", "financeiro-status " + (evento.status || ""), rotuloStatusFinanceiro(evento.status));
+    topo.append(tituloEvento, selo);
+
+    const descricao = el("p", "", evento.description || "");
+    const meta = el("div", "financeiro-meta");
+    const data = new Date(evento.created_at);
+    const dataTexto = Number.isNaN(data.getTime()) ? "Data não informada" : data.toLocaleString("pt-BR");
+    meta.append(el("span", "", "Data: " + dataTexto));
+    meta.append(el("strong", "", formatarDinheiroCentavos(evento.amount_cents)));
+
+    if (evento.actor_label) meta.append(el("span", "", "De/por: " + evento.actor_label));
+    if (evento.counterparty_label) meta.append(el("span", "", "Para: " + evento.counterparty_label));
+    if (evento.related_order_id) meta.append(el("span", "", "Pedido: " + evento.related_order_id));
+    if (evento.source_reference) meta.append(el("span", "", "Referência: " + evento.source_reference));
+
+    card.append(topo);
+    if (evento.description) card.append(descricao);
+    card.append(meta);
+
+    if (!evento.read_at) {
+      const marcar = el("button", "financeiro-marcar-lida", "Marcar como lida");
+      marcar.type = "button";
+      marcar.addEventListener("click", async () => {
+        marcar.disabled = true;
+        const { error } = await supabase
+          .from("refugiart_financial_notifications")
+          .update({ read_at: new Date().toISOString() })
+          .eq("id", evento.id);
+        if (error) {
+          status.textContent = "Não foi possível atualizar a notificação: " + error.message;
+          marcar.disabled = false;
+          return;
+        }
+        evento.read_at = new Date().toISOString();
+        renderizarFinanceiro();
+      });
+      card.append(marcar);
+    }
+    fila.append(card);
   }
 }
 
@@ -72,6 +184,13 @@ function renderizar() {
   atualizarCabecalho();
 
   const termo = (busca?.value || "").trim().toLocaleLowerCase("pt-BR");
+
+  if (pastaAtual === "financeiro") {
+    document.body.classList.add("financeiro-aberto");
+    renderizarFinanceiro();
+    return;
+  }
+  document.body.classList.remove("financeiro-aberto");
 
   if (pastaAtual === "reclamacoes" || filtroAtual === "reclamacoes") {
     status.textContent = "Reclamações";
@@ -164,7 +283,9 @@ filtros.forEach(botao => {
   });
 });
 
-busca?.addEventListener("input", renderizar);
+busca?.addEventListener("input", () => pastaAtual === "financeiro" ? renderizarFinanceiro() : renderizar());
+
+document.getElementById("atualizar-financeiro")?.addEventListener("click", carregarFinanceiro);
 
 async function carregar() {
   status.textContent = "Verificando acesso e carregando fila...";
@@ -183,6 +304,8 @@ async function carregar() {
     mostrarMensagem("Acesso restrito à equipe administrativa.");
     return;
   }
+
+  await carregarFinanceiro();
 
   const { data, error } = await supabase.rpc("refugiart_admin_queue");
   if (error) {

@@ -493,10 +493,10 @@ function criarCartaoObra(obra) {
       });
       confirmarExclusao.addEventListener("click", async () => {
         confirmarExclusao.disabled = true;
-        mensagem.textContent = "Excluindo publicação...";
+        mensagem.textContent = "Removendo do portfólio...";
         try {
           const { error } = await supabase.from("atelie_posts")
-            .delete()
+            .update({ removida_do_portfolio: true })
             .eq("id", obra.id)
             .eq("user_id", usuario.id);
           if (error) throw error;
@@ -504,7 +504,7 @@ function criarCartaoObra(obra) {
           obrasCarregadas = obrasCarregadas.filter(item => String(item.id) !== String(obra.id));
           renderizarObras();
         } catch (erro) {
-          mensagem.textContent = "Não foi possível excluir: " + (erro.message || "tente novamente.");
+          mensagem.textContent = "Não foi possível remover do portfólio: " + (erro.message || "tente novamente.");
           confirmarExclusao.disabled = false;
         }
       });
@@ -745,7 +745,7 @@ async function carregarObras() {
 
     const { data: obras, error } = await supabase
       .from("atelie_posts")
-      .select("id, user_id, image_url, caption, category, created_at, moderation_status, content_sensitive, publicar_comunidade, publicar_mercado, preco")
+      .select("id, user_id, image_url, caption, category, created_at, moderation_status, content_sensitive, publicar_comunidade, publicar_mercado, preco, removida_do_portfolio")
       .eq("user_id", perfilIdAtelie)
       .order("created_at", { ascending: false })
       .limit(50);

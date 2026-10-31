@@ -6,15 +6,45 @@
 <link rel="stylesheet" href="style.css">
 <style>
 body{background:#f4f6f2;color:#29352e}.leiloes-main{max-width:1180px;margin:30px auto;padding:0 16px}.leiloes-intro{background:linear-gradient(120deg,#243e35,#45624b);color:#fff;border-radius:16px;padding:28px;margin-bottom:22px}.leiloes-intro small{letter-spacing:1.5px;font-weight:800;color:#d8e5d9}.leiloes-intro h2{font:clamp(28px,4vw,40px) Georgia,serif;margin:8px 0}.leiloes-intro p{max-width:700px;color:#e4ece4;line-height:1.6;margin:0}.leiloes-grade{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.leilao-card{background:#fff;border:1px solid #e2e8e0;border-radius:13px;overflow:hidden;display:flex;flex-direction:column}.leilao-card img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#e8ece6}.leilao-info{padding:15px;display:flex;flex-direction:column;gap:8px;flex:1}.leilao-selo{align-self:flex-start;background:#fff0e9;color:#9b432b;border-radius:5px;padding:5px 8px;font-size:10px;font-weight:800}.leilao-info h3{font-size:16px;margin:0;color:#243e35}.leilao-artista{font-size:12px;color:#778177;margin:0}.leilao-preco{font-size:18px;font-weight:800;color:#243e35;margin:5px 0}.leilao-tempo{font-size:15px;font-weight:800;color:#a64f36}.leilao-atual{font-size:13px;color:#657267}.leilao-lance{display:flex;gap:7px;margin-top:auto}.leilao-lance input{min-width:0;flex:1;padding:11px;border:1px solid #dce4dc;border-radius:8px;font:inherit}.leilao-lance button{border:0;border-radius:8px;background:#243e35;color:white;padding:10px 13px;font-weight:700}.leilao-lance button:disabled{opacity:.5}.leiloes-vazio{grid-column:1/-1;background:#fff;border:1px dashed #d7e0d6;border-radius:12px;text-align:center;padding:48px 20px;color:#748074}.leiloes-vazio strong{display:block;color:#243e35;font:24px Georgia,serif;margin-bottom:8px}@media(max-width:850px){.leiloes-grade{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.leiloes-grade{grid-template-columns:1fr}.leiloes-main{padding:0 10px}.leiloes-intro{padding:22px}}
+/* MENU LATERAL DO MERCADO — mesmo comportamento da Galeria */
+.leiloes-layout{display:flex;flex-direction:row;align-items:flex-start;gap:12px;width:100%;min-width:0;padding:0 18px;box-sizing:border-box}
+.coluna-leiloes{position:relative;display:flex;flex-direction:column;align-items:stretch;flex:0 0 52px;width:52px;min-width:52px;max-width:52px;box-sizing:border-box;padding:12px 5px;background:#fff;border:1px solid #e1e7df;border-radius:14px;overflow:hidden;transition:flex-basis .25s ease,width .25s ease,max-width .25s ease;z-index:2}
+.coluna-leiloes.expandida{flex-basis:190px;width:190px;min-width:190px;max-width:190px;padding:14px 10px}
+.conteudo-coluna-leiloes{display:flex;flex-direction:column;align-items:stretch;width:100%;min-width:0;overflow:hidden}
+.coluna-leiloes a.link-coluna-leiloes{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;width:100%;min-width:0;gap:10px;margin:4px 0;padding:12px 8px;color:#294438;background:transparent;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;line-height:1.4;white-space:nowrap;box-sizing:border-box;transition:background .2s ease,color .2s ease}
+.coluna-leiloes a.link-coluna-leiloes:hover,.coluna-leiloes a.link-coluna-leiloes.ativo{color:#243e35;background:#e8eee8}
+.icone-coluna-leiloes{display:inline-flex;align-items:center;justify-content:center;flex:0 0 24px;width:24px;font-size:19px}
+.texto-coluna-leiloes{overflow:hidden}
+.coluna-leiloes:not(.expandida) .titulo-coluna-leiloes,.coluna-leiloes:not(.expandida) .texto-coluna-leiloes,.coluna-leiloes:not(.expandida) .divisor-coluna-leiloes{display:none!important}
+.coluna-leiloes:not(.expandida) a.link-coluna-leiloes{justify-content:center;padding:12px 2px}
+.titulo-coluna-leiloes{margin:14px 8px 6px;color:#7b877d;font-size:10px;font-weight:800;letter-spacing:1.2px}
+.divisor-coluna-leiloes{height:1px;background:#e1e7df;margin:10px 4px}
+.seta-coluna-leiloes{display:flex;align-items:center;justify-content:center;width:40px;height:40px;margin:0 auto 14px;border:0;border-radius:8px;background:#e8eee8;color:#243e35;cursor:pointer;font-size:18px}
+.pagina-leiloes{flex:1 1 0;min-width:0;width:0;padding-left:0;padding-right:0}
+@media(max-width:700px){.leiloes-layout{gap:8px;padding:0 8px}.coluna-leiloes{flex-basis:48px;width:48px;min-width:48px;max-width:48px;padding:10px 4px}.coluna-leiloes.expandida{flex-basis:165px;width:165px;min-width:165px;max-width:165px;padding:12px 8px}}
+.leiloes-layout{display:flex;align-items:flex-start;gap:12px;width:100%;min-width:0;padding:0 18px;box-sizing:border-box}.pagina-leiloes{flex:1 1 0;min-width:0;width:0}.leiloes-main{max-width:none;margin:30px auto;padding:0 16px}@media(max-width:700px){.leiloes-layout{gap:8px;padding:0 8px}} 
 </style>
 </head>
 <body>
 <header class="cabecalho"><img src="imagens/logo.png" alt="Símbolo da RefugiART" class="logo"><div class="identidade"><h1>RefugiART</h1><p>A arte nos aproxima.</p></div><button class="botao-menu" id="abrirMenu" type="button" aria-label="Abrir menu" aria-controls="menuLateral" aria-expanded="false">☰</button></header>
-<nav class="navegacao-principal"><a href="inicio.html">Início</a><a href="mercado.html">Mercado</a><a href="comunidades.html">Comunidades</a><a href="galeria.html">Galeria</a><a href="bazar.html">Bazar</a><a href="carteira.html">Carteira</a><a id="linkLogin" href="login.html">Login</a></nav>
+<nav class="navegacao-principal"><a href="inicio.html">Início</a><a href="mercado.html">Mercado</a><a href="comunidades.html">Comunidades</a><a href="galeria.html">Galeria</a><a id="linkLogin" href="login.html">Login</a></nav>
+
+<div class="leiloes-layout">
+<aside class="coluna-leiloes" id="colunaLeiloes" aria-label="Menu do Mercado">
+<button type="button" class="seta-coluna-leiloes" id="alternarColunaLeiloes" aria-label="Expandir menu do Mercado" aria-controls="navegacaoLeiloes" aria-expanded="false"><span id="iconeSetaLeiloes">➜</span></button>
+<nav class="conteudo-coluna-leiloes" id="navegacaoLeiloes" aria-label="Áreas do Mercado">
+<a href="carteira.html" class="link-coluna-leiloes" title="Carteira"><span class="icone-coluna-leiloes">▣</span><span class="texto-coluna-leiloes">Carteira</span></a>
+<a href="sacola.html" class="link-coluna-leiloes" title="Sacola"><span class="icone-coluna-leiloes">🛍</span><span class="texto-coluna-leiloes">Sacola</span></a>
+<a href="bazar.html" class="link-coluna-leiloes" title="Bazar"><span class="icone-coluna-leiloes">▧</span><span class="texto-coluna-leiloes">Bazar</span></a>
+<a href="leiloes.html" class="link-coluna-leiloes ativo" title="Leilões"><span class="icone-coluna-leiloes">⚒</span><span class="texto-coluna-leiloes">Leilões</span></a>
+<div class="divisor-coluna-leiloes"></div><p class="titulo-coluna-leiloes">INTERAÇÕES</p>
+<a href="balao.html" class="link-coluna-leiloes" title="Balão"><span class="icone-coluna-leiloes">◉</span><span class="texto-coluna-leiloes">Balão</span></a>
+</nav></aside>
 <main class="leiloes-main">
 <section class="leiloes-intro"><small>REFUGIART • DISPUTAS DE ARTE</small><h2>Leilões em andamento</h2><p>Acompanhe o tempo restante, veja os lances e participe das disputas. O cronômetro segue o horário oficial registrado pelo servidor.</p></section>
 <div id="gradeLeiloes" class="leiloes-grade" aria-live="polite"><div class="leiloes-vazio">Carregando leilões...</div></div>
 </main>
+</div>
 <footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
 <div class="fundo-menu" id="fundoMenu"></div>
 <aside class="menu-lateral" id="menuLateral" role="dialog" aria-modal="true" aria-labelledby="tituloMenu" aria-hidden="true" inert>
@@ -32,5 +62,8 @@ function renderizar(){grade.replaceChildren();if(!leiloes.length){const vazio=do
 leiloes.forEach(item=>{const post=item.post||{};const card=document.createElement("article");card.className="leilao-card";const img=document.createElement("img");img.src=post.image_url||"";img.alt=post.caption||"Obra em leilão";img.loading="lazy";const info=document.createElement("div");info.className="leilao-info";const selo=document.createElement("span");selo.className="leilao-selo";selo.textContent="LEILÃO EM ANDAMENTO";const titulo=document.createElement("h3");titulo.textContent=post.caption||"Obra de arte";const artista=document.createElement("p");artista.className="leilao-artista";artista.textContent="Artista RefugiART";const inicial=document.createElement("p");inicial.className="leilao-preco";inicial.textContent="Lance inicial: "+moeda(item.initial_price);const tempo=document.createElement("div");tempo.className="leilao-tempo";tempo.dataset.ends=item.ends_at;const maior=document.createElement("p");maior.className="leilao-atual";maior.textContent="Maior lance: "+(item.winning_bid?moeda(item.winning_bid):"Nenhum lance registrado");const acoes=document.createElement("form");acoes.className="leilao-lance";const campo=document.createElement("input");campo.type="number";campo.min=Number(item.winning_bid||item.initial_price)+0.01;campo.step="0.01";campo.placeholder="Seu lance (R$)";campo.required=true;const botao=document.createElement("button");botao.type="button";botao.textContent="Lances em implantação";botao.disabled=true;botao.title="A participação financeira será liberada após a implementação da reserva segura de saldo.";campo.disabled=true;campo.placeholder="Lances temporariamente indisponíveis";acoes.append(campo,botao);info.append(selo,titulo,artista,inicial,tempo,maior,acoes);card.append(img,info);grade.append(card);});cronometros();}
 async function carregar(){const {data,error}=await supabase.from("refugiart_auctions").select("id,post_id,status,initial_price,starts_at,ends_at,winning_bid").eq("status","active").order("ends_at",{ascending:true});if(error){console.error(error);grade.innerHTML='<div class="leiloes-vazio"><strong>Leilões ainda não disponíveis</strong>É necessário aplicar a migração do Supabase antes de ativar esta área.</div>';return;}const ids=(data||[]).map(x=>x.post_id);let posts=[];if(ids.length){const resposta=await supabase.from("atelie_posts").select("id,image_url,caption,user_id").eq("moderation_status","published").in("id",ids);posts=resposta.data||[];}const map=new Map(posts.map(p=>[String(p.id),p]));leiloes=(data||[]).filter(x=>new Date(x.ends_at).getTime()>Date.now()).map(x=>({...x,post:map.get(String(x.post_id))}));renderizar();}
 setInterval(cronometros,1000);carregar();
-</script><script src="script.js"></script>
+</script><script>
+(function(){const coluna=document.getElementById("colunaLeiloes"),botao=document.getElementById("alternarColunaLeiloes"),icone=document.getElementById("iconeSetaLeiloes");if(!coluna||!botao||!icone)return;botao.addEventListener("click",function(){const aberta=coluna.classList.toggle("expandida");botao.setAttribute("aria-expanded",String(aberta));botao.setAttribute("aria-label",aberta?"Recolher menu do Mercado":"Expandir menu do Mercado");icone.textContent=aberta?"⬅":"➜";});})();
+</script>
+<script src="script.js"></script>
 </body></html>

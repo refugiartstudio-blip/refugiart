@@ -176,7 +176,8 @@
       atualizarCronometros();
     }
     function atualizarCronometros(){document.querySelectorAll(".produto-cronometro").forEach(el=>{const restante=new Date(el.dataset.ends).getTime()-Date.now();if(restante<=0){el.textContent="Encerrando leilão...";return;}const h=Math.floor(restante/3600000),m=Math.floor(restante%3600000/60000),s=Math.floor(restante%60000/1000);el.textContent="⏱ "+[h,m,s].map(n=>String(n).padStart(2,"0")).join(":");});}
-    setInterval(atualizarCronometros,1000);\n    setInterval(()=>{cicloLeiloes++;filtrar();},30000);
+    setInterval(atualizarCronometros,1000);
+    setInterval(()=>{cicloLeiloes++;filtrar();},30000);
     document.getElementById("formBusca").addEventListener("submit",e=>{e.preventDefault();filtrar();});
     busca.addEventListener("input",filtrar);ordenar.addEventListener("change",filtrar);
     document.getElementById("categoriasBazar").addEventListener("click",e=>{

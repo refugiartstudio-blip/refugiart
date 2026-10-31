@@ -301,6 +301,43 @@ begin
 end;
 $$;
 
+-- Encerramento idempotente de leilões vencidos.
+-- Enquanto os lances estiverem bloqueados, encerra sem vencedor e sem saldo.
+create or replace function public.refugiart_close_expired_auctions()
+returns integer
+language plpgsql
+security definer
+set search_path = public
+as $
+declare
+  item record;
+  total_closed integer := 0;
+begin
+  for item in
+    select id, post_id
+    from public.refugiart_auctions
+    where status = 'active' and ends_at <= now()
+    order by ends_at
+    for update skip locked
+  loop
+    update public.refugiart_auctions
+    set status = 'finished', closed_at = now(),
+        winning_user_id = null, winning_bid = null
+    where id = item.id and status = 'active' and ends_at <= now();
+
+    if found then
+      update public.atelie_posts
+      set auction_status = 'finished'
+      where id = item.post_id and auction_status = 'active';
+      total_closed := total_closed + 1;
+    end if;
+  end loop;
+  return total_closed;
+end;
+$;
+revoke all on function public.refugiart_close_expired_auctions() from public, anon, authenticated;
+grant execute on function public.refugiart_close_expired_auctions() to service_role;
+
 -- Lances financeiros ficam bloqueados até existir reserva atômica do saldo.
 -- Esta trava evita aceitar ofertas sem separar o dinheiro do participante.
 create or replace function public.refugiart_place_auction_bid(p_auction_id bigint,p_amount numeric)

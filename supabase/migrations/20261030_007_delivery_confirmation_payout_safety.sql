@@ -3,6 +3,11 @@
 -- Nao habilita gateway, saque bancario ou checkout; protege a liquidacao interna.
 begin;
 
+-- O estado disputed precisa existir no dominio de status do pedido.
+alter table public.refugiart_orders drop constraint if exists refugiart_orders_status_check;
+alter table public.refugiart_orders add constraint refugiart_orders_status_check
+  check (status in ('pending_payment','paid','awaiting_shipment','shipped','delivered','cancelled','refund_pending','refunded','disputed'));
+
 alter table public.refugiart_orders
   add column if not exists delivery_method text not null default 'carrier'
     check (delivery_method in ('carrier','in_person','pickup')),
@@ -118,6 +123,111 @@ begin
   return v_code;
 end;
 $$;
+
+create or replace function public.refugiart_release_seller_payout(
+  p_order_id bigint,
+  p_method text
+) returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_order public.refugiart_orders%rowtype;
+  v_wallet public.refugiart_wallets%rowtype;
+  v_sale_tx public.refugiart_wallet_transactions%rowtype;
+  v_fee numeric(12,2);
+  v_net numeric(12,2);
+begin
+  if p_method not in ('buyer_confirmation','handover_code','admin_review') then
+    raise exception 'Metodo de liberacao invalido.';
+  end if;
+  select * into v_order from public.refugiart_orders
+    where id=p_order_id for update;
+  if not found then raise exception 'Pedido nao encontrado.'; end if;
+  if v_order.delivery_status<>'confirmed' or v_order.delivery_confirmed_at is null then
+    raise exception 'A entrega ainda nao foi confirmada.';
+  end if;
+  if v_order.payout_released_at is not null then
+    return jsonb_build_object('success',true,'already_released',true);
+  end if;
+  if exists(select 1 from public.refugiart_order_disputes
+    where order_id=p_order_id and status in ('open','under_review')) then
+    raise exception 'Existe disputa aberta; o saldo permanece bloqueado.';
+  end if;
+  if v_order.platform_commission_amount<0 or v_order.platform_commission_amount>v_order.subtotal then
+    raise exception 'Comissao do pedido inconsistente.';
+  end if;
+
+  select * into v_sale_tx from public.refugiart_wallet_transactions
+    where related_order_id=p_order_id and user_id=v_order.seller_id
+      and transaction_type='sale' and direction='credit' and status='pending'
+    order by id desc limit 1 for update;
+  if not found or v_sale_tx.amount<>v_order.subtotal then
+    raise exception 'Credito pendente do pedido ausente ou divergente; solicitar revisao administrativa.';
+  end if;
+
+  select * into v_wallet from public.refugiart_wallets
+    where user_id=v_order.seller_id for update;
+  if not found or v_wallet.pending_balance<v_sale_tx.amount then
+    raise exception 'Saldo pendente insuficiente para liberar este pedido.';
+  end if;
+
+  v_fee := round(v_order.platform_commission_amount,2);
+  v_net := round(v_sale_tx.amount-v_fee,2);
+  if v_net<0 then raise exception 'Valor liquido negativo.'; end if;
+
+  update public.refugiart_wallets
+    set pending_balance=pending_balance-v_sale_tx.amount,
+        available_balance=available_balance+v_net,
+        updated_at=clock_timestamp()
+    where user_id=v_order.seller_id;
+
+  -- Preserva trilha: credito pendente original e marcado como revertido;
+  -- novos lancamentos representam liquido pago e comissao retida pela plataforma.
+  update public.refugiart_wallet_transactions
+    set status='reversed',description=coalesce(description,'')||' | Substituido pela liquidacao liquida do pedido '||p_order_id
+    where id=v_sale_tx.id and status='pending';
+
+  insert into public.refugiart_wallet_transactions(
+    user_id,transaction_type,direction,amount,status,idempotency_key,
+    related_user_id,related_post_id,related_auction_id,related_order_id,
+    description,confirmed_at
+  ) values (
+    v_order.seller_id,'sale','credit',v_net,'confirmed',
+    'seller-payout-net:'||p_order_id,
+    v_order.buyer_id,
+    (select post_id from public.refugiart_order_items where order_id=p_order_id order by id limit 1),
+    v_order.auction_id,p_order_id,
+    'Valor liquido liberado apos confirmacao de entrega',clock_timestamp()
+  );
+
+  if v_fee > 0 then
+    insert into public.refugiart_wallet_transactions(
+      user_id,transaction_type,direction,amount,status,idempotency_key,
+      related_user_id,related_post_id,related_auction_id,related_order_id,
+      description,confirmed_at
+    ) values (
+      v_order.seller_id,'fee','debit',v_fee,'confirmed',
+      'seller-platform-commission:'||p_order_id,
+      null,
+      (select post_id from public.refugiart_order_items where order_id=p_order_id order by id limit 1),
+      v_order.auction_id,p_order_id,
+      'Comissao RefugiART registrada no pedido',clock_timestamp()
+    );
+  end if;
+
+  update public.refugiart_orders set payout_released_at=clock_timestamp(),
+    payout_release_method=p_method where id=p_order_id;
+  insert into public.refugiart_delivery_events(order_id,actor_id,event_type,delivery_method,notes)
+    values(p_order_id,null,'payout_released',v_order.delivery_method,
+      'Liquidacao interna: liquido R$ '||v_net||'; comissao R$ '||v_fee);
+
+  return jsonb_build_object('success',true,'gross',v_sale_tx.amount,
+    'commission',v_fee,'seller_net',v_net,'released_at',clock_timestamp());
+end;
+$$;
+
 
 -- Registra o codigo apresentado pelo comprador ao artista. A confirmacao so
 -- libera saldo se nao houver disputa e se o credito pendente deste pedido existir.
@@ -236,103 +346,6 @@ $$;
 
 -- Funcao interna: move o bruto pendente para liquido disponivel, destacando
 -- a comissao como debito separado. Exige credito pendente ligado ao pedido.
-create or replace function public.refugiart_release_seller_payout(
-  p_order_id bigint,
-  p_method text
-) returns jsonb
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_order public.refugiart_orders%rowtype;
-  v_wallet public.refugiart_wallets%rowtype;
-  v_sale_tx public.refugiart_wallet_transactions%rowtype;
-  v_fee numeric(12,2);
-  v_net numeric(12,2);
-begin
-  if p_method not in ('buyer_confirmation','handover_code','admin_review') then
-    raise exception 'Metodo de liberacao invalido.';
-  end if;
-  select * into v_order from public.refugiart_orders
-    where id=p_order_id for update;
-  if not found then raise exception 'Pedido nao encontrado.'; end if;
-  if v_order.delivery_status<>'confirmed' or v_order.delivery_confirmed_at is null then
-    raise exception 'A entrega ainda nao foi confirmada.';
-  end if;
-  if v_order.payout_released_at is not null then
-    return jsonb_build_object('success',true,'already_released',true);
-  end if;
-  if exists(select 1 from public.refugiart_order_disputes
-    where order_id=p_order_id and status in ('open','under_review')) then
-    raise exception 'Existe disputa aberta; o saldo permanece bloqueado.';
-  end if;
-  if v_order.platform_commission_amount<0 or v_order.platform_commission_amount>v_order.subtotal then
-    raise exception 'Comissao do pedido inconsistente.';
-  end if;
-
-  select * into v_sale_tx from public.refugiart_wallet_transactions
-    where related_order_id=p_order_id and user_id=v_order.seller_id
-      and transaction_type='sale' and direction='credit' and status='pending'
-    order by id desc limit 1 for update;
-  if not found or v_sale_tx.amount<>v_order.subtotal then
-    raise exception 'Credito pendente do pedido ausente ou divergente; solicitar revisao administrativa.';
-  end if;
-
-  select * into v_wallet from public.refugiart_wallets
-    where user_id=v_order.seller_id for update;
-  if not found or v_wallet.pending_balance<v_sale_tx.amount then
-    raise exception 'Saldo pendente insuficiente para liberar este pedido.';
-  end if;
-
-  v_fee := round(v_order.platform_commission_amount,2);
-  v_net := round(v_sale_tx.amount-v_fee,2);
-  if v_net<0 then raise exception 'Valor liquido negativo.'; end if;
-
-  update public.refugiart_wallets
-    set pending_balance=pending_balance-v_sale_tx.amount,
-        available_balance=available_balance+v_net,
-        updated_at=clock_timestamp()
-    where user_id=v_order.seller_id;
-
-  -- Preserva trilha: credito pendente original e marcado como revertido;
-  -- novos lancamentos representam liquido pago e comissao retida pela plataforma.
-  update public.refugiart_wallet_transactions
-    set status='reversed',description=coalesce(description,'')||' | Substituido pela liquidacao liquida do pedido '||p_order_id
-    where id=v_sale_tx.id and status='pending';
-
-  insert into public.refugiart_wallet_transactions(
-    user_id,transaction_type,direction,amount,status,idempotency_key,
-    related_user_id,related_post_id,related_auction_id,related_order_id,
-    description,confirmed_at
-  ) values
-  (
-    v_order.seller_id,'sale','credit',v_net,'confirmed',
-    'seller-payout-net:'||p_order_id,
-    v_order.buyer_id,
-    (select post_id from public.refugiart_order_items where order_id=p_order_id order by id limit 1),
-    v_order.auction_id,p_order_id,
-    'Valor liquido liberado apos confirmacao de entrega',clock_timestamp()
-  ),
-  (
-    v_order.seller_id,'fee','debit',v_fee,'confirmed',
-    'seller-platform-commission:'||p_order_id,
-    null,
-    (select post_id from public.refugiart_order_items where order_id=p_order_id order by id limit 1),
-    v_order.auction_id,p_order_id,
-    'Comissao RefugiART registrada no pedido',clock_timestamp()
-  );
-
-  update public.refugiart_orders set payout_released_at=clock_timestamp(),
-    payout_release_method=p_method where id=p_order_id;
-  insert into public.refugiart_delivery_events(order_id,actor_id,event_type,delivery_method,notes)
-    values(p_order_id,null,'payout_released',v_order.delivery_method,
-      'Liquidacao interna: liquido R$ '||v_net||'; comissao R$ '||v_fee);
-
-  return jsonb_build_object('success',true,'gross',v_sale_tx.amount,
-    'commission',v_fee,'seller_net',v_net,'released_at',clock_timestamp());
-end;
-$$;
 
 -- Apenas RPCs autenticadas apropriadas ficam expostas. A liquidacao interna e
 -- reservada ao service_role e chamada pelas RPCs seguras acima.

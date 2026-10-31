@@ -29,7 +29,7 @@
     .saldo-card:after{content:"";position:absolute;width:210px;height:210px;border:1px solid #ffffff20;border-radius:50%;right:-55px;top:-90px;box-shadow:0 0 0 25px #ffffff08,0 0 0 52px #ffffff06}
     .saldo-legenda{font-size:13px;color:#d9e4dc}
     .saldo-valor{font-size:clamp(30px,5vw,43px);font-weight:800;letter-spacing:-1px;margin:12px 0 7px}
-    .saldo-nota{font-size:12px;color:#d2dfd5;max-width:440px;line-height:1.5}
+    .saldo-nota{font-size:12px;color:#d2dfd5;max-width:440px;line-height:1.5}.saldo-bloqueado-card{background:#fff;border:1px solid var(--carteira-borda);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:center;gap:8px}.saldo-bloqueado-card small{font-size:11px;letter-spacing:1px;font-weight:800;color:#78877a}.saldo-bloqueado-card strong{font-size:28px;color:#8a6532}.saldo-bloqueado-card p{margin:0;font-size:12px;color:#788078;line-height:1.5}
     .saldo-selo{display:inline-flex;margin-top:16px;padding:6px 10px;border:1px solid #ffffff45;border-radius:30px;font-size:11px}
     .atalhos-carteira{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .atalho{background:#fff;border:1px solid var(--carteira-borda);border-radius:16px;padding:20px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:18px;color:var(--carteira-texto);cursor:pointer;font:inherit;min-height:190px}
@@ -82,7 +82,7 @@
         <a href="carteira.html" class="ativo" title="Carteira"><span class="carteira-icone">▣</span><span class="carteira-link-texto">Carteira</span></a>
         <a href="sacola.html" title="Sacola"><span class="carteira-icone">🛍</span><span class="carteira-link-texto">Sacola</span></a>
         <a href="bazar.html" title="Bazar"><span class="carteira-icone">▧</span><span class="carteira-link-texto">Bazar</span></a>
-        <a href="mercado.html#leiloes" title="Leilões"><span class="carteira-icone">⚒</span><span class="carteira-link-texto">Leilões</span></a>
+        <a href="leiloes.html" title="Leilões"><span class="carteira-icone">⚒</span><span class="carteira-link-texto">Leilões</span></a>
         <div style="height:1px;background:#e1e7df;margin:10px 4px"></div>
         <a href="balao.html" title="Balão"><span class="carteira-icone">◉</span><span class="carteira-link-texto">Balão</span></a>
       </nav>
@@ -102,6 +102,7 @@
           <div class="saldo-nota">Seu saldo será atualizado após a confirmação das transações pela instituição de pagamento.</div>
           <span class="saldo-selo">◉ Carteira RefugiART</span>
         </div>
+        <div class="saldo-bloqueado-card"><small>SALDO BLOQUEADO / PENDENTE</small><strong id="saldoPendente">R$ 0,00</strong><p>Valores de vendas aguardando a confirmação da postagem da obra ou a conclusão de outras etapas de segurança.</p></div>
         <div class="atalhos-carteira">
           <button class="atalho" type="button" data-acao="saque">
             <span class="atalho-icone">↗</span>
@@ -188,6 +189,12 @@
     document.querySelectorAll("#filtrosHistorico button").forEach(botao=>botao.addEventListener("click",()=>{
       document.querySelectorAll("#filtrosHistorico button").forEach(b=>b.classList.toggle("ativo",b===botao));
     }));
+  </script>
+  <script type="module">
+    import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
+    const sb=createClient("https://nlqalpiksbqflzxzsgoa.supabase.co","sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
+    const fmt=v=>Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+    (async()=>{const {data:{user}}=await sb.auth.getUser();if(!user)return;const {data,error}=await sb.from("refugiart_wallets").select("available_balance,pending_balance").eq("user_id",user.id).maybeSingle();if(error){console.warn("Carteira indisponível:",error.message);return;}document.getElementById("saldoDisponivel").textContent=fmt(data?.available_balance);document.getElementById("saldoPendente").textContent=fmt(data?.pending_balance);})();
   </script>
   <script src="script.js"></script>
 </body>

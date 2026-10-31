@@ -79,3 +79,12 @@ Criada `20261030_009_platform_costs_and_promo_reserve.sql` para registrar custos
 ## Migration 010 — rateio exato do subsídio
 
 Criada `20261030_010_exact_group_shipping_subsidy.sql`. A função recebe a lista de pacotes e fretes, calcula o teto global de 20% da comissão e distribui os centavos residuais por maiores restos. O objetivo é evitar que arredondamentos independentes por artista excedam ou deixem saldo do orçamento de subsídio sem alocação. A execução real ainda precisa de homologação PostgreSQL.
+
+
+## Migration 012 — reservas em leilao sem vencedor
+
+A migration `20261030_012_release_no_winner_auction_reservations.sql` substitui o encerramento de leiloes para devolver todas as reservas ainda ativas quando nao houver lance vencedor. Cada devolucao exige saldo reservado suficiente, muda a reserva para `released` e grava uma transacao idempotente no historico. Se qualquer participante apresentar divergencia, a transacao completa e revertida e o leilao nao e marcado como encerrado.
+
+**Homologacao obrigatoria:** testar leilao sem lances; leilao com varios participantes e sem vencedor elegivel; reserva ativa com carteira consistente; reserva ativa com carteira inconsistente (espera-se rollback integral); execucao repetida apos encerramento (nao deve devolver duas vezes).
+
+A migration ainda nao foi executada no Supabase nem testada em PostgreSQL real.

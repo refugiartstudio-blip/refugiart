@@ -2,6 +2,12 @@
 -- Requer migrations 001, 003 e 004 aplicadas previamente.
 begin;
 
+-- O lance vencedor nao inclui frete automaticamente. Mantem o frete explicitamente
+-- pendente de cotacao, em vez de apresentar o valor zero como frete gratis.
+alter table public.refugiart_orders
+  add column if not exists shipping_status text not null default 'pending_quote'
+  check (shipping_status in ('pending_quote','quoted','paid','waived'));
+
 -- Permite rastrear cada movimento financeiro ate o pedido correspondente.
 alter table public.refugiart_wallet_transactions
   add column if not exists related_order_id bigint

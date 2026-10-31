@@ -124,6 +124,7 @@
           <div><h3 id="tituloHistorico">Histórico de transações</h3><p>Vendas, compras, depósitos, saques e taxas.</p></div>
           <div class="historico-filtros" id="filtrosHistorico">
             <button class="ativo" type="button" data-filtro="todas">Todas</button>
+            <button type="button" data-filtro="compras">Compras</button>
             <button type="button" data-filtro="vendas">Vendas</button>
             <button type="button" data-filtro="depositos">Depósitos</button>
             <button type="button" data-filtro="saques">Saques</button>
@@ -190,7 +191,7 @@
     document.querySelectorAll("#filtrosHistorico button").forEach(botao=>botao.addEventListener("click",()=>{
       document.querySelectorAll("#filtrosHistorico button").forEach(b=>b.classList.toggle("ativo",b===botao));
       const filtro=botao.dataset.filtro;
-      const tipos={vendas:"venda",depositos:"depósito",saques:"saque"};
+      const tipos={compras:"compra",vendas:"venda",depositos:"depósito",saques:"saque"};
       const tipoAlvo=tipos[filtro];
       const linhas=[...document.querySelectorAll("#historicoLista .transacao-item")];
       let visiveis=0;
@@ -207,7 +208,7 @@
         document.getElementById("historicoLista").append(aviso);
       }
       if(linhas.length&&visiveis===0){
-        const nomes={vendas:"vendas",depositos:"depósitos",saques:"saques"};
+        const nomes={compras:"compras",vendas:"vendas",depositos:"depósitos",saques:"saques"};
         aviso.innerHTML="<strong>Nenhuma movimentação encontrada</strong><p>Você ainda não possui "+(nomes[filtro]||"movimentações")+" nesta categoria.</p>";
         aviso.hidden=false;
       }else{

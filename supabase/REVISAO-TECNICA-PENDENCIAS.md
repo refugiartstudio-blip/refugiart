@@ -209,3 +209,26 @@ Achados:
 **Dependências:** escolher provedor que aceite marketplace, vendedores terceiros, KYC, split e Pix; decidir recebimento centralizado ou split; definir política de expiração e tratamento de carrinho com múltiplos artistas. Não presumir suporte do provedor.
 
 **Status:** auditoria estática concluída e documentada. Nenhuma cobrança foi criada e nenhum SQL foi executado. Checkout permanece desativado até implementação e homologação ponta a ponta.
+
+
+## Reserva transacional inicial do checkout — 31/10/2026
+
+Código criado: `migrations/20261031_014_checkout_item_reservations.sql`  
+Auditoria: `REVISAO-RESERVA-TRANSACIONAL-CHECKOUT.md`
+
+Implementado em código, ainda não executado:
+- Grupo de checkout por comprador com chave idempotente.
+- Reserva por obra com snapshots de vendedor, título e preço consultados do banco.
+- Lock das obras em ordem estável e índice único para impedir reserva/venda concorrente da mesma obra.
+- Prazo inicial de 15 minutos e expiração lazy na próxima tentativa de checkout.
+- RPC autenticada aceita somente IDs e chave de idempotência; subtotal calculado no banco.
+- RLS e revogação de escrita direta dos clientes.
+
+Limites:
+- Ainda não cria `refugiart_orders`, não calcula frete/comissão, não chama provedor, não confirma pagamento e não credita carteira.
+- Não existe rotina agendada para expirar reservas sem novas chamadas.
+- Falta função segura de cancelamento/liberação e transição para `consumed` após pagamento autenticado.
+- Histórico de reserva impede exclusão física da obra; será necessário arquivamento lógico.
+- Migration requer revisão e testes reais de PostgreSQL, concorrência, idempotência, RLS e grants antes de execução.
+
+**Status:** etapa de código/documentação criada no GitHub. Não executada no Supabase; checkout continua desativado.

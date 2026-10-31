@@ -2312,7 +2312,8 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
 .pagina-atelie .titulo-feed.janela-kraken-area .marca-janela-kraken{
   display:flex;
   width:100%;
-  min-height:128px;
+  height:150px;
+  min-height:150px;
   box-sizing:border-box;
   align-items:center;
   justify-content:center;

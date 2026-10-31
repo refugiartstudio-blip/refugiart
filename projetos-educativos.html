@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#243e35">
+  <title>Projetos educativos — RefugiART</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .pagina-institucional{width:min(100% - 28px,1000px);margin:28px auto 40px}
+    .hero-institucional{background:#fff;border:1px solid #dce8dc;border-radius:16px;padding:clamp(22px,5vw,36px);margin-bottom:22px}
+    .etiqueta-institucional{color:#557a63;font-size:11px;font-weight:bold;letter-spacing:1.5px}
+    .hero-institucional h2{color:#243e35;font-family:Georgia,serif;font-size:clamp(27px,5vw,38px);line-height:1.2;margin:10px 0}
+    .hero-institucional p{color:#626b62;line-height:1.8;margin-bottom:0}
+    .grade-institucional{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:15px}
+    .cartao-institucional-pagina{background:#fff;border:1px solid #dce8dc;border-radius:14px;padding:20px;box-shadow:0 4px 14px rgba(36,62,53,.05)}
+    .cartao-institucional-pagina .simbolo{font-size:27px;color:#557a63}
+    .cartao-institucional-pagina h3{color:#243e35;margin:8px 0}
+    .cartao-institucional-pagina p{color:#626b62;line-height:1.7;margin:0}
+    .aviso-institucional{margin-top:20px;padding:17px 18px;border-left:4px solid #d6a45d;background:#fff;border-radius:8px;color:#505a50;line-height:1.7}
+    @media(max-width:480px){.pagina-institucional{width:calc(100% - 20px);margin:18px auto 28px}}
+  </style>
+</head>
+<body>
+  <header class="cabecalho">
+    <img src="imagens/logo.png" alt="Símbolo da RefugiART" class="logo">
+    <div class="identidade"><h1>RefugiART</h1><p>A arte nos aproxima.</p></div>
+    <button class="botao-menu" id="abrirMenu" type="button" aria-label="Abrir menu" aria-controls="menuLateral" aria-expanded="false">☰</button>
+  </header>
+  <nav class="navegacao-principal" aria-label="Navegação principal">
+    <a href="index.html">Início</a>
+    <a href="mercado.html">Mercado</a>
+    <a href="comunidades.html">Comunidades</a>
+    <a href="galeria.html">Galeria</a>
+    <a href="login.html" id="linkLogin">Login</a>
+  </nav>
+  <main class="pagina-institucional">
+    <section class="hero-institucional">
+      <span class="etiqueta-institucional">ARTE, ENSINO E FORMAÇÃO</span>
+      <h2>Projetos educativos</h2>
+      <p>Conheça as iniciativas educativas da RefugiART: propostas que estimulam a criatividade, o pensamento visual, a experimentação e o acesso à formação artística.</p>
+    </section>
+    <section class="grade-institucional">
+  <article class="cartao-institucional-pagina"><span class="simbolo">✎</span><h3>Oficinas de artes</h3><p>Experiências práticas de desenho, pintura, aquarela, grafite e outras possibilidades de criação.</p></article>
+  <article class="cartao-institucional-pagina"><span class="simbolo">▤</span><h3>Cursos e materiais</h3><p>Conteúdos de aprendizagem, materiais didáticos e percursos formativos para diferentes níveis de experiência.</p></article>
+  <article class="cartao-institucional-pagina"><span class="simbolo">◎</span><h3>Projetos com escolas</h3><p>Propostas educativas em diálogo com estudantes, professores e instituições de ensino.</p></article>
+</section><div class="aviso-institucional"><strong>Novas turmas e atividades serão divulgadas aqui.</strong> A página reunirá informações sobre conteúdos, público participante, inscrições, locais e certificados quando disponíveis.</div>
+  </main>
+  <footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
+  <div class="fundo-menu" id="fundoMenu"></div>
+  <aside class="menu-lateral" id="menuLateral" role="dialog" aria-modal="true" aria-labelledby="tituloMenu" aria-hidden="true" inert>
+    <div class="cabecalho-menu">
+      <div><h2 id="tituloMenu">RefugiART</h2><p>Explore nossas iniciativas</p></div>
+      <button class="botao-fechar" id="fecharMenu" type="button" aria-label="Fechar menu">×</button>
+    </div>
+    <div class="introducao-menu"><span>✦</span><div><h3>Conheça nosso universo</h3><p>Arte, cultura e transformação social.</p></div></div>
+    <nav class="opcoes-menu" aria-label="Áreas da RefugiART">
+      <a href="revista.html" class="item-menu"><span class="icone-menu">▤</span><span class="texto-menu"><strong>Revista RefugiART</strong><small>Publicações e entrevistas</small></span><span class="seta-menu">›</span></a>
+      <a href="eventos.html" class="item-menu"><span class="icone-menu">▦</span><span class="texto-menu"><strong>Eventos</strong><small>Encontros e programações</small></span><span class="seta-menu">›</span></a>
+      <a href="exposicoes.html" class="item-menu"><span class="icone-menu">▧</span><span class="texto-menu"><strong>Exposições</strong><small>Mostras e trabalhos artísticos</small></span><span class="seta-menu">›</span></a>
+      <a href="palestras.html" class="item-menu"><span class="icone-menu">◉</span><span class="texto-menu"><strong>Palestras e encontros</strong><small>Ideias e experiências</small></span><span class="seta-menu">›</span></a>
+      <a href="acoes-sociais.html" class="item-menu"><span class="icone-menu">♡</span><span class="texto-menu"><strong>Ações sociais</strong><small>Arte junto à comunidade</small></span><span class="seta-menu">›</span></a>
+      <a href="projetos-educativos.html" class="item-menu"><span class="icone-menu">✎</span><span class="texto-menu"><strong>Projetos educativos</strong><small>Oficinas, cursos e formação</small></span><span class="seta-menu">›</span></a>
+      <a href="perfil.html" class="item-menu"><span class="icone-menu">♙</span><span class="texto-menu"><strong>Meu perfil</strong><small>Editar meus dados e informações</small></span><span class="seta-menu">›</span></a>
+    </nav>
+    <div class="rodape-menu"><p>RefugiART — Criar é Sentir.</p></div>
+  </aside>
+  <script>
+    const abrirMenu=document.getElementById("abrirMenu");
+    const fecharMenu=document.getElementById("fecharMenu");
+    const menu=document.getElementById("menuLateral");
+    const fundo=document.getElementById("fundoMenu");
+    function abrirPainel(){menu.inert=false;menu.setAttribute("aria-hidden","false");menu.classList.add("menu-aberto");fundo.classList.add("fundo-visivel");document.body.classList.add("menu-bloqueio");abrirMenu.setAttribute("aria-expanded","true");fecharMenu.focus();}
+    function fecharPainel(){menu.classList.remove("menu-aberto");fundo.classList.remove("fundo-visivel");document.body.classList.remove("menu-bloqueio");menu.setAttribute("aria-hidden","true");menu.inert=true;abrirMenu.setAttribute("aria-expanded","false");abrirMenu.focus();}
+    abrirMenu.addEventListener("click",abrirPainel);fecharMenu.addEventListener("click",fecharPainel);fundo.addEventListener("click",fecharPainel);
+    document.addEventListener("keydown",e=>{if(e.key==="Escape"&&menu.classList.contains("menu-aberto"))fecharPainel();});
+  </script>
+</body>
+</html>

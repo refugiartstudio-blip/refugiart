@@ -189,6 +189,30 @@
     // O envio do depósito é tratado no módulo Supabase, que possui a sessão autenticada.
     document.querySelectorAll("#filtrosHistorico button").forEach(botao=>botao.addEventListener("click",()=>{
       document.querySelectorAll("#filtrosHistorico button").forEach(b=>b.classList.toggle("ativo",b===botao));
+      const filtro=botao.dataset.filtro;
+      const tipos={vendas:"venda",depositos:"depósito",saques:"saque"};
+      const tipoAlvo=tipos[filtro];
+      const linhas=[...document.querySelectorAll("#historicoLista .transacao-item")];
+      let visiveis=0;
+      linhas.forEach(linha=>{
+        const mostrar=filtro==="todas"||linha.dataset.tipo===tipoAlvo;
+        linha.hidden=!mostrar;
+        if(mostrar)visiveis++;
+      });
+      let aviso=document.getElementById("historicoFiltroVazio");
+      if(!aviso){
+        aviso=document.createElement("div");
+        aviso.id="historicoFiltroVazio";
+        aviso.className="historico-vazio";
+        document.getElementById("historicoLista").append(aviso);
+      }
+      if(linhas.length&&visiveis===0){
+        const nomes={vendas:"vendas",depositos:"depósitos",saques:"saques"};
+        aviso.innerHTML="<strong>Nenhuma movimentação encontrada</strong><p>Você ainda não possui "+(nomes[filtro]||"movimentações")+" nesta categoria.</p>";
+        aviso.hidden=false;
+      }else{
+        aviso.hidden=true;
+      }
     }));
   </script>
   <script type="module">

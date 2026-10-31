@@ -850,3 +850,78 @@ body:has(#conteudoGaleria) > header.cabecalho .botao-menu {
   border-radius: 50%;
   overflow: hidden;
 }
+
+/* MENU LATERAL SOBREPOSTO — mesmo comportamento do Mercado */
+.galeria-layout {
+  position: relative;
+  display: block !important;
+  width: 100%;
+  min-width: 0;
+  padding: 0 18px;
+  box-sizing: border-box;
+}
+
+.galeria-layout > .coluna-galeria {
+  position: absolute;
+  left: 18px;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
+  flex: none;
+  padding: 12px 5px;
+  overflow: hidden;
+  transition: width 0.25s ease, max-width 0.25s ease;
+  z-index: 20;
+}
+
+.galeria-layout > .coluna-galeria.expandida {
+  width: 190px;
+  min-width: 190px;
+  max-width: 190px;
+  flex: none;
+  padding: 14px 10px;
+  box-shadow: 0 8px 24px rgba(20, 40, 28, 0.14);
+}
+
+.galeria-layout > #conteudoGaleria,
+.galeria-layout > .pagina-galeria {
+  width: calc(100% - 64px);
+  min-width: 0;
+  max-width: none;
+  margin: 24px 0 54px 64px;
+  padding: 0 18px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .galeria-layout {
+    padding: 0 8px;
+  }
+
+  .galeria-layout > .coluna-galeria {
+    left: 8px;
+    width: 48px;
+    min-width: 48px;
+    max-width: 48px;
+    padding: 10px 4px;
+  }
+
+  .galeria-layout > .coluna-galeria.expandida {
+    width: 165px;
+    min-width: 165px;
+    max-width: 165px;
+    padding: 12px 8px;
+  }
+
+  .galeria-layout > #conteudoGaleria,
+  .galeria-layout > .pagina-galeria {
+    width: calc(100% - 56px);
+    margin: 15px 0 40px 56px;
+    padding: 0 10px;
+  }
+}
+

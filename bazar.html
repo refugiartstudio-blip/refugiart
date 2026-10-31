@@ -171,7 +171,7 @@
       let perfis=[];
       if(ids.length){const resposta=await supabase.from("profiles").select("id,nome_artistico").in("id",ids);perfis=resposta.data||[];}
       const nomes=new Map(perfis.map(p=>[p.id,p.nome_artistico||"Artista RefugiART"]));
-      obras=(data||[]).map(o=>({...o,artista:nomes.get(o.user_id)||"Artista RefugiART"}));
+      obras=(data||[]).filter(o=>o.listing_mode!=="auction"||["collecting","active"].includes(o.auction_status)).map(o=>({...o,artista:nomes.get(o.user_id)||"Artista RefugiART"}));
       filtrar();
       atualizarCronometros();
     }

@@ -377,7 +377,7 @@ returns integer
 language plpgsql
 security definer
 set search_path = public
-as $
+as $$
 declare
   item record;
   total_closed integer := 0;
@@ -403,7 +403,7 @@ begin
   end loop;
   return total_closed;
 end;
-$;
+$$;
 revoke all on function public.refugiart_close_expired_auctions() from public, anon, authenticated;
 grant execute on function public.refugiart_close_expired_auctions() to service_role;
 

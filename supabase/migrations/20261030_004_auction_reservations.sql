@@ -74,10 +74,14 @@ begin
   if not found then raise exception 'Carteira nao encontrada.'; end if;
 
   select * into v_old_reservation from public.refugiart_auction_reservations
-    where auction_id=p_auction_id and user_id=v_user and status='active'
+    where auction_id=p_auction_id and user_id=v_user
     for update;
 
-  v_delta := p_amount-coalesce(v_old_reservation.amount,0);
+  if found and v_old_reservation.status='active' then
+    v_delta := p_amount-v_old_reservation.amount;
+  else
+    v_delta := p_amount;
+  end if;
   if v_delta > v_wallet.available_balance then
     raise exception 'Saldo disponivel insuficiente para cobrir o lance.';
   end if;
@@ -91,9 +95,9 @@ begin
   insert into public.refugiart_auction_bids(auction_id,user_id,amount)
     values(p_auction_id,v_user,p_amount) returning id into v_bid_id;
 
-  if found and v_old_reservation.id is not null then
+  if v_old_reservation.id is not null then
     update public.refugiart_auction_reservations
-      set amount=p_amount,bid_id=v_bid_id,updated_at=now()
+      set amount=p_amount,bid_id=v_bid_id,status='active',updated_at=now()
       where id=v_old_reservation.id returning id into v_reservation_id;
   else
     insert into public.refugiart_auction_reservations(auction_id,user_id,bid_id,amount,status)
@@ -173,7 +177,7 @@ begin
 
       update public.refugiart_wallets
         set reserved_balance=reserved_balance-v_winner.amount,
-            pending_balance=pending_balance+a.initial_price*0+v_winner.amount,
+            pending_balance=pending_balance+v_winner.amount,
             updated_at=now()
         where user_id=a.artist_id;
       update public.refugiart_wallets
@@ -189,22 +193,22 @@ begin
         related_user_id,related_post_id,related_auction_id,description,confirmed_at
       ) values
       (v_winner.user_id,'purchase','debit',v_winner.amount,'confirmed',
-       'auction-capture-buyer:'||a.id,v_auction_artist_placeholder(a.id),a.post_id,a.id,
+       'auction-capture-buyer:'||a.id,a.artist_id,a.post_id,a.id,
        'Valor capturado do vencedor do leilao',now()),
       (a.artist_id,'sale','credit',v_winner.amount,'pending',
        'auction-capture-seller:'||a.id,v_winner.user_id,a.post_id,a.id,
        'Venda em leilao aguardando regras de entrega e liberacao',null);
 
-      update public.refugiart_auction_reservations
-        set status='released',updated_at=now()
-        where auction_id=a.id and status='active' and user_id<>v_winner.user_id;
       update public.refugiart_wallets w
         set available_balance=available_balance+r.amount,
             reserved_balance=reserved_balance-r.amount,
             updated_at=now()
         from public.refugiart_auction_reservations r
         where r.auction_id=a.id and r.user_id=w.user_id
-          and r.status='released' and r.user_id<>v_winner.user_id;
+          and r.status='active' and r.user_id<>v_winner.user_id;
+      update public.refugiart_auction_reservations
+        set status='released',updated_at=now()
+        where auction_id=a.id and status='active' and user_id<>v_winner.user_id;
       insert into public.refugiart_wallet_transactions(
         user_id,transaction_type,direction,amount,status,idempotency_key,
         related_post_id,related_auction_id,description,confirmed_at

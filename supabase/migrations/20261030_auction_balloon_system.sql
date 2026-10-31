@@ -3,6 +3,8 @@
 begin;
 
 alter table public.atelie_posts
+  add column if not exists moderation_status text not null default 'published'
+    check (moderation_status in ('published','under_review','removed')),
   add column if not exists listing_mode text not null default 'community'
     check (listing_mode in ('community','market','auction')),
   add column if not exists auction_status text not null default 'none'
@@ -135,6 +137,9 @@ begin
     where id::text = p_post_id
     for update;
   if not found then raise exception 'Obra não encontrada.'; end if;
+  if coalesce(v_post.moderation_status,'published') <> 'published' then
+    raise exception 'Esta obra está temporariamente indisponível para manifestações.';
+  end if;
   if v_post.user_id = v_user then raise exception 'Você não pode dar balão na própria obra.'; end if;
 
   if v_post.listing_mode = 'auction' then
@@ -235,6 +240,9 @@ begin
     for update;
   if not found or v_post.user_id <> auth.uid() then
     raise exception 'Somente o artista pode aprovar este leilão.';
+  end if;
+  if coalesce(v_post.moderation_status,'published') <> 'published' then
+    raise exception 'Esta obra está indisponível para aprovação de leilão.';
   end if;
   if v_post.listing_mode <> 'community'
      or v_post.publicar_comunidade is not true

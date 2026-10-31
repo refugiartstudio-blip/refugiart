@@ -88,7 +88,14 @@ alter table public.refugiart_auction_bids enable row level security;
 
 grant select on public.refugiart_wallets to authenticated;
 grant select on public.refugiart_auction_interests to authenticated;
-grant select on public.refugiart_auctions to anon, authenticated;
+
+-- Expõe apenas os campos necessários para a vitrine pública.
+-- artist_id permanece disponível somente para as funções SECURITY DEFINER.
+revoke select on public.refugiart_auctions from anon, authenticated;
+grant select (id, post_id, status, initial_price, starts_at, ends_at, winning_user_id, winning_bid, closed_at, created_at)
+  on public.refugiart_auctions to anon, authenticated;
+
+-- Lances só podem ser consultados pelo próprio participante via RLS.
 grant select on public.refugiart_auction_bids to authenticated;
 
 drop policy if exists "wallet_owner_read" on public.refugiart_wallets;

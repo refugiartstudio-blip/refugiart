@@ -113,3 +113,14 @@ A ordem deve ser confirmada contra o estado real do projeto antes de executar. O
 7. Conferir que o resultado mensal é identificado como resultado de contribuição antes de custos não registrados, e não como lucro líquido.
 8. Testar usuário anon, authenticated e service_role: somente service_role pode consultar a visão gerencial ou lançar custos.
 9. Conciliar comissão, despesas e saldos com pedidos e extratos de pagamento em ambiente de homologação.
+
+
+## Migration 010 — rateio de centavos do frete
+
+1. Um pacote: subsídio igual ao limite global ou ao frete, o que for menor.
+2. Três pacotes com fretes R$ 30,00, R$ 50,00 e R$ 70,00; comissão total R$ 80,00: subsídio total R$ 16,00 e soma das parcelas deve ser exatamente R$ 16,00.
+3. Frete total inferior ao teto: subsídio não pode superar o frete real.
+4. Frete zero: subsídio e frete do comprador devem ser zero.
+5. Carrinho abaixo/acima de R$ 300: elegibilidade deve refletir o subtotal, sem alterar o teto financeiro.
+6. Pacotes com identificador repetido, campo ausente, frete negativo ou formato inválido devem ser rejeitados.
+7. Conferir que nenhum pacote recebe subsídio maior que seu frete e que a soma do frete pago pelo comprador + subsídio é igual ao frete cotado total.

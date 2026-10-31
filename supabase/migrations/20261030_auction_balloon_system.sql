@@ -65,16 +65,18 @@ create policy "wallet_owner_read" on public.refugiart_wallets
   for select to authenticated using (auth.uid() = user_id);
 
 drop policy if exists "interest_public_read" on public.refugiart_auction_interests;
-create policy "interest_public_read" on public.refugiart_auction_interests
-  for select to anon, authenticated using (true);
+drop policy if exists "interest_owner_read" on public.refugiart_auction_interests;
+create policy "interest_owner_read" on public.refugiart_auction_interests
+  for select to authenticated using (auth.uid() = user_id);
 
 drop policy if exists "auctions_public_read" on public.refugiart_auctions;
 create policy "auctions_public_read" on public.refugiart_auctions
   for select to anon, authenticated using (true);
 
 drop policy if exists "bids_public_read" on public.refugiart_auction_bids;
-create policy "bids_public_read" on public.refugiart_auction_bids
-  for select to anon, authenticated using (true);
+drop policy if exists "bids_participant_read" on public.refugiart_auction_bids;
+create policy "bids_participant_read" on public.refugiart_auction_bids
+  for select to authenticated using (auth.uid() = user_id);
 
 -- O cliente não pode inserir balões ou lances diretamente: somente pelas RPCs.
 revoke insert, update, delete on public.refugiart_auction_interests from anon, authenticated;
@@ -190,6 +192,7 @@ begin
     from public.refugiart_auction_bids where auction_id=p_auction_id;
   if p_amount <= v_highest then raise exception 'O lance precisa superar a oferta atual.'; end if;
   insert into public.refugiart_auction_bids(auction_id,user_id,amount) values(p_auction_id,auth.uid(),p_amount);
+  update public.refugiart_auctions set winning_user_id=auth.uid(),winning_bid=p_amount where id=p_auction_id;
   return jsonb_build_object('accepted',true,'amount',p_amount,'created_at',now());
 end;
 $$;

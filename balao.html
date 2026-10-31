@@ -80,7 +80,7 @@ async function carregarBaloes(){
  const {data:obras,error}=await supabase.from("atelie_posts")
   .select("id,user_id,image_url,caption,category,created_at,auction_balloon_count")
   .eq("publicar_comunidade",true).eq("publicar_mercado",false)
-  .eq("listing_mode","community").eq("moderation_status","published")
+  .eq("listing_mode","community").eq("removida_do_portfolio",false).eq("moderation_status","published")
   .gt("auction_balloon_count",0).order("auction_balloon_count",{ascending:false}).order("created_at",{ascending:false});
  if(error){estado("Não foi possível carregar as obras neste momento.");return;}
  if(!obras?.length){estado("Ainda não há obras com balões por aqui. Quando uma publicação da comunidade receber balões, ela aparecerá neste espaço.");return;}

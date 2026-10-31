@@ -381,7 +381,8 @@
       document.querySelectorAll("#categorias-mercado .categoria-mercado").forEach(item=>item.classList.toggle("selecionada",item===botao));
       document.querySelectorAll("#lista-obras-mercado .cartao-obra").forEach(card=>{card.hidden=card.dataset.categoria!==categoriaSelecionada;});
     });
-    setInterval(()=>{document.querySelectorAll("[data-ends]").forEach(el=>{const ms=new Date(el.dataset.ends).getTime()-Date.now();if(ms<=0){el.textContent="⏱ Leilão encerrado";return;}const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000);el.textContent="⏱ "+[h,m,s].map(n=>String(n).padStart(2,"0")).join(":");});},1000);\n    carregarMercado();
+    setInterval(()=>{document.querySelectorAll("[data-ends]").forEach(el=>{const ms=new Date(el.dataset.ends).getTime()-Date.now();if(ms<=0){el.textContent="⏱ Leilão encerrado";return;}const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000);el.textContent="⏱ "+[h,m,s].map(n=>String(n).padStart(2,"0")).join(":");});},1000);
+    carregarMercado();
   </script>
 
 

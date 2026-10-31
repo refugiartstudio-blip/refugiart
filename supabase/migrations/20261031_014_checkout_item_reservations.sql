@@ -107,6 +107,11 @@ begin
     raise exception 'A sacola contém obras repetidas.';
   end if;
 
+  -- Serializa tentativas com a mesma chave para evitar grupos duplicados em corrida.
+  perform pg_advisory_xact_lock(
+    hashtextextended(v_buyer::text || ':' || p_idempotency_key::text,0)
+  );
+
   -- Repetição da mesma requisição devolve o mesmo grupo, sem duplicar reservas.
   select * into v_group
   from public.refugiart_checkout_groups

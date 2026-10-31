@@ -64,3 +64,12 @@ Como o carrinho ultrapassa R$ 300, fica marcado como elegível à campanha. A ca
 - Taxas de gateway, tributos, chargebacks, reembolsos, atendimento e custos operacionais devem ser medidos separadamente antes de tratar a comissao como lucro.
 - O saldo do artista fica pendente ate confirmacao valida de entrega; na liberacao, o artista recebe o liquido apos comissao, e a comissao e registrada em livro-razao proprio da plataforma.
 - Nenhuma cotacao, desconto, comissao ou liberacao financeira pode ser confiada a valores enviados pelo navegador. O backend deve recalcular e validar.
+
+
+## Controle de custos e reserva promocional — migration 009
+
+A migration `20261030_009_platform_costs_and_promo_reserve.sql` adiciona um livro de despesas da plataforma separado do livro de comissões. Categorias registráveis: taxa de gateway, tributos, subsídio de frete, reembolso, chargeback e despesas operacionais. Também cria uma reserva promocional financiada: aportes são registrados como `promo_funding` e gastos como `promo_spend`; um gasto promocional é recusado quando supera o saldo previamente aportado.
+
+A visão gerencial mensal apresenta comissão bruta, categorias de custo e resultado de contribuição antes de custos não registrados. Esse resultado não é lucro líquido contábil ou fiscal. A comissão só aparece quando registrada no livro da plataforma; despesas precisam ser lançadas pelo backend com chave idempotente. A reserva promocional não é receita nem lucro.
+
+**Regra:** não oferecer subsídio adicional acima dos 20% ordinários da comissão sem saldo promocional real e previamente financiado. O custo do benefício deve ser registrado no livro de despesas.

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#243e35">
+<title>Balões da Comunidade | RefugiART</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:#f4f1e9}
+.pagina-baloes{max-width:1120px;margin:28px auto 50px;padding:0 18px}
+.topo-baloes{display:flex;align-items:center;gap:13px;margin-bottom:20px}
+.voltar-mercado{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;flex:0 0 38px;border-radius:50%;background:#e5ece4;color:#243e35;text-decoration:none;font-size:1.35rem;font-weight:800}
+.topo-baloes h1{margin:0;color:#243e35;font-size:1.55rem}
+.topo-baloes p{margin:4px 0 0;color:#6c766d;font-size:.9rem;line-height:1.45}
+.destaque-baloes{display:flex;align-items:center;gap:14px;padding:17px 18px;margin-bottom:22px;border:1px solid #e4e7dc;border-radius:15px;background:linear-gradient(120deg,#fff 0%,#f0f3e9 100%)}
+.icone-destaque{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border-radius:14px;background:#e8eee5;font-size:1.7rem}
+.destaque-baloes strong{display:block;color:#243e35;font-size:.98rem}
+.destaque-baloes span{display:block;margin-top:3px;color:#687168;font-size:.84rem;line-height:1.45}
+.grade-baloes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.cartao-balao{overflow:hidden;background:#fff;border:1px solid #e2e3d9;border-radius:14px;box-shadow:0 4px 15px #243e350d}
+.imagem-balao{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#e7e9df}
+.info-balao{padding:12px 13px}
+.autor-balao{display:flex;align-items:center;gap:8px;margin-bottom:9px;color:#243e35;font-size:.86rem;font-weight:700}
+.autor-balao img{width:31px;height:31px;border-radius:50%;object-fit:cover}
+.legenda-balao{margin:0;color:#59645b;font-size:.86rem;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.rodape-balao{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #edf0e9}
+.contagem-balao{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:20px;background:#fff3df;color:#81551b;font-size:.8rem;font-weight:800;white-space:nowrap}
+.link-atelie-balao{color:#243e35;text-decoration:none;font-size:.8rem;font-weight:800}
+.data-balao{margin-top:9px;color:#899087;font-size:.72rem}
+.estado-baloes{grid-column:1/-1;padding:34px 18px;text-align:center;color:#687168;background:#fff;border:1px solid #e2e3d9;border-radius:14px;line-height:1.5}
+@media(max-width:520px){.pagina-baloes{margin-top:18px;padding:0 12px}.grade-baloes{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.info-balao{padding:9px}.autor-balao{font-size:.76rem}.autor-balao img{width:26px;height:26px}.legenda-balao{font-size:.78rem}.rodape-balao{align-items:flex-start;flex-direction:column}.link-atelie-balao{font-size:.76rem}.destaque-baloes{padding:13px;gap:10px}.topo-baloes h1{font-size:1.3rem}}
+</style>
+</head>
+<body>
+<header class="cabecalho">
+<img src="imagens/logo.png" alt="Símbolo da RefugiART" class="logo">
+<div class="identidade"><h1>RefugiART</h1><p>A arte nos aproxima.</p></div>
+<button class="botao-menu" id="abrirMenu" type="button" aria-label="Abrir menu" aria-controls="menuLateral" aria-expanded="false">☰</button>
+</header>
+<nav class="navegacao-principal" aria-label="Navegação principal">
+<a href="inicio.html">Início</a><a href="mercado.html">Mercado</a><a href="comunidades.html">Comunidades</a><a href="galeria.html">Galeria</a><a id="linkLogin" href="login.html">Login</a>
+</nav>
+<main class="pagina-baloes">
+<header class="topo-baloes">
+<a class="voltar-mercado" href="mercado.html" aria-label="Voltar ao Mercado">←</a>
+<div><h1>Balões da Comunidade</h1><p>Obras que despertaram interesse e reconhecimento.</p></div>
+</header>
+<section class="destaque-baloes">
+<div class="icone-destaque">🎈</div>
+<div><strong>Um espaço para valorizar quem cria</strong><span>Aqui aparecem publicações da comunidade que receberam balões, mas não estão anunciadas para venda nem em leilão.</span></div>
+</section>
+<section id="lista-baloes" class="grade-baloes" aria-live="polite">
+<p class="estado-baloes">Carregando obras...</p>
+</section>
+</main>
+<footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
+<div class="fundo-menu" id="fundoMenu"></div>
+<aside class="menu-lateral" id="menuLateral" role="dialog" aria-modal="true" aria-labelledby="tituloMenu" aria-hidden="true" inert>
+<div class="cabecalho-menu"><div><h2 id="tituloMenu">RefugiART</h2><p>Explore nossas iniciativas</p></div><button class="botao-fechar" id="fecharMenu" type="button" aria-label="Fechar menu">×</button></div>
+<div class="introducao-menu"><span>✦</span><div><h3>Conheça nosso universo</h3><p>Arte, cultura e transformação social.</p></div></div>
+<nav class="opcoes-menu" aria-label="Áreas da RefugiART">
+<a href="revista.html" class="item-menu"><span class="icone-menu">▤</span><span class="texto-menu"><strong>Revista RefugiART</strong><small>Publicações e entrevistas</small></span><span class="seta-menu">›</span></a>
+<a href="eventos.html" class="item-menu"><span class="icone-menu">▦</span><span class="texto-menu"><strong>Eventos</strong><small>Encontros e programações</small></span><span class="seta-menu">›</span></a>
+<a href="exposicoes.html" class="item-menu"><span class="icone-menu">▧</span><span class="texto-menu"><strong>Exposições</strong><small>Mostras e trabalhos artísticos</small></span><span class="seta-menu">›</span></a>
+<a href="palestras.html" class="item-menu"><span class="icone-menu">◉</span><span class="texto-menu"><strong>Palestras e encontros</strong><small>Ideias e experiências</small></span><span class="seta-menu">›</span></a>
+<a href="acoes-sociais.html" class="item-menu"><span class="icone-menu">♡</span><span class="texto-menu"><strong>Ações sociais</strong><small>Arte junto à comunidade</small></span><span class="seta-menu">›</span></a>
+<a href="projetos-educativos.html" class="item-menu"><span class="icone-menu">✎</span><span class="texto-menu"><strong>Projetos educativos</strong><small>Oficinas, cursos e formação</small></span><span class="seta-menu">›</span></a>
+<a href="perfil.html" class="item-menu"><span class="icone-menu">♙</span><span class="texto-menu"><strong>Meu perfil</strong><small>Editar meus dados e informações</small></span><span class="seta-menu">›</span></a>
+</nav><div class="rodape-menu"><p>RefugiART — Criar é Sentir.</p></div>
+</aside>
+<script src="script.js"></script>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const supabase=createClient("https://nlqalpiksbqflzxzsgoa.supabase.co","sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
+const lista=document.getElementById("lista-baloes");
+const el=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;};
+function estado(msg){lista.replaceChildren(el("p","estado-baloes",msg));}
+async function carregarBaloes(){
+ const {data:obras,error}=await supabase.from("atelie_posts")
+  .select("id,user_id,image_url,caption,category,created_at,auction_balloon_count")
+  .eq("publicar_comunidade",true).eq("publicar_mercado",false)
+  .eq("listing_mode","community").eq("moderation_status","published")
+  .gt("auction_balloon_count",0).order("auction_balloon_count",{ascending:false}).order("created_at",{ascending:false});
+ if(error){estado("Não foi possível carregar as obras neste momento.");return;}
+ if(!obras?.length){estado("Ainda não há obras com balões por aqui. Quando uma publicação da comunidade receber balões, ela aparecerá neste espaço.");return;}
+ const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];
+ let perfis=[];
+ if(ids.length){const r=await supabase.from("profiles").select("id,nome_artistico,foto_url").in("id",ids);perfis=r.data||[];}
+ const mapa=new Map(perfis.map(p=>[p.id,p]));
+ lista.replaceChildren();
+ obras.forEach(obra=>{
+  const perfil=mapa.get(obra.user_id),card=el("article","cartao-balao"),img=el("img","imagem-balao");
+  img.src=obra.image_url;img.alt="Obra da comunidade";img.loading="lazy";card.append(img);
+  const info=el("div","info-balao"),autor=el("div","autor-balao");
+  if(perfil?.foto_url){const avatar=el("img");avatar.src=perfil.foto_url;avatar.alt="";autor.append(avatar);}
+  autor.append(el("span","",perfil?.nome_artistico||"Artista RefugiART"));info.append(autor);
+  if(obra.caption)info.append(el("p","legenda-balao",obra.caption));
+  const rodape=el("div","rodape-balao");
+  rodape.append(el("span","contagem-balao","🎈 "+Number(obra.auction_balloon_count||0)+" balão(ões)"));
+  const link=el("a","link-atelie-balao","Conhecer artista →");link.href="atelie.html?id="+encodeURIComponent(obra.user_id);rodape.append(link);info.append(rodape);
+  if(obra.created_at)info.append(el("div","data-balao",new Date(obra.created_at).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"})));
+  card.append(info);lista.append(card);
+ });
+}
+carregarBaloes();
+</script>
+<script>
+const abrirMenu=document.getElementById("abrirMenu"),fecharMenu=document.getElementById("fecharMenu"),menuLateral=document.getElementById("menuLateral"),fundoMenu=document.getElementById("fundoMenu");
+function abrirPainel(){menuLateral.inert=false;menuLateral.setAttribute("aria-hidden","false");menuLateral.classList.add("menu-aberto");fundoMenu.classList.add("fundo-visivel");document.body.classList.add("menu-bloqueio");abrirMenu.setAttribute("aria-expanded","true");fecharMenu.focus();}
+function fecharPainel(){menuLateral.classList.remove("menu-aberto");fundoMenu.classList.remove("fundo-visivel");document.body.classList.remove("menu-bloqueio");abrirMenu.setAttribute("aria-expanded","false");menuLateral.setAttribute("aria-hidden","true");menuLateral.inert=true;abrirMenu.focus();}
+abrirMenu.addEventListener("click",abrirPainel);fecharMenu.addEventListener("click",fecharPainel);fundoMenu.addEventListener("click",fecharPainel);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&menuLateral.classList.contains("menu-aberto"))fecharPainel();});
+</script>
+</body>
+</html>

@@ -22,8 +22,8 @@
     .carteira-principal{width:calc(100% - 56px);min-width:0;margin-left:56px}
     .carteira-intro{margin:0 0 22px}
     .carteira-intro small{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#78877a}
-    .carteira-intro h2{font:clamp(27px,4vw,38px) Georgia,serif;color:var(--carteira-verde);margin:7px 0}
-    .carteira-intro p{margin:0;color:#6d786f;max-width:680px;line-height:1.6}
+    .carteira-intro h2{font:clamp(27px,4vw,38px) Georgia,serif;color:var(--carteira-verde);margin:3px 0 4px}
+    .carteira-intro p{margin:0;color:#6d786f;max-width:560px;font-size:12px;line-height:1.35}
     .carteira-resumo{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(230px,1fr);gap:16px;margin-bottom:18px}
     .saldo-card{position:relative;overflow:hidden;background:linear-gradient(125deg,#243e35,#365d4b);color:white;border-radius:18px;padding:clamp(22px,4vw,34px);min-height:190px;box-sizing:border-box}
     .saldo-card:after{content:"";position:absolute;width:210px;height:210px;border:1px solid #ffffff20;border-radius:50%;right:-55px;top:-90px;box-shadow:0 0 0 25px #ffffff08,0 0 0 52px #ffffff06}
@@ -47,7 +47,7 @@
     .historico-filtros button{border:1px solid var(--carteira-borda);background:#fff;border-radius:30px;padding:7px 11px;color:#526056;font-size:12px;cursor:pointer}
     .historico-filtros button.ativo{background:var(--carteira-verde);border-color:var(--carteira-verde);color:#fff}
     .historico-vazio{text-align:center;padding:48px 20px;color:#7a857c}.lista-transacoes{display:flex;flex-direction:column}.transacao-item{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;border-bottom:1px solid var(--carteira-borda)}.transacao-item:last-child{border-bottom:0}.transacao-info{display:flex;flex-direction:column;gap:5px;min-width:0}.transacao-info strong{font-size:14px;color:var(--carteira-texto)}.transacao-info small{font-size:11px;color:#788078;line-height:1.4}.transacao-valor{white-space:nowrap;color:var(--carteira-verde);font-size:15px}.transacao-item[hidden]{display:none!important}
-    .codigos-entrega-topo{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.codigo-topo-card{display:flex;flex-direction:column;gap:5px;min-width:min(100%,220px);padding:12px 15px;background:#fff;border:1px solid #dce7dc;border-left:4px solid #365d4b;border-radius:10px;box-shadow:0 2px 8px rgba(20,40,28,.05)}.codigo-topo-card small{font-size:11px;color:#6d786f;letter-spacing:0}.codigo-topo-card strong{font-size:20px;letter-spacing:2px;color:#243e35}.codigo-topo-card span{font-size:11px;color:#657368;line-height:1.4}
+    .codigos-entrega-topo{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}.codigo-topo-card{display:flex;flex-direction:column;gap:2px;width:max-content;min-width:112px;max-width:170px;padding:6px 9px;background:#fff;border:1px solid #dce7dc;border-left:3px solid #365d4b;border-radius:7px;box-shadow:0 1px 4px rgba(20,40,28,.04)}.codigo-topo-card small{font-size:9px;color:#6d786f;letter-spacing:0}.codigo-topo-card strong{font-size:15px;letter-spacing:1.5px;color:#243e35}.codigo-topo-card span{font-size:9px;color:#657368;line-height:1.2}
     .codigo-entrega,.confirmar-entrega{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:10px;padding:10px 12px;background:#f1f5ef;border:1px solid #dce7dc;border-radius:10px}.codigo-entrega strong{font-size:14px;letter-spacing:1.5px;color:#243e35}.codigo-entrega small,.confirmar-entrega small{font-size:11px;color:#657368;line-height:1.45}.confirmar-entrega{width:min(100%,330px);background:#fafbf9}.confirmar-entrega input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #d5dfd5;border-radius:8px;font:inherit;text-transform:uppercase;letter-spacing:2px}.confirmar-entrega button{border:0;border-radius:8px;background:#243e35;color:#fff;padding:10px 14px;font-weight:700;cursor:pointer}.confirmar-entrega button:disabled{opacity:.65;cursor:wait}
     .historico-vazio .icone-vazio{font-size:34px;color:#9aaa9c;margin-bottom:10px}
     .historico-vazio strong{display:block;color:#405247;font-size:15px;margin-bottom:6px}
@@ -94,7 +94,7 @@
       <header class="carteira-intro">
         <small>ÁREA FINANCEIRA • REFUGIART</small>
         <h2>Confirmação de entrega</h2>
-        <p>Comprou uma obra? Guarde seu código de entrega. Ao receber a encomenda, informe-o ao vendedor para confirmar a entrega e liberar o valor da venda.</p>
+        <p>Guarde o código e informe-o ao vendedor após receber a obra.</p>
         <div id="codigosEntregaTopo" class="codigos-entrega-topo" aria-live="polite">
           <small>Seus códigos de entrega aparecerão aqui quando houver compras.</small>
         </div>

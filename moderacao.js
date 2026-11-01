@@ -244,6 +244,44 @@ async function renderizarFinanceiro() {
   }
 }
 
+
+async function carregarArquivadasFinanceiro() {
+  status.textContent = "Carregando notificações arquivadas...";
+  const { data, error } = await supabase.from("refugiart_financial_notifications")
+    .select("id,event_type,status,summary,description,actor_label,counterparty_label,amount_cents,currency,source_reference,related_order_id,created_at,read_at,archived_at")
+    .not("archived_at", "is", null).order("archived_at", { ascending: false }).limit(200);
+  if (error) { status.textContent = "Não foi possível carregar os arquivados: " + error.message; mostrarMensagem("Verifique sua conexão e tente novamente."); return; }
+  renderizarArquivadasFinanceiro(data || []);
+}
+
+function renderizarArquivadasFinanceiro(registros) {
+  fila.replaceChildren(); atualizarAbas(); atualizarCabecalho();
+  const termo = (busca?.value || "").trim().toLocaleLowerCase("pt-BR");
+  const lista = registros.filter(evento => [evento.summary,evento.description,evento.actor_label,evento.counterparty_label,evento.event_type,evento.status,evento.source_reference,evento.related_order_id,formatarDinheiroCentavos(evento.amount_cents)].join(" ").toLocaleLowerCase("pt-BR").includes(termo));
+  if (!lista.length) { status.textContent = termo ? "Nenhuma notificação arquivada corresponde à pesquisa." : "A zona de reciclagem está vazia."; mostrarMensagem(termo ? "Tente pesquisar por outro termo." : "As notificações enviadas para a lixeira aparecerão aqui. Você poderá excluí-las definitivamente."); return; }
+  status.textContent = lista.length + " notificação(ões) arquivada(s).";
+  for (const evento of lista) {
+    const card=el("article","financeiro-item"), topo=el("div","financeiro-item-topo");
+    topo.append(el("h3","",""+(evento.summary||"Notificação financeira")),el("span","financeiro-status","Arquivada"));
+    const meta=el("div","financeiro-meta"), data=new Date(evento.created_at);
+    meta.append(el("span","","Data: "+(Number.isNaN(data.getTime())?"Não informada":data.toLocaleString("pt-BR"))),el("strong","",formatarDinheiroCentavos(evento.amount_cents)));
+    if(evento.actor_label)meta.append(el("span","","De/por: "+evento.actor_label));
+    if(evento.counterparty_label)meta.append(el("span","","Para: "+evento.counterparty_label));
+    if(evento.related_order_id)meta.append(el("span","","Pedido: "+evento.related_order_id));
+    card.append(topo); if(evento.description)card.append(el("p","",evento.description)); card.append(meta);
+    const excluir=el("button","financeiro-marcar-lida","Excluir definitivamente");
+    excluir.type="button"; excluir.style.cssText="color:#963f36;border-color:#efd8d4;background:#fff7f5;";
+    excluir.addEventListener("click",async()=>{
+      if(!confirm("Esta ação apagará definitivamente esta notificação. Deseja continuar?"))return;
+      excluir.disabled=true;
+      const {error}=await supabase.from("refugiart_financial_notifications").delete().eq("id",evento.id).not("archived_at","is",null);
+      if(error){status.textContent="Não foi possível excluir definitivamente: "+error.message;excluir.disabled=false;return;}
+      renderizarArquivadasFinanceiro(registros.filter(item=>item.id!==evento.id));
+    });
+    card.append(excluir); fila.append(card);
+  }
+}
+
 async function carregarSaques() {
   status.textContent="Carregando solicitações de saque...";
   const {data,error}=await supabase.from("refugiart_withdrawal_requests")
@@ -316,8 +354,8 @@ function renderizar() {
   }
 
   if (pastaAtual === "arquivadas") {
-    status.textContent = "Histórico de moderação";
-    mostrarMensagem("Ainda não há um histórico de publicações arquivadas conectado a esta caixa.");
+    document.body.classList.add("financeiro-aberto");
+    carregarArquivadasFinanceiro();
     return;
   }
 
@@ -400,9 +438,9 @@ filtros.forEach(botao => {
   });
 });
 
-busca?.addEventListener("input", () => pastaAtual === "financeiro" ? renderizarFinanceiro() : renderizar());
+busca?.addEventListener("input", () => pastaAtual === "financeiro" ? renderizarFinanceiro() : pastaAtual === "arquivadas" ? carregarArquivadasFinanceiro() : renderizar());
 
-document.getElementById("atualizar-financeiro")?.addEventListener("click", carregarFinanceiro);
+document.getElementById("atualizar-financeiro")?.addEventListener("click", () => pastaAtual === "arquivadas" ? carregarArquivadasFinanceiro() : carregarFinanceiro());
 
 async function carregar() {
   status.textContent = "Verificando acesso e carregando fila...";

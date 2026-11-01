@@ -227,6 +227,13 @@ async function carregarSaques() {
     .order("created_at",{ascending:false}).limit(200);
   if(error){status.textContent="Não foi possível carregar os saques: "+error.message;mostrarMensagem("Tente atualizar a seção.");return;}
   solicitacoesSaque=data||[];
+  const ids=[...new Set(solicitacoesSaque.map(x=>x.user_id).filter(Boolean))];
+  const nomes={};
+  if(ids.length){
+    const {data:perfis}=await supabase.from("profiles").select("id,nome_artistico").in("id",ids);
+    (perfis||[]).forEach(p=>nomes[p.id]=p.nome_artistico);
+  }
+  solicitacoesSaque.forEach(x=>x.nome_usuario=nomes[x.user_id]||"Artista RefugiART");
   renderizarSaques();
 }
 function renderizarSaques(){
@@ -242,7 +249,7 @@ function renderizarSaques(){
     const meta=el("div","financeiro-meta");
     meta.append(el("strong","",formatarDinheiroCentavos(item.amount_cents)));
     meta.append(el("span","",new Date(item.created_at).toLocaleString("pt-BR")));
-    meta.append(el("span","","Usuário: "+item.user_id));
+    meta.append(el("span","","Artista: "+item.nome_usuario));
     card.append(topo,descricao,meta);
     if(item.status==="pending"){
       const acoes=el("div","financeiro-acoes");

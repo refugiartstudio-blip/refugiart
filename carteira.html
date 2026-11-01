@@ -47,6 +47,7 @@
     .historico-filtros button{border:1px solid var(--carteira-borda);background:#fff;border-radius:30px;padding:7px 11px;color:#526056;font-size:12px;cursor:pointer}
     .historico-filtros button.ativo{background:var(--carteira-verde);border-color:var(--carteira-verde);color:#fff}
     .historico-vazio{text-align:center;padding:48px 20px;color:#7a857c}.lista-transacoes{display:flex;flex-direction:column}.transacao-item{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;border-bottom:1px solid var(--carteira-borda)}.transacao-item:last-child{border-bottom:0}.transacao-info{display:flex;flex-direction:column;gap:5px;min-width:0}.transacao-info strong{font-size:14px;color:var(--carteira-texto)}.transacao-info small{font-size:11px;color:#788078;line-height:1.4}.transacao-valor{white-space:nowrap;color:var(--carteira-verde);font-size:15px}.transacao-item[hidden]{display:none!important}
+    .codigo-entrega,.confirmar-entrega{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:10px;padding:10px 12px;background:#f1f5ef;border:1px solid #dce7dc;border-radius:10px}.codigo-entrega strong{font-size:14px;letter-spacing:1.5px;color:#243e35}.codigo-entrega small,.confirmar-entrega small{font-size:11px;color:#657368;line-height:1.45}.confirmar-entrega{width:min(100%,330px);background:#fafbf9}.confirmar-entrega input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #d5dfd5;border-radius:8px;font:inherit;text-transform:uppercase;letter-spacing:2px}.confirmar-entrega button{border:0;border-radius:8px;background:#243e35;color:#fff;padding:10px 14px;font-weight:700;cursor:pointer}.confirmar-entrega button:disabled{opacity:.65;cursor:wait}
     .historico-vazio .icone-vazio{font-size:34px;color:#9aaa9c;margin-bottom:10px}
     .historico-vazio strong{display:block;color:#405247;font-size:15px;margin-bottom:6px}
     .historico-vazio p{font-size:13px;max-width:420px;margin:0 auto;line-height:1.6}
@@ -291,15 +292,18 @@
     async function carregarHistoricoCarteira(user){
       const lista=document.getElementById("historicoLista");
       if(!lista)return;
-      const [pedidosResp,depositosResp]=await Promise.all([
+      const [pedidosResp,depositosResp,codigosResp]=await Promise.all([
         sb.from("refugiart_orders")
           .select("id,buyer_id,seller_id,status,subtotal_cents,paid_at,created_at,provider_order_nsu")
           .or("buyer_id.eq."+user.id+",seller_id.eq."+user.id)
           .order("created_at",{ascending:false}).limit(100),
         sb.from("refugiart_payment_intents")
           .select("id,status,amount_cents,paid_amount_cents,created_at,confirmed_at,order_nsu")
-          .eq("user_id",user.id).order("created_at",{ascending:false}).limit(100)
+          .eq("user_id",user.id).order("created_at",{ascending:false}).limit(100),
+        sb.from("refugiart_delivery_codes").select("order_id,code,confirmed_at").eq("buyer_id",user.id)
       ]);
+      if(codigosResp.error)console.warn("Não foi possível carregar códigos de entrega:",codigosResp.error.message);
+      const codigosPorPedido=new Map((codigosResp.data||[]).map(c=>[Number(c.order_id),c]));
       if(pedidosResp.error)console.warn("Não foi possível carregar pedidos da carteira:",pedidosResp.error.message);
       if(depositosResp.error)console.warn("Não foi possível carregar depósitos da carteira:",depositosResp.error.message);
       const itens=[];
@@ -317,7 +321,10 @@
           valor:Number(p.subtotal_cents||0)/100,
           data:p.paid_at||p.created_at,
           status,
-          id:p.id
+          id:p.id,
+          codigoEntrega:!venda?codigosPorPedido.get(Number(p.id))?.code:null,
+          entregaConfirmada:!venda?Boolean(codigosPorPedido.get(Number(p.id))?.confirmed_at):p.status==="delivered",
+          podeConfirmar:venda&&["awaiting_shipment","shipped"].includes(p.status)
         });
       });
       (depositosResp.data||[]).filter(d=>!String(d.order_nsu||"").startsWith("REFUGIART-MKT-")).forEach(d=>{
@@ -344,11 +351,50 @@
         const titulo=document.createElement("strong");titulo.textContent=item.detalhe;
         const meta=document.createElement("small");meta.textContent=new Date(item.data).toLocaleString("pt-BR")+" • "+item.status;
         info.append(titulo,meta);
+        if(item.tipo==="Compra"&&item.codigoEntrega){
+          const area=document.createElement("div");area.className="codigo-entrega";
+          const rotulo=document.createElement("strong");rotulo.textContent="Seu código de entrega: "+item.codigoEntrega;
+          const instrucao=document.createElement("small");instrucao.textContent=item.entregaConfirmada?"Entrega confirmada.":"Compartilhe este código com o vendedor somente depois de receber a obra.";
+          area.append(rotulo,instrucao);info.append(area);
+        }else if(item.tipo==="Compra"){
+          const aviso=document.createElement("small");aviso.textContent="Código de entrega indisponível no momento.";info.append(aviso);
+        }
+        if(item.podeConfirmar){
+          const area=document.createElement("div");area.className="confirmar-entrega";
+          const campo=document.createElement("input");campo.type="text";campo.maxLength=8;campo.placeholder="Código de 8 caracteres";campo.autocomplete="off";campo.setAttribute("aria-label","Código de confirmação da entrega");campo.dataset.codigoPedido=String(item.id);
+          const botao=document.createElement("button");botao.type="button";botao.textContent="Confirmar entrega";botao.dataset.confirmarPedido=String(item.id);
+          const feedback=document.createElement("small");feedback.className="feedback-entrega";feedback.setAttribute("role","status");
+          area.append(campo,botao,feedback);info.append(area);
+        }
         const valor=document.createElement("strong");valor.className="transacao-valor";valor.textContent=fmt(item.valor);
         linha.append(info,valor);tabela.append(linha);
       });
       lista.append(tabela);
     }
+
+    document.getElementById("historicoLista").addEventListener("click",async e=>{
+      const botao=e.target.closest("[data-confirmar-pedido]");
+      if(!botao)return;
+      const id=botao.dataset.confirmarPedido;
+      const area=botao.closest(".confirmar-entrega");
+      const campo=area?.querySelector("[data-codigo-pedido]");
+      const feedback=area?.querySelector(".feedback-entrega");
+      const codigo=(campo?.value||"").trim().toUpperCase();
+      if(!/^[A-F0-9]{8}$/.test(codigo)){
+        if(feedback)feedback.textContent="Digite o código completo de 8 caracteres.";
+        return;
+      }
+      botao.disabled=true;botao.textContent="Validando...";
+      if(feedback)feedback.textContent="Verificando o código de entrega...";
+      const {data,error}=await sb.rpc("refugiart_confirm_delivery",{p_order_id:Number(id),p_code:codigo});
+      if(error||!data?.confirmed){
+        if(feedback)feedback.textContent=error?.message||"Não foi possível confirmar a entrega.";
+        botao.disabled=false;botao.textContent="Confirmar entrega";return;
+      }
+      if(feedback)feedback.textContent="Entrega confirmada! Atualizando sua carteira...";
+      const {data:{user}}=await sb.auth.getUser();
+      if(user){await atualizarSaldos(user);await carregarHistoricoCarteira(user);}
+    });
 
     const depositoSolicitado=Number(new URLSearchParams(location.search).get("deposito"));if(Number.isFinite(depositoSolicitado)&&depositoSolicitado>0){document.getElementById("modalTitulo").textContent="Adicionar saldo";document.getElementById("modalDescricao").textContent="Para registrar seu balão, sua carteira precisa ter pelo menos "+fmt(depositoSolicitado)+". O depósito ainda depende da integração de pagamento.";document.getElementById("valorCarteira").value=depositoSolicitado.toFixed(2);document.getElementById("modalCarteira").classList.add("aberto");}
   </script>

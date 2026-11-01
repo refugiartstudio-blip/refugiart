@@ -47,6 +47,7 @@
     .bazar-opcao:hover,.bazar-opcao.selecionada{background:#edf2eb;color:#243e35}
     .bazar-ordenacao select{display:none}
     .bazar-grade{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+    .bazar-pagina-obras{display:contents}
     .produto-bazar{background:#fff;border:1px solid #e8ece6;border-radius:9px;overflow:hidden;min-width:0;display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease}
     .produto-bazar:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(30,55,38,.10)}
     .produto-foto{position:relative;aspect-ratio:1/1;background:#e9ece6;overflow:hidden}
@@ -89,8 +90,13 @@
     .bazar-vazio strong{display:block;color:var(--verde-bazar);font-family:Georgia,serif;font-size:22px;margin-bottom:8px}
     .bazar-carregando{grid-column:1/-1;text-align:center;padding:35px;color:#748074}
     @media(max-width:1000px){.bazar-grade{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    @media(max-width:700px){.bazar-grade{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.produto-info{padding:10px}.produto-titulo{font-size:13px}.produto-preco{font-size:18px}.produto-acoes a{font-size:11px}.bazar-banner-selo{display:none}.bazar-ferramentas{align-items:flex-start}}
-    @media(max-width:380px){.bazar-grade{grid-template-columns:1fr 1fr;gap:7px}.produto-info{padding:8px}.produto-preco{font-size:16px}}
+    @media(max-width:700px){
+      .bazar-grade{display:flex;gap:0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;overscroll-behavior-x:contain;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+      .bazar-grade::-webkit-scrollbar{display:none}
+      .bazar-pagina-obras{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,auto));grid-auto-flow:row;align-content:start;gap:10px;flex:0 0 100%;width:100%;min-width:100%;scroll-snap-align:start;scroll-snap-stop:always}
+      .produto-info{padding:10px}.produto-titulo{font-size:13px}.produto-preco{font-size:18px}.produto-acoes a{font-size:11px}.bazar-banner-selo{display:none}.bazar-ferramentas{align-items:flex-start}
+    }
+    @media(max-width:380px){.bazar-pagina-obras{gap:7px}.produto-info{padding:8px}.produto-preco{font-size:16px}}
   </style>
 </head>
 <body>
@@ -209,7 +215,9 @@
       contagem.innerHTML="<strong>"+lista.length+"</strong> obra(s) encontrada(s)";
       grade.replaceChildren();
       if(!lista.length){const vazio=document.createElement("div");vazio.className="bazar-vazio";vazio.innerHTML="<strong>Nenhuma obra encontrada</strong>Experimente mudar a busca ou escolher outra categoria.";grade.append(vazio);return;}
-      lista.forEach(obra=>{
+      let paginaAtual=null;
+      lista.forEach((obra,index)=>{
+        if(index%6===0){paginaAtual=document.createElement("div");paginaAtual.className="bazar-pagina-obras";grade.append(paginaAtual);}
         const card=document.createElement("article");card.className="produto-bazar";
         const foto=document.createElement("div");foto.className="produto-foto";
         const img=document.createElement("img");img.src=obra.image_url;img.alt=obra.caption||"Obra disponível no Bazar RefugiART";img.loading="lazy";img.onerror=()=>{foto.style.background="#e9ece6";img.remove();};foto.append(img);
@@ -222,7 +230,7 @@
         if(obra.listing_mode==="community"||obra.listing_mode==="auction"){const baloes=document.createElement("p");baloes.className="produto-baloes";baloes.textContent="🎈 "+(obra.auction_balloon_count||0)+(obra.listing_mode==="community"?" / 30 balões de interesse":" / 10 para ativar o leilão");info.append(baloes);}
         const acoes=document.createElement("div");acoes.className="produto-acoes";
         const link=document.createElement("button");link.type="button";link.className="produto-ver produto-icone-acao";link.textContent="🔎";link.setAttribute("aria-label","Ampliar obra");link.title="Ampliar obra";link.addEventListener("click",()=>abrirModalObra(obra));
-        if(obra.listing_mode==="auction"&&obra.auction_status==="collecting"){const balao=document.createElement("button");balao.type="button";balao.className="produto-ver";balao.textContent="🎈";balao.classList.add("produto-icone-acao");balao.setAttribute("aria-label","Manifestar interesse");balao.title="Manifestar interesse";balao.addEventListener("click",async()=>{if(!confirm("Dar um balão é como curtir esta obra: sua manifestação é definitiva e não poderá ser retirada. Deseja confirmar?"))return;balao.disabled=true;try{const {data,error}=await supabase.rpc("refugiart_give_balloon",{p_post_id:String(obra.id)});if(error)throw error;obra.auction_balloon_count=data.count;alert(data.status==="active"?"A meta foi alcançada! O leilão de 24 horas começou.":"Seu balão foi registrado. Obrigado pelo interesse!");if(data.status==="active")window.location.reload();else filtrar();}catch(err){alert("Não foi possível registrar: "+(err.message||"tente novamente."));balao.disabled=false;}});acoes.append(balao);}if(obra.listing_mode==="market"){const comprar=document.createElement("button");comprar.type="button";comprar.className="produto-ver";comprar.textContent="💰";comprar.classList.add("produto-icone-acao");comprar.setAttribute("aria-label","Adicionar à sacola");comprar.title="Adicionar à sacola";comprar.addEventListener("click",()=>{let itens=[];try{itens=JSON.parse(localStorage.getItem("refugiart_sacola")||"[]");}catch{}if(itens.some(x=>String(x.id)===String(obra.id))){alert("Esta obra já está na sua sacola.");return;}itens.push({id:obra.id,user_id:obra.user_id,image_url:obra.image_url,caption:obra.caption,artista:obra.artista,preco:Number(obra.preco),listing_mode:"market"});localStorage.setItem("refugiart_sacola",JSON.stringify(itens));alert("Obra adicionada à sacola.");});acoes.append(comprar);}acoes.append(link);info.append(titulo,preco,acoes);card.append(foto,info);grade.append(card);
+        if(obra.listing_mode==="auction"&&obra.auction_status==="collecting"){const balao=document.createElement("button");balao.type="button";balao.className="produto-ver";balao.textContent="🎈";balao.classList.add("produto-icone-acao");balao.setAttribute("aria-label","Manifestar interesse");balao.title="Manifestar interesse";balao.addEventListener("click",async()=>{if(!confirm("Dar um balão é como curtir esta obra: sua manifestação é definitiva e não poderá ser retirada. Deseja confirmar?"))return;balao.disabled=true;try{const {data,error}=await supabase.rpc("refugiart_give_balloon",{p_post_id:String(obra.id)});if(error)throw error;obra.auction_balloon_count=data.count;alert(data.status==="active"?"A meta foi alcançada! O leilão de 24 horas começou.":"Seu balão foi registrado. Obrigado pelo interesse!");if(data.status==="active")window.location.reload();else filtrar();}catch(err){alert("Não foi possível registrar: "+(err.message||"tente novamente."));balao.disabled=false;}});acoes.append(balao);}if(obra.listing_mode==="market"){const comprar=document.createElement("button");comprar.type="button";comprar.className="produto-ver";comprar.textContent="💰";comprar.classList.add("produto-icone-acao");comprar.setAttribute("aria-label","Adicionar à sacola");comprar.title="Adicionar à sacola";comprar.addEventListener("click",()=>{let itens=[];try{itens=JSON.parse(localStorage.getItem("refugiart_sacola")||"[]");}catch{}if(itens.some(x=>String(x.id)===String(obra.id))){alert("Esta obra já está na sua sacola.");return;}itens.push({id:obra.id,user_id:obra.user_id,image_url:obra.image_url,caption:obra.caption,artista:obra.artista,preco:Number(obra.preco),listing_mode:"market"});localStorage.setItem("refugiart_sacola",JSON.stringify(itens));alert("Obra adicionada à sacola.");});acoes.append(comprar);}acoes.append(link);info.append(titulo,preco,acoes);card.append(foto,info);paginaAtual.append(card);
       });
     }
     async function carregar(){

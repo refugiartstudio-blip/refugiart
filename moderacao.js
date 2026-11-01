@@ -216,6 +216,30 @@ async function renderizarFinanceiro() {
       });
       card.append(marcar);
     }
+
+    const saqueResolvido = evento.event_type === "withdrawal" && ["completed","canceled"].includes(evento.status);
+    if (evento.read_at || saqueResolvido) {
+      const excluir = el("button", "financeiro-marcar-lida", "🗑️");
+      excluir.type = "button";
+      excluir.title = "Arquivar notificação";
+      excluir.setAttribute("aria-label", "Arquivar notificação");
+      excluir.addEventListener("click", async () => {
+        if (!confirm("Deseja remover esta notificação da Central financeira?")) return;
+        excluir.disabled = true;
+        const { error } = await supabase
+          .from("refugiart_financial_notifications")
+          .update({ archived_at: new Date().toISOString() })
+          .eq("id", evento.id);
+        if (error) {
+          status.textContent = "Não foi possível remover a notificação: " + error.message;
+          excluir.disabled = false;
+          return;
+        }
+        notificacoesFinanceiras = notificacoesFinanceiras.filter(item => item.id !== evento.id);
+        renderizarFinanceiro();
+      });
+      card.append(excluir);
+    }
     fila.append(card);
   }
 }

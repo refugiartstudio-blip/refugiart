@@ -38,9 +38,13 @@
       <input
         type="search"
         id="busca-atelie"
-        placeholder="Buscar artistas, obras e inspirações..."
-        aria-label="Buscar no Ateliê"
+        placeholder="Buscar por nome artístico ou ateliê..."
+        aria-label="Buscar artistas pelo nome artístico ou nome do ateliê"
+        autocomplete="off"
+        aria-controls="resultados-busca-atelie"
+        aria-expanded="false"
       >
+      <div class="resultados-busca-atelie" id="resultados-busca-atelie" role="listbox" aria-label="Resultados da busca" hidden></div>
     </form>
 
     <button class="botao-menu" id="abrirMenu" type="button"

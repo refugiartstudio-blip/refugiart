@@ -18,6 +18,7 @@ let publicacoes = [];
 let notificacoesFinanceiras = [];
 let canalFinanceiro = null;
 let erroCarregamentoFinanceiro = null;
+let solicitacoesSaque = [];
 let pastaAtual = "entrada";
 let filtroAtual = "todas";
 
@@ -57,7 +58,8 @@ function atualizarCabecalho() {
     denuncias: "Denúncias",
     reclamacoes: "Reclamações",
     arquivadas: "Arquivadas",
-    financeiro: "Central financeira"
+    financeiro: "Central financeira",
+    saques: "Solicitações de saque"
   };
   titulo.textContent = nomes[pastaAtual] || "Caixa de entrada";
 
@@ -218,11 +220,55 @@ async function renderizarFinanceiro() {
   }
 }
 
+async function carregarSaques() {
+  status.textContent="Carregando solicitações de saque...";
+  const {data,error}=await supabase.from("refugiart_withdrawal_requests")
+    .select("id,user_id,amount_cents,pix_key,holder_name,status,created_at")
+    .order("created_at",{ascending:false}).limit(200);
+  if(error){status.textContent="Não foi possível carregar os saques: "+error.message;mostrarMensagem("Tente atualizar a seção.");return;}
+  solicitacoesSaque=data||[];
+  renderizarSaques();
+}
+function renderizarSaques(){
+  fila.replaceChildren();atualizarAbas();atualizarCabecalho();
+  const pendentes=solicitacoesSaque.filter(x=>x.status==="pending");
+  status.textContent=solicitacoesSaque.length+" solicitação(ões) de saque. "+pendentes.length+" aguardando pagamento.";
+  if(!solicitacoesSaque.length){mostrarMensagem("Ainda não há solicitações de saque.");return;}
+  for(const item of solicitacoesSaque){
+    const card=el("article","financeiro-item");
+    const topo=el("div","financeiro-item-topo");
+    topo.append(el("h3","","Saque solicitado"),el("span","financeiro-status "+item.status,item.status==="pending"?"Pendente":item.status==="paid"?"Pago":"Recusado"));
+    const descricao=el("p","","Titular: "+item.holder_name+" • Chave Pix: "+item.pix_key);
+    const meta=el("div","financeiro-meta");
+    meta.append(el("strong","",formatarDinheiroCentavos(item.amount_cents)));
+    meta.append(el("span","",new Date(item.created_at).toLocaleString("pt-BR")));
+    meta.append(el("span","","Usuário: "+item.user_id));
+    card.append(topo,descricao,meta);
+    if(item.status==="pending"){
+      const acoes=el("div","financeiro-acoes");
+      const pago=el("button","financeiro-atualizar","Marcar como pago");
+      const recusar=el("button","financeiro-atualizar","Recusar");
+      pago.style.display=recusar.style.display="inline-flex";
+      async function processar(novo,botao){
+        if(!confirm(novo==="paid"?"Confirma que a transferência Pix foi realizada?":"Confirma a recusa desta solicitação?"))return;
+        pago.disabled=recusar.disabled=true;
+        const {error}=await supabase.rpc("refugiart_admin_update_withdrawal",{p_request_id:item.id,p_status:novo});
+        if(error){status.textContent="Não foi possível atualizar: "+error.message;pago.disabled=recusar.disabled=false;return;}
+        await carregarSaques();
+      }
+      pago.addEventListener("click",()=>processar("paid",pago));
+      recusar.addEventListener("click",()=>processar("rejected",recusar));
+      acoes.append(pago,recusar);card.append(acoes);
+    }
+    fila.append(card);
+  }
+}
+
 function renderizar() {
   fila.replaceChildren();
   atualizarAbas();
   atualizarCabecalho();
-
+  if(pastaAtual==="saques"){document.body.classList.add("financeiro-aberto");renderizarSaques();return;}
   const termo = (busca?.value || "").trim().toLocaleLowerCase("pt-BR");
 
   if (pastaAtual === "financeiro") {

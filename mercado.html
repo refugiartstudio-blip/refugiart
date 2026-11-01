@@ -27,6 +27,12 @@
 .categoria-mercado.selecionada{background:#243e35;color:#fff;border-color:#243e35}
 #lista-obras-mercado .imagem-obra{height:auto;aspect-ratio:1/1;background:#e8e8df}
 #lista-obras-mercado .imagem-obra img{width:100%;height:100%;object-fit:cover;display:block}
+/* Interações entre legenda e preço no Mercado */
+#lista-obras-mercado .acoes-obra-mercado{display:flex;align-items:center;gap:8px;width:100%;margin:4px 0 3px}
+#lista-obras-mercado .acao-obra-mercado{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:29px;padding:4px 9px;border:1px solid #e4e8e1;border-radius:18px;background:#fff;color:#526258;font-size:12px;font-weight:650;cursor:pointer}
+#lista-obras-mercado .acao-obra-mercado.ativo{background:#fff0f2;border-color:#f0cbd2;color:#bd3150}
+#lista-obras-mercado .acao-obra-mercado.balao{background:#fff7e9;border-color:#f0dfbf;color:#80551a}
+#lista-obras-mercado .acao-obra-mercado:disabled{opacity:.55;cursor:wait}
 /* Informações compactas para priorizar a imagem da obra */
 #lista-obras-mercado .dados-obra{display:flex;flex-wrap:wrap;align-items:center;column-gap:10px;row-gap:2px;padding:7px 10px 9px}
 #lista-obras-mercado .categoria-obra{display:block;width:100%;font-size:9px;line-height:1.2;letter-spacing:.04em;margin:0}
@@ -279,30 +285,105 @@
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     const supabase = createClient("https://nlqalpiksbqflzxzsgoa.supabase.co", "sb_publishable_BpJHFuq0WQaH5hGYOuC20Q_grO6loaP");
     const lista = document.getElementById("lista-obras-mercado");
-    let categoriaSelecionada = null;
     const el = (tag, cls, text) => { const n=document.createElement(tag); if(cls)n.className=cls; if(text!==undefined)n.textContent=text; return n; };
+
     async function carregarMercado() {
       const {data:obras,error}=await supabase.from("atelie_posts")
-        .select("id,user_id,image_url,caption,category,preco,created_at")
-        .eq("publicar_mercado",true).eq("removida_do_portfolio",false).eq("moderation_status","published").not("preco","is",null).order("created_at",{ascending:false});
+        .select("id,user_id,image_url,caption,category,preco,created_at,listing_mode,auction_status,auction_balloon_count,auction_initial_price")
+        .eq("publicar_mercado",true).eq("removida_do_portfolio",false)
+        .eq("moderation_status","published").not("preco","is",null)
+        .order("created_at",{ascending:false});
       if(error){lista.replaceChildren(el("p","","Não foi possível carregar os anúncios neste momento."));return;}
       if(!obras?.length){lista.replaceChildren(el("p","","Ainda não há obras anunciadas. Quando um artista publicar no Mercado, elas aparecerão aqui."));return;}
+
       const ids=[...new Set(obras.map(o=>o.user_id).filter(Boolean))];
-      const {data:perfis}=await supabase.from("profiles").select("id,nome_artistico").in("id",ids);
+      const postIds=obras.map(o=>String(o.id));
+      const [{data:perfis},{data:curtidas,error:erroCurtidas},{data:authData}]=await Promise.all([
+        supabase.from("profiles").select("id,nome_artistico").in("id",ids),
+        supabase.from("community_post_likes").select("post_id,user_id").in("post_id",postIds),
+        supabase.auth.getUser()
+      ]);
       const nomes=new Map((perfis||[]).map(p=>[p.id,p.nome_artistico||"Artista RefugiART"]));
+      const usuario=authData?.user||null;
+      const curtidasPorObra=new Map();
+      (curtidas||[]).forEach(item=>{
+        const chave=String(item.post_id);
+        if(!curtidasPorObra.has(chave))curtidasPorObra.set(chave,[]);
+        curtidasPorObra.get(chave).push(item.user_id);
+      });
+
       lista.replaceChildren();
       obras.forEach(obra=>{
+        const postId=String(obra.id);
         const card=el("article","cartao-obra"),foto=el("div","imagem-obra"),img=el("img");
         card.dataset.categoria=obra.category||"Outros";
         img.src=obra.image_url;img.alt="Obra "+(obra.category||"artística");img.loading="lazy";foto.append(img);
+
         const dados=el("div","dados-obra");
         dados.append(el("span","categoria-obra",(obra.category||"ARTE").toUpperCase()));
         dados.append(el("h3","","Obra de "+(nomes.get(obra.user_id)||"Artista RefugiART")));
         if(obra.caption)dados.append(el("p","",obra.caption));
+
+        const listaCurtidas=curtidasPorObra.get(postId)||[];
+        const jaCurtiu=!!usuario&&listaCurtidas.includes(usuario.id);
+        const acoes=el("div","acoes-obra-mercado");
+        const like=el("button","acao-obra-mercado"+(jaCurtiu?" ativo":""),(jaCurtiu?"❤️ ":"♡ ")+listaCurtidas.length);
+        like.type="button";like.setAttribute("aria-label","Curtir obra");like.title="Curtir obra";
+        like.addEventListener("click",async()=>{
+          const {data:{user}}=await supabase.auth.getUser();
+          if(!user){alert("Entre na sua conta para curtir esta obra.");return;}
+          const ativo=like.classList.contains("ativo");
+          like.disabled=true;
+          const resposta=ativo
+            ?await supabase.from("community_post_likes").delete().eq("post_id",postId).eq("user_id",user.id)
+            :await supabase.from("community_post_likes").insert({post_id:postId,user_id:user.id});
+          if(resposta.error){alert("Não foi possível registrar sua curtida: "+resposta.error.message);like.disabled=false;return;}
+          like.classList.toggle("ativo",!ativo);
+          like.textContent=(ativo?"♡ ":"❤️ ")+(listaCurtidas.length+(ativo?-1:1));
+          if(ativo){curtidasPorObra.set(postId,listaCurtidas.filter(id=>id!==user.id));}
+          else{curtidasPorObra.set(postId,[...listaCurtidas,user.id]);}
+          like.disabled=false;
+        });
+        acoes.append(like);
+
+        // Balão somente em obra de leilão que ainda está na fase de coleta.
+        if(obra.listing_mode==="auction"&&obra.auction_status==="collecting"){
+          const balao=el("button","acao-obra-mercado balao","🎈 "+Number(obra.auction_balloon_count||0)+"/10");
+          balao.type="button";balao.setAttribute("aria-label","Manifestar interesse com balão");balao.title="Manifestar interesse";
+          balao.addEventListener("click",async()=>{
+            const {data:{user}}=await supabase.auth.getUser();
+            if(!user){alert("Entre na sua conta para dar um balão.");return;}
+            if(user.id===obra.user_id){alert("Você não pode dar balão na própria obra.");return;}
+            if(!confirm("Dar um balão é manifestar interesse real em participar do leilão. A manifestação é definitiva e não poderá ser retirada. Deseja confirmar?"))return;
+            balao.disabled=true;
+            try{
+              const {data,error}=await supabase.rpc("refugiart_give_balloon",{p_post_id:postId});
+              if(error)throw error;
+              if(data?.needs_wallet){
+                alert("Saldo insuficiente. É necessário ter pelo menos "+Number(data.required).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})+" disponível na carteira. Nenhum valor será descontado.");
+                window.location.href="carteira.html?deposito="+encodeURIComponent(data.required);
+                return;
+              }
+              obra.auction_balloon_count=data.count;
+              balao.textContent="🎈 "+data.count+"/10";
+              alert(data.status==="active"?"A meta foi alcançada! O leilão de 24 horas começou.":"Seu balão foi registrado. Obrigado pelo interesse!");
+              if(data.status==="active")carregarMercado();
+            }catch(err){
+              alert("Não foi possível registrar o balão: "+(err.message||"tente novamente."));
+              balao.disabled=false;
+            }
+          });
+          acoes.append(balao);
+        }
+
+        dados.append(acoes);
         dados.append(el("p","preco-mercado",Number(obra.preco).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})));
-        const link=el("a","link-artista-mercado","Conhecer Ateliê →");link.href="atelie.html?id="+encodeURIComponent(obra.user_id);dados.append(link);
+        const link=el("a","link-artista-mercado","Conhecer Ateliê →");
+        link.href="atelie.html?id="+encodeURIComponent(obra.user_id);
+        dados.append(link);
         card.append(foto,dados);lista.append(card);
       });
+      if(erroCurtidas)console.warn("Não foi possível carregar as curtidas:",erroCurtidas.message);
     }
     carregarMercado();
   </script>

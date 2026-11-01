@@ -257,6 +257,29 @@
       }
     });
 
+    async function atualizarSaldos(user){
+      const disponivel=document.getElementById("saldoDisponivel");
+      const pendente=document.getElementById("saldoPendente");
+      if(!disponivel||!pendente)return;
+      const {data,error}=await sb.from("refugiart_orders")
+        .select("status,seller_net_cents")
+        .eq("seller_id",user.id)
+        .in("status",["awaiting_shipment","shipped","delivered"]);
+      if(error){
+        console.error("Não foi possível atualizar os saldos:",error.message);
+        return;
+      }
+      let totalPendente=0;
+      let totalDisponivel=0;
+      (data||[]).forEach(p=>{
+        const valor=Number(p.seller_net_cents||0);
+        if(p.status==="delivered")totalDisponivel+=valor;
+        else if(p.status==="awaiting_shipment"||p.status==="shipped")totalPendente+=valor;
+      });
+      disponivel.textContent=fmt(totalDisponivel/100);
+      pendente.textContent=fmt(totalPendente/100);
+    }
+
     (async()=>{
       const {data:{user}}=await sb.auth.getUser();
       if(!user)return;

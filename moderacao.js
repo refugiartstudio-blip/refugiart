@@ -275,7 +275,7 @@ function renderizar() {
   fila.replaceChildren();
   atualizarAbas();
   atualizarCabecalho();
-  if(pastaAtual==="saques"){document.body.classList.add("financeiro-aberto");renderizarSaques();return;}
+  if(pastaAtual==="saques"){document.body.classList.add("financeiro-aberto");carregarSaques();return;}
   const termo = (busca?.value || "").trim().toLocaleLowerCase("pt-BR");
 
   if (pastaAtual === "financeiro") {

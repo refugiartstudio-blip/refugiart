@@ -9,13 +9,15 @@ const $ = id => document.getElementById(id);
 const sidebar = $("sidebar");
 const navButtons = document.querySelectorAll("[data-page]");
 const pages = document.querySelectorAll(".page");
+let painelAdminAutorizado = false;
 
 function openPage(name) {
   pages.forEach(page => page.classList.toggle("active", page.id === "page-" + name));
   navButtons.forEach(button => button.classList.toggle("active", button.dataset.page === name));
-  const titles = {dashboard:"Visão geral da plataforma",financeiro:"Financeiro",vendas:"Vendas",artistas:"Artistas",estoque:"Obras e anúncios",relatorios:"Relatórios",configuracoes:"Configurações",ajuda:"Ajuda"};
+  const titles = {dashboard:"Visão geral da plataforma",financeiro:"Financeiro",vendas:"Vendas",artistas:"Artistas e Apreciadores",estoque:"Obras e anúncios",relatorios:"Relatórios",configuracoes:"Configurações",ajuda:"Ajuda"};
   document.querySelector(".welcome h1").textContent = titles[name] || "RefugiART Painel";
   sidebar.classList.remove("open");
+  if(name === "artistas" && painelAdminAutorizado) carregarUsuarios();
 }
 navButtons.forEach(button => button.addEventListener("click", () => openPage(button.dataset.page)));
 document.querySelectorAll("[data-open]").forEach(button => button.addEventListener("click", () => openPage(button.dataset.open)));
@@ -49,6 +51,31 @@ function renderRows(rows,bodyId,mode="financeiro"){
   });
 }
 
+async function carregarUsuarios(){
+  const body=$("usuarios-real");
+  const total=$("usuarios-total");
+  if(!body || !total) return;
+  total.textContent="Consultando cadastros…";
+  fillMessage("usuarios-real","Carregando usuários cadastrados…",3);
+  const {data,error}=await supabase.rpc("refugiart_admin_list_users");
+  if(error){
+    total.textContent="Não foi possível carregar";
+    fillMessage("usuarios-real","Erro ao consultar usuários: "+(error.message||"verifique as permissões."),3);
+    return;
+  }
+  const usuarios=data||[];
+  total.textContent=usuarios.length+" usuário(s) cadastrado(s)";
+  body.replaceChildren();
+  if(!usuarios.length){fillMessage("usuarios-real","Ainda não há usuários cadastrados.",3);return;}
+  usuarios.forEach(usuario=>{
+    const row=document.createElement("tr");
+    setCell(row,usuario.nome||"Nome não informado");
+    setCell(row,usuario.email||"E-mail não informado");
+    setCell(row,usuario.categoria||"Não informado");
+    body.append(row);
+  });
+}
+
 let charts=[];
 function destroyCharts(){charts.forEach(chart=>chart.destroy());charts=[];}
 function buildCharts(orders,transactions){
@@ -77,7 +104,9 @@ async function iniciarPainel(){
     if(!session){status.textContent="Faça login no RefugiART para acessar os dados administrativos.";fillMessage("movimentacoes-reais","Acesso restrito: entre na sua conta administrativa.");fillMessage("financeiro-real","Acesso restrito: entre na sua conta administrativa.");fillMessage("vendas-reais","Acesso restrito: entre na sua conta administrativa.");return;}
     const {data:isAdmin,error:adminError}=await supabase.rpc("refugiart_is_admin");
     if(adminError)throw adminError;
-    if(isAdmin!==true){status.textContent="Acesso restrito à administração do RefugiART.";fillMessage("movimentacoes-reais","Sua conta não possui permissão para visualizar este painel.");fillMessage("financeiro-real","Sua conta não possui permissão para visualizar este painel.");fillMessage("vendas-reais","Sua conta não possui permissão para visualizar este painel.");return;}
+    if(isAdmin!==true){status.textContent="Acesso restrito à administração do RefugiART.";fillMessage("movimentacoes-reais","Sua conta não possui permissão para visualizar este painel.");fillMessage("financeiro-real","Sua conta não possui permissão para visualizar este painel.");fillMessage("vendas-reais","Sua conta não possui permissão para visualizar este painel.");fillMessage("usuarios-real","Acesso restrito à administração do RefugiART.",3);return;}
+    painelAdminAutorizado=true;
+    await carregarUsuarios();
     status.textContent="Conectado · dados reais do Supabase";
     const [ordersResult,itemsResult,paymentsResult,withdrawalsResult]=await Promise.all([
       supabase.from("refugiart_orders").select("id,status,subtotal_cents,platform_commission_cents,seller_net_cents,paid_at,created_at").order("created_at",{ascending:true}),

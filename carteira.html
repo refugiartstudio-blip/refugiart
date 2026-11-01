@@ -373,8 +373,7 @@
         if(item.tipo==="Compra"&&item.codigoEntrega){
           const area=document.createElement("div");area.className="codigo-entrega";
           const rotulo=document.createElement("strong");rotulo.textContent="Seu código de entrega: "+item.codigoEntrega;
-          const instrucao=document.createElement("small");instrucao.textContent=item.entregaConfirmada?"Entrega confirmada.":"Compartilhe este código com o vendedor somente depois de receber a obra.";
-          area.append(rotulo,instrucao);info.append(area);
+          area.append(rotulo);info.append(area);
         }else if(item.tipo==="Compra"){
           const aviso=document.createElement("small");aviso.textContent="Código de entrega indisponível no momento.";info.append(aviso);
         }

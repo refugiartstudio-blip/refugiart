@@ -317,8 +317,7 @@
             const card=document.createElement("div");card.className="codigo-topo-card";
             const pedido=document.createElement("small");pedido.textContent="CÓDIGO DA COMPRA #"+c.order_id;
             const codigo=document.createElement("strong");codigo.textContent=c.code;
-            const estado=document.createElement("span");estado.textContent=c.confirmed_at?"Entrega já confirmada.":"Compartilhe com o vendedor somente depois de receber a obra.";
-            card.append(pedido,codigo,estado);topoCodigos.append(card);
+            card.append(pedido,codigo);topoCodigos.append(card);
           });
         }else{
           const vazio=document.createElement("small");vazio.textContent="Seus códigos de entrega aparecerão aqui quando houver compras.";topoCodigos.append(vazio);

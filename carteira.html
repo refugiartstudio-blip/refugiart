@@ -108,9 +108,9 @@
         </div>
         <div class="saldo-bloqueado-card"><small>SALDO BLOQUEADO / PENDENTE</small><strong id="saldoPendente">R$ 0,00</strong><p>Valores de vendas aguardando a confirmação da postagem da obra ou a conclusão de outras etapas de segurança.</p></div>
         <div class="atalhos-carteira">
-          <button class="atalho" type="button" data-acao="saque" disabled aria-disabled="true" title="Saques ainda não estão disponíveis">
+          <button class="atalho" type="button" data-acao="saque" id="botaoSaque" disabled aria-disabled="true" title="É necessário ter saldo disponível para solicitar saque">
             <span class="atalho-icone">↗</span>
-            <span><strong>Saques indisponíveis</strong><small>Essa função será liberada após a validação dos repasses.</small></span>
+            <span><strong id="tituloBotaoSaque">Saques indisponíveis</strong><small id="textoBotaoSaque">O botão será liberado quando houver saldo disponível.</small></span>
           </button>
           <button class="atalho" type="button" data-acao="deposito">
             <span class="atalho-icone">＋</span>
@@ -181,7 +181,6 @@
     document.querySelectorAll("[data-acao]").forEach(botao=>botao.addEventListener("click",()=>{
       acaoAtual=botao.dataset.acao;
       const saque=acaoAtual==="saque";
-      if(saque){return;}
       titulo.textContent=saque?"Solicitar saque":"Adicionar saldo";
       descricao.textContent=saque?"Informe o valor que deseja retirar e a chave Pix para receber. O saque dependerá da confirmação do saldo e das regras do serviço de pagamentos.":"Adicione créditos à sua carteira para participar dos leilões RefugiART. Compras no Bazar não exigem depósito.";
       campoPix.hidden=!saque;document.getElementById("valorCarteira").value="";document.getElementById("chavePixSaque").value="";
@@ -228,6 +227,10 @@
     const botaoPagamento=document.getElementById("confirmarAcaoCarteira");
     const inputValor=document.getElementById("valorCarteira");
     botaoPagamento.addEventListener("click",async()=>{
+      if(acaoAtual==="saque"){
+        statusPagamento.textContent="O botão de saque já está habilitado conforme seu saldo, mas a integração para solicitar e processar retiradas ainda precisa ser implementada. Nenhum valor foi movimentado.";
+        return;
+      }
       const valor=Number(inputValor.value);
       if(!Number.isFinite(valor)||valor<1||valor>10000){
         statusPagamento.textContent="Informe um valor entre R$ 1,00 e R$ 10.000,00.";
@@ -282,6 +285,17 @@
       });
       disponivel.textContent=fmt(totalDisponivel/100);
       pendente.textContent=fmt(totalPendente/100);
+      const botaoSaque=document.getElementById("botaoSaque");
+      const tituloBotaoSaque=document.getElementById("tituloBotaoSaque");
+      const textoBotaoSaque=document.getElementById("textoBotaoSaque");
+      if(botaoSaque){
+        const podeSacar=totalDisponivel>0;
+        botaoSaque.disabled=!podeSacar;
+        botaoSaque.setAttribute("aria-disabled",String(!podeSacar));
+        botaoSaque.title=podeSacar?"Solicitar saque do saldo disponível":"É necessário ter saldo disponível para solicitar saque";
+        if(tituloBotaoSaque)tituloBotaoSaque.textContent=podeSacar?"Solicitar saque":"Saques indisponíveis";
+        if(textoBotaoSaque)textoBotaoSaque.textContent=podeSacar?"Você tem "+fmt(totalDisponivel/100)+" disponível para saque.":"O botão será liberado quando houver saldo disponível.";
+      }
     }
 
     (async()=>{

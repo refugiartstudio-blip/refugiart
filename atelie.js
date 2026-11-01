@@ -997,29 +997,109 @@ document.querySelectorAll("[data-categoria]").forEach((elemento) => {
   });
 });
 
-/* ---------- Pesquisa com atraso inteligente ---------- */
+/* ---------- Busca global de artistas por nome artístico ou nome do ateliê ---------- */
+const resultadosBusca = document.getElementById("resultados-busca-atelie");
+let solicitacaoBuscaArtistas = 0;
 
-function aplicarPesquisa() {
-  termoBusca = campoBusca?.value.trim() || "";
-  renderizarObras();
+function fecharResultadosBusca() {
+  if (!resultadosBusca) return;
+  resultadosBusca.hidden = true;
+  resultadosBusca.replaceChildren();
+  campoBusca?.setAttribute("aria-expanded", "false");
 }
 
-formBusca?.addEventListener("submit", (evento) => {
-  evento.preventDefault();
+function renderizarResultadosBusca(perfis) {
+  if (!resultadosBusca) return;
+  resultadosBusca.replaceChildren();
 
-  if (temporizadorBusca) {
-    clearTimeout(temporizadorBusca);
+  if (!perfis.length) {
+    resultadosBusca.appendChild(criarElemento("p","busca-atelie-vazio","Nenhum artista ou ateliê encontrado."));
+    resultadosBusca.hidden = false;
+    campoBusca?.setAttribute("aria-expanded","true");
+    return;
   }
 
-  aplicarPesquisa();
+  perfis.forEach(perfil => {
+    const opcao = criarElemento("button","resultado-artista-atelie");
+    opcao.type = "button";
+    opcao.setAttribute("role","option");
+    const nome = perfil.nome_artistico?.trim() || "Artista RefugiART";
+    const atelie = perfil.nome_atelie?.trim() || "Ateliê sem nome";
+    opcao.append(
+      criarElemento("strong","",nome),
+      criarElemento("small","",atelie)
+    );
+    opcao.addEventListener("click",()=>{
+      window.location.href = "atelie.html?id=" + encodeURIComponent(perfil.id);
+    });
+    resultadosBusca.appendChild(opcao);
+  });
+
+  resultadosBusca.hidden = false;
+  campoBusca?.setAttribute("aria-expanded","true");
+}
+
+async function pesquisarArtistas() {
+  const termo = campoBusca?.value.trim() || "";
+  const numero = ++solicitacaoBuscaArtistas;
+  if (termo.length < 2) {
+    fecharResultadosBusca();
+    return;
+  }
+
+  if (resultadosBusca) {
+    resultadosBusca.replaceChildren(criarElemento("p","busca-atelie-vazio","Pesquisando artistas..."));
+    resultadosBusca.hidden = false;
+    campoBusca?.setAttribute("aria-expanded","true");
+  }
+
+  const padrao = "%" + termo.replace(/[%,]/g," ").trim() + "%";
+  const [porNome,porAtelie] = await Promise.all([
+    supabase.from("profiles").select("id,nome_artistico,nome_atelie").ilike("nome_artistico",padrao).limit(8),
+    supabase.from("profiles").select("id,nome_artistico,nome_atelie").ilike("nome_atelie",padrao).limit(8)
+  ]);
+
+  if (numero !== solicitacaoBuscaArtistas) return;
+  if (porNome.error || porAtelie.error) {
+    resultadosBusca?.replaceChildren(criarElemento("p","busca-atelie-vazio","Não foi possível pesquisar agora. Tente novamente."));
+    if (resultadosBusca) resultadosBusca.hidden = false;
+    campoBusca?.setAttribute("aria-expanded","true");
+    console.warn("Erro na busca de artistas:",porNome.error||porAtelie.error);
+    return;
+  }
+
+  const unicos = new Map();
+  [...(porNome.data||[]),...(porAtelie.data||[])].forEach(perfil=>{
+    if (perfil.id) unicos.set(perfil.id,perfil);
+  });
+  const encontrados=[...unicos.values()].sort((a,b)=>{
+    const nomeA=normalizarTexto(a.nome_artistico);
+    const nomeB=normalizarTexto(b.nome_artistico);
+    const busca=normalizarTexto(termo);
+    const exatoA=nomeA.startsWith(busca)?0:1;
+    const exatoB=nomeB.startsWith(busca)?0:1;
+    return exatoA-exatoB || (a.nome_artistico||"").localeCompare(b.nome_artistico||"");
+  }).slice(0,10);
+  renderizarResultadosBusca(encontrados);
+}
+
+formBusca?.addEventListener("submit",evento=>{
+  evento.preventDefault();
+  if(temporizadorBusca)clearTimeout(temporizadorBusca);
+  pesquisarArtistas();
 });
 
-campoBusca?.addEventListener("input", () => {
-  if (temporizadorBusca) {
-    clearTimeout(temporizadorBusca);
-  }
+campoBusca?.addEventListener("input",()=>{
+  if(temporizadorBusca)clearTimeout(temporizadorBusca);
+  temporizadorBusca=setTimeout(pesquisarArtistas,300);
+});
 
-  temporizadorBusca = setTimeout(aplicarPesquisa, 250);
+document.addEventListener("click",evento=>{
+  if(!formBusca?.contains(evento.target))fecharResultadosBusca();
+});
+
+campoBusca?.addEventListener("keydown",evento=>{
+  if(evento.key==="Escape")fecharResultadosBusca();
 });
 
 /* ---------- Navegação do carrossel da Janela Criativa ---------- */

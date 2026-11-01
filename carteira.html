@@ -167,7 +167,14 @@
       <div class="modal-cabecalho"><h3 id="modalTitulo">Adicionar saldo</h3><button class="modal-fechar" id="fecharModalCarteira" type="button" aria-label="Fechar">×</button></div>
       <p id="modalDescricao">Adicione créditos à sua carteira para participar dos leilões RefugiART.</p>
       <label for="valorCarteira">Valor (R$)</label><input id="valorCarteira" type="number" min="1" step="0.01" placeholder="Ex.: 50,00">
-      <div id="campoChavePix" hidden><label for="chavePixSaque">Chave Pix para recebimento</label><input id="chavePixSaque" type="text" placeholder="Informe sua chave Pix"></div>
+      <div id="campoChavePix" hidden>
+  <label for="chavePixSalva">Escolha uma chave Pix cadastrada</label>
+  <select id="chavePixSalva"><option value="">Cadastrar nova chave Pix</option></select>
+  <div id="novaChavePixCampos">
+    <label for="chavePixSaque">Nova chave Pix</label><input id="chavePixSaque" type="text" placeholder="CPF, e-mail, telefone ou chave aleatória">
+    <label for="titularPixSaque">Nome do titular da conta</label><input id="titularPixSaque" type="text" placeholder="Nome completo do titular">
+  </div>
+</div>
       <button class="modal-confirmar" id="confirmarAcaoCarteira" type="button">Continuar</button>
       <p class="modal-rodape" id="statusPagamento" role="status" aria-live="polite">Os depósitos ainda estão bloqueados. Nenhuma cobrança será criada enquanto a operação não estiver autorizada.</p>
     </div>
@@ -182,8 +189,8 @@
       acaoAtual=botao.dataset.acao;
       const saque=acaoAtual==="saque";
       titulo.textContent=saque?"Solicitar saque":"Adicionar saldo";
-      descricao.textContent=saque?"Informe o valor que deseja retirar e a chave Pix para receber. O saque dependerá da confirmação do saldo e das regras do serviço de pagamentos.":"Adicione créditos à sua carteira para participar dos leilões RefugiART. Compras no Bazar não exigem depósito.";
-      campoPix.hidden=!saque;document.getElementById("valorCarteira").value="";document.getElementById("chavePixSaque").value="";
+      descricao.textContent=saque?"Informe o valor do saque e selecione uma chave Pix cadastrada ou cadastre uma nova.":"Adicione créditos à sua carteira para participar dos leilões RefugiART. Compras no Bazar não exigem depósito.";
+      campoPix.hidden=!saque;document.getElementById("valorCarteira").value="";if(saque)window.carregarChavesPixCarteira?.();
       botaoAcao.textContent=saque?"Solicitar saque":"Continuar para depósito";
       modal.classList.add("aberto");
     }));
@@ -226,9 +233,42 @@
     const statusPagamento=document.getElementById("statusPagamento");
     const botaoPagamento=document.getElementById("confirmarAcaoCarteira");
     const inputValor=document.getElementById("valorCarteira");
+    const selectPix=document.getElementById("chavePixSalva");
+    const campoNovaPix=document.getElementById("novaChavePixCampos");
+    let chavesPixCarteira=[];
+    window.carregarChavesPixCarteira=async()=>{
+      const {data:{user}}=await sb.auth.getUser();if(!user)return;
+      const {data,error}=await sb.from("refugiart_pix_keys").select("id,slot,pix_key,holder_name").eq("user_id",user.id).order("slot");
+      if(error){statusPagamento.textContent="Não foi possível carregar suas chaves Pix: "+error.message;return;}
+      chavesPixCarteira=data||[];selectPix.replaceChildren();
+      const nova=document.createElement("option");nova.value="";nova.textContent=chavesPixCarteira.length>=2?"Selecione uma chave cadastrada":"Cadastrar nova chave Pix";selectPix.append(nova);
+      chavesPixCarteira.forEach(k=>{const o=document.createElement("option");o.value=k.id;o.textContent="Chave "+k.slot+" • "+k.pix_key;selectPix.append(o);});
+      if(chavesPixCarteira.length>=2){selectPix.value=String(chavesPixCarteira[0].id);}
+      campoNovaPix.hidden=Boolean(selectPix.value);
+    };
+    selectPix.addEventListener("change",()=>{campoNovaPix.hidden=Boolean(selectPix.value);});
     botaoPagamento.addEventListener("click",async()=>{
       if(acaoAtual==="saque"){
-        statusPagamento.textContent="O botão de saque já está habilitado conforme seu saldo, mas a integração para solicitar e processar retiradas ainda precisa ser implementada. Nenhum valor foi movimentado.";
+        const valorSaque=Number(inputValor.value);
+        const centavosSaque=Math.round(valorSaque*100);
+        if(!Number.isFinite(valorSaque)||valorSaque<1||Math.abs(valorSaque*100-centavosSaque)>0.001){statusPagamento.textContent="Informe um valor válido a partir de R$ 1,00.";return;}
+        let chave="",titular="";
+        if(selectPix.value){const escolhida=chavesPixCarteira.find(k=>k.id===selectPix.value);chave=escolhida?.pix_key||"";titular=escolhida?.holder_name||"";}
+        else{
+          chave=document.getElementById("chavePixSaque").value.trim();titular=document.getElementById("titularPixSaque").value.trim();
+          if(!chave||!titular){statusPagamento.textContent="Informe a chave Pix e o nome do titular.";return;}
+          if(chavesPixCarteira.length>=2){statusPagamento.textContent="Você já cadastrou o limite de duas chaves Pix. Selecione uma delas.";return;}
+        }
+        botaoPagamento.disabled=true;botaoPagamento.textContent="Enviando solicitação...";
+        try{
+          if(!selectPix.value){const slot=chavesPixCarteira.some(k=>k.slot===1)?2:1;const {error:pixError}=await sb.from("refugiart_pix_keys").insert({slot,pix_key:chave,holder_name:titular});if(pixError)throw pixError;}
+          const {data,error}=await sb.rpc("refugiart_request_withdrawal",{p_amount_cents:centavosSaque,p_pix_key:chave,p_holder_name:titular});
+          if(error)throw error;
+          statusPagamento.textContent="Solicitação registrada! O valor foi reservado e aparecerá no seu histórico de saques.";
+          const {data:{user}}=await sb.auth.getUser();if(user){await atualizarSaldos(user);await carregarHistoricoCarteira(user);}
+          setTimeout(fecharModal,1300);
+        }catch(err){statusPagamento.textContent=err.message||"Não foi possível solicitar o saque.";}
+        finally{botaoPagamento.disabled=false;botaoPagamento.textContent="Solicitar saque";}
         return;
       }
       const valor=Number(inputValor.value);
@@ -278,11 +318,14 @@
       }
       let totalPendente=0;
       let totalDisponivel=0;
+      const {data:saques}=await sb.from("refugiart_withdrawal_requests").select("amount_cents,status").eq("user_id",user.id).in("status",["pending","paid"]);
+      const totalReservado=(saques||[]).reduce((s,x)=>s+Number(x.amount_cents||0),0);
       (data||[]).forEach(p=>{
         const valor=Number(p.seller_net_cents||0);
         if(p.status==="delivered")totalDisponivel+=valor;
         else if(p.status==="awaiting_shipment"||p.status==="shipped")totalPendente+=valor;
       });
+      totalDisponivel=Math.max(0,totalDisponivel-totalReservado);
       disponivel.textContent=fmt(totalDisponivel/100);
       pendente.textContent=fmt(totalPendente/100);
       const botaoSaque=document.getElementById("botaoSaque");
@@ -309,7 +352,7 @@
     async function carregarHistoricoCarteira(user){
       const lista=document.getElementById("historicoLista");
       if(!lista)return;
-      const [pedidosResp,depositosResp,codigosResp]=await Promise.all([
+      const [pedidosResp,depositosResp,codigosResp,saquesResp]=await Promise.all([
         sb.from("refugiart_orders")
           .select("id,buyer_id,seller_id,status,subtotal_cents,paid_at,created_at,provider_order_nsu")
           .or("buyer_id.eq."+user.id+",seller_id.eq."+user.id)
@@ -317,7 +360,8 @@
         sb.from("refugiart_payment_intents")
           .select("id,status,amount_cents,paid_amount_cents,created_at,confirmed_at,order_nsu")
           .eq("user_id",user.id).order("created_at",{ascending:false}).limit(100),
-        sb.from("refugiart_delivery_codes").select("order_id,code,confirmed_at").eq("buyer_id",user.id)
+        sb.from("refugiart_delivery_codes").select("order_id,code,confirmed_at").eq("buyer_id",user.id),
+        sb.from("refugiart_financial_notifications").select("id,event_type,status,summary,description,amount_cents,created_at").eq("counterparty_user_id",user.id).eq("event_type","withdrawal").is("archived_at",null).order("created_at",{ascending:false}).limit(100)
       ]);
       if(codigosResp.error)console.warn("Não foi possível carregar códigos de entrega:",codigosResp.error.message);
       const codigosPorPedido=new Map((codigosResp.data||[]).map(c=>[Number(c.order_id),c]));
@@ -369,6 +413,7 @@
           id:d.id
         });
       });
+      (saquesResp.data||[]).forEach(s=>itens.push({tipo:"Saque",detalhe:s.summary,valor:Number(s.amount_cents||0)/100,data:s.created_at,status:s.description||({pending:"Saque em andamento",paid:"Saque pago",rejected:"Saque recusado"})[s.status]||s.status}));
       itens.sort((a,b)=>new Date(b.data)-new Date(a.data));
       lista.replaceChildren();
       if(!itens.length){
@@ -383,6 +428,7 @@
         const titulo=document.createElement("strong");titulo.textContent=item.detalhe;
         const meta=document.createElement("small");meta.textContent=new Date(item.data).toLocaleString("pt-BR")+" • "+item.status;
         info.append(titulo,meta);
+        if(item.tipo==="Saque"&&item.status==="aguarde até 2h"){const espera=document.createElement("small");espera.textContent="aguarde até 2h";espera.style.fontSize="10px";info.append(espera);}
         if(item.tipo==="Compra"&&item.codigoEntrega){
           const area=document.createElement("div");area.className="codigo-entrega";
           const rotulo=document.createElement("strong");rotulo.textContent="Seu código de entrega: "+item.codigoEntrega;

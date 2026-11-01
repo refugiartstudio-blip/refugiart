@@ -136,7 +136,7 @@
     <section aria-label="Produtos disponíveis">
       <div class="bazar-ferramentas">
         <div class="bazar-contagem" id="contagemBazar">Carregando obras...</div>
-        <form class="bazar-busca" id="formBusca"><input id="buscaBazar" type="search" placeholder="Buscar obras..." aria-label="Buscar no Bazar"><button type="submit" aria-label="Pesquisar">⌕</button></form>
+        <form class="bazar-busca" id="formBusca"><input id="buscaBazar" type="search" placeholder="Buscar artista ou obra..." aria-label="Buscar por nome do artista ou da obra no Bazar"><button type="submit" aria-label="Pesquisar">⌕</button></form>
         <div class="bazar-ordenacao">Ordenar por
           <div class="bazar-seletor">
             <button type="button" class="bazar-seletor-botao" id="abrirOpcoesBazar" aria-expanded="false" aria-controls="opcoesBazar"><span id="textoOpcaoBazar">Mais recentes</span><span>⌄</span></button>
@@ -195,7 +195,7 @@
     function filtrar(){
       const termo=busca.value.trim().toLocaleLowerCase("pt-BR");
       let lista=obras.filter(o=>{
-        const texto=[o.caption,o.category,o.artista].filter(Boolean).join(" ").toLocaleLowerCase("pt-BR");
+        const texto=[o.caption,o.artista].filter(Boolean).join(" ").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLocaleLowerCase("pt-BR");
         return (categoria==="todas"||String(o.category||"").toLocaleLowerCase("pt-BR")===categoria.toLocaleLowerCase("pt-BR"))&&texto.includes(termo);
       });
       const criterio=ordenar.value.startsWith("categoria:")?"recentes":ordenar.value;

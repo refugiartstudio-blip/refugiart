@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let supabase = null;
   let usuarioAtual = null;
   let nomeAtual = "Artista";
+  let fotoAtual = "";
   let canalChat = null;
 
   try {
@@ -18,7 +19,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     usuarioAtual = user;
     const { data: perfil } = await supabase.from("profiles")
-      .select("nome_artistico").eq("id", user.id).maybeSingle();
+      .select("nome_artistico, foto_url").eq("id", user.id).maybeSingle();
+    fotoAtual = perfil?.foto_url || "";
     nomeAtual = perfil?.nome_artistico || user.user_metadata?.nome || user.email?.split("@")[0] || "Artista";
     const nomeTopo = document.getElementById("nomeUsuario");
     if (nomeTopo) nomeTopo.textContent = nomeAtual;
@@ -73,8 +75,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     let perfis = {};
     if (ids.length) {
       const { data: listaPerfis } = await supabase.from("profiles")
-        .select("id, nome_artistico").in("id", ids);
-      (listaPerfis || []).forEach(p => perfis[p.id] = p.nome_artistico || "Artista");
+        .select("id, nome_artistico, foto_url").in("id", ids);
+      (listaPerfis || []).forEach(p => perfis[p.id] = { nome: p.nome_artistico || "Artista", foto: p.foto_url || "" });
     }
     area.innerHTML = "";
     if (!data?.length) {
@@ -82,8 +84,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
     data.forEach(m => {
-      const autor = m.user_id === usuarioAtual.id ? nomeAtual : (perfis[m.user_id] || "Artista");
-      criarMensagem(area, autor, m.content, m.user_id === usuarioAtual.id);
+      const perfilAutor = m.user_id === usuarioAtual.id ? { nome: nomeAtual, foto: fotoAtual } : (perfis[m.user_id] || { nome: "Artista", foto: "" });
+      const autor = perfilAutor.nome;
+      criarMensagem(area, autor, m.content, m.user_id === usuarioAtual.id, null, perfilAutor.foto);
       const elemento = area.lastElementChild;
       elemento.dataset.userId = m.user_id;
       elemento.dataset.messageId = m.id;
@@ -229,7 +232,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   // CRIAR MENSAGENS
   // =====================================
 
-  function criarMensagem(area, autor, texto, propria = false, citada = null) {
+  function aplicarFotoAvatar(avatar, foto, nome) {
+    avatar.textContent = nome.charAt(0).toUpperCase();
+    if (!foto) return;
+    const imagem = document.createElement("img");
+    imagem.src = foto;
+    imagem.alt = "Foto de perfil de " + nome;
+    imagem.loading = "lazy";
+    imagem.onerror = () => { imagem.remove(); avatar.textContent = nome.charAt(0).toUpperCase(); };
+    avatar.textContent = "";
+    avatar.appendChild(imagem);
+  }
+
+  function criarMensagem(area, autor, texto, propria = false, citada = null, foto = "") {
     const mensagem = document.createElement("article");
     mensagem.className = "mensagem";
     mensagem.dataset.autor = autor;
@@ -239,7 +254,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const avatar = document.createElement("div");
     avatar.className = "avatar";
-    avatar.textContent = autor.charAt(0).toUpperCase();
+    aplicarFotoAvatar(avatar, foto, autor);
 
     const corpo = document.createElement("div");
     corpo.className = "corpo-mensagem";
@@ -416,7 +431,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const botao = document.createElement("button");
     botao.type = "button"; botao.className = "item-conversa"; botao.dataset.userId = perfil.id;
     const avatar = document.createElement("div"); avatar.className = "avatar";
-    avatar.textContent = (perfil.nome_artistico || "A").charAt(0).toUpperCase();
+    aplicarFotoAvatar(avatar, perfil.foto_url || "", perfil.nome_artistico || "Artista");
     const dados = document.createElement("div"); const nome = document.createElement("strong");
     nome.textContent = perfil.nome_artistico || "Artista";
     const detalhe = document.createElement("p"); detalhe.textContent = previa;
@@ -456,7 +471,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!data?.length) mostrarVazio(area, "Esta conversa ainda não tem mensagens. Envie a primeira!");
     (data || []).forEach(m => {
       const propria = m.user_id === usuarioAtual.id;
-      const item = criarMensagem(area, propria ? nomeAtual : contatoAtual.nome_artistico, m.content, propria);
+      const item = criarMensagem(area, propria ? nomeAtual : contatoAtual.nome_artistico, m.content, propria, null, propria ? fotoAtual : (contatoAtual.foto_url || ""));
       item.dataset.messageId = m.id;
       const horario = item.querySelector(".identificacao span");
       if (horario) horario.textContent = new Date(m.created_at).toLocaleTimeString("pt-BR", {hour:"2-digit",minute:"2-digit"});

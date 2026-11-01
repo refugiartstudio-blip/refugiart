@@ -2370,3 +2370,14 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
 .pagina-atelie .kraken-banner-trilho .marca-janela-kraken.kraken-amarelo{background:#f2cc24 !important;color:#080808 !important}
 .pagina-atelie .kraken-banner-trilho .marca-janela-kraken.kraken-vermelho-roxo{background:linear-gradient(120deg,#c51f32 0 50%,#542080 50% 100%) !important;color:#fff !important}
 .pagina-atelie .kraken-banner-trilho .marca-janela-kraken{flex-shrink:0}
+
+
+/* ---------- Resultados da busca global de artistas ---------- */
+.pagina-atelie #form-busca-atelie{position:relative}
+.pagina-atelie .resultados-busca-atelie{position:absolute;z-index:1200;top:calc(100% + 9px);left:0;right:0;max-height:min(65vh,420px);overflow-y:auto;padding:6px;background:#fff;border:1px solid #dfe5dc;border-radius:14px;box-shadow:0 12px 30px rgba(25,45,34,.16)}
+.pagina-atelie .resultados-busca-atelie[hidden]{display:none}
+.pagina-atelie .resultado-artista-atelie{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;padding:11px 12px;border:0;border-radius:9px;background:transparent;color:#243e35;text-align:left;cursor:pointer}
+.pagina-atelie .resultado-artista-atelie:hover,.pagina-atelie .resultado-artista-atelie:focus-visible{background:#f0f4ef;outline:none}
+.pagina-atelie .resultado-artista-atelie strong{font-size:13px;font-weight:700}
+.pagina-atelie .resultado-artista-atelie small,.pagina-atelie .busca-atelie-vazio{font-size:11px;color:#788278}
+.pagina-atelie .busca-atelie-vazio{margin:0;padding:12px}

@@ -261,12 +261,17 @@
         }
         botaoPagamento.disabled=true;botaoPagamento.textContent="Enviando solicitação...";
         try{
-          if(!selectPix.value){const slot=chavesPixCarteira.some(k=>k.slot===1)?2:1;const {error:pixError}=await sb.from("refugiart_pix_keys").insert({slot,pix_key:chave,holder_name:titular});if(pixError)throw pixError;}
           const {data,error}=await sb.rpc("refugiart_request_withdrawal",{p_amount_cents:centavosSaque,p_pix_key:chave,p_holder_name:titular});
           if(error)throw error;
+          if(!data?.created)throw new Error("O sistema não confirmou o registro do saque. Tente novamente.");
           statusPagamento.textContent="Solicitação registrada! O valor foi reservado e aparecerá no seu histórico de saques.";
+          if(!selectPix.value){
+            const slot=chavesPixCarteira.some(k=>k.slot===1)?2:1;
+            const {error:pixError}=await sb.from("refugiart_pix_keys").insert({slot,pix_key:chave,holder_name:titular});
+            if(pixError)statusPagamento.textContent="Saque registrado, mas não foi possível salvar a chave Pix para os próximos pedidos: "+pixError.message;
+          }
           const {data:{user}}=await sb.auth.getUser();if(user){await atualizarSaldos(user);await carregarHistoricoCarteira(user);}
-          setTimeout(fecharModal,1300);
+          setTimeout(fecharModal,1800);
         }catch(err){statusPagamento.textContent=err.message||"Não foi possível solicitar o saque.";}
         finally{botaoPagamento.disabled=false;botaoPagamento.textContent="Solicitar saque";}
         return;

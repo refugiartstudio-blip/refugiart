@@ -360,7 +360,7 @@
         sb.from("refugiart_payment_intents")
           .select("id,status,amount_cents,paid_amount_cents,created_at,confirmed_at,order_nsu")
           .eq("user_id",user.id).order("created_at",{ascending:false}).limit(100),
-        sb.from("refugiart_delivery_codes").select("order_id,code,confirmed_at").eq("buyer_id",user.id),
+        sb.from("refugiart_delivery_codes").select("order_id,code,confirmed_at").eq("buyer_id",user.id).is("confirmed_at",null),
         sb.from("refugiart_financial_notifications").select("id,event_type,status,summary,description,amount_cents,created_at").eq("counterparty_user_id",user.id).eq("event_type","withdrawal").is("archived_at",null).order("created_at",{ascending:false}).limit(100)
       ]);
       if(codigosResp.error)console.warn("Não foi possível carregar códigos de entrega:",codigosResp.error.message);
@@ -433,7 +433,7 @@
           const area=document.createElement("div");area.className="codigo-entrega";
           const rotulo=document.createElement("strong");rotulo.textContent="Seu código de entrega: "+item.codigoEntrega;
           area.append(rotulo);info.append(area);
-        }else if(item.tipo==="Compra"){
+        }else if(item.tipo==="Compra"&&!item.entregaConfirmada){
           const aviso=document.createElement("small");aviso.textContent="Código de entrega indisponível no momento.";info.append(aviso);
         }
         if(item.podeConfirmar){

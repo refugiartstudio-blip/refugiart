@@ -333,15 +333,16 @@
           const {data:{user}}=await supabase.auth.getUser();
           if(!user){alert("Entre na sua conta para curtir esta obra.");return;}
           const ativo=like.classList.contains("ativo");
+          const atuais=curtidasPorObra.get(postId)||[];
           like.disabled=true;
           const resposta=ativo
             ?await supabase.from("community_post_likes").delete().eq("post_id",postId).eq("user_id",user.id)
             :await supabase.from("community_post_likes").insert({post_id:postId,user_id:user.id});
           if(resposta.error){alert("Não foi possível registrar sua curtida: "+resposta.error.message);like.disabled=false;return;}
+          const atualizadas=ativo?atuais.filter(id=>id!==user.id):[...atuais,user.id];
+          curtidasPorObra.set(postId,atualizadas);
           like.classList.toggle("ativo",!ativo);
-          like.textContent=(ativo?"♡ ":"❤️ ")+(listaCurtidas.length+(ativo?-1:1));
-          if(ativo){curtidasPorObra.set(postId,listaCurtidas.filter(id=>id!==user.id));}
-          else{curtidasPorObra.set(postId,[...listaCurtidas,user.id]);}
+          like.textContent=(ativo?"♡ ":"❤️ ")+atualizadas.length;
           like.disabled=false;
         });
         acoes.append(like);

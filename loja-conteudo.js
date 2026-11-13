@@ -32,7 +32,7 @@ if (root) {
     const style=document.createElement("style");
     style.textContent=`
       .editor-textos-loja{margin:14px 0 20px;display:flex;justify-content:flex-end}
-      .editor-textos-loja button{border:1px solid #d5dfd4;border-radius:999px;padding:10px 15px;background:#fff;color:#243e35;font:700 12px inherit;cursor:pointer}
+      .editor-textos-loja button{border:1px solid #d5dfd4;border-radius:999px;padding:10px 15px;background:#fff;color:#243e35;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
       .editor-textos-loja button:hover{background:#edf2eb}
       .painel-textos-loja{margin:14px 0 22px;padding:18px;border:1px solid #d7e1d6;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(36,62,53,.07)}
       .painel-textos-loja[hidden]{display:none}

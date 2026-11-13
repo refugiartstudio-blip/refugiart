@@ -169,7 +169,7 @@ function renderizar() {
     const card = elemento("article", "produto-loja");
     const capa = elemento("div", "produto-loja-capa");
     if (fotos.length) {
-      const img = elemento("img", "produto-loja-imagem"); img.src = fotos[0]; img.alt = produto.title; img.loading = "lazy";
+      const img = elemento("img", "produto-loja-imagem"); img.src = fotos[0]; img.alt = produto.title; img.loading = "lazy"; img.addEventListener("click", () => abrirZoom(fotos, 0));
       const abrir = elemento("button", "produto-loja-zoom", fotos.length > 1 ? "Ver fotos · " + fotos.length : "Ampliar foto");
       abrir.type = "button"; abrir.addEventListener("click", () => abrirZoom(fotos, 0));
       capa.append(img, abrir);

@@ -59,6 +59,7 @@ const statusForm = document.getElementById("statusProdutoLoja");
 const gradeEdicao = document.getElementById("galeriaEdicaoProduto");
 
 function desenharFotosEdicao() {
+  gradeEdicao.querySelectorAll("img[data-object-url]").forEach(img => URL.revokeObjectURL(img.dataset.objectUrl));
   gradeEdicao.replaceChildren();
   if (!imagensAtuais.length && !imagensNovas.length) {
     gradeEdicao.append(elemento("p", "admin-loja-status", "Nenhuma fotografia adicionada."));
@@ -74,7 +75,7 @@ function desenharFotosEdicao() {
   });
   imagensNovas.forEach((arquivo, i) => {
     const item = elemento("div", "admin-foto-item");
-    const img = elemento("img"); img.src = URL.createObjectURL(arquivo); img.alt = "Nova fotografia " + (i + 1);
+    const img = elemento("img"); img.src = URL.createObjectURL(arquivo); img.dataset.objectUrl = img.src; img.alt = "Nova fotografia " + (i + 1);
     const remover = elemento("button", "admin-foto-remover", "×"); remover.type = "button"; remover.setAttribute("aria-label", "Remover nova fotografia");
     remover.addEventListener("click", () => { imagensNovas.splice(i, 1); sincronizarInputFotos(); desenharFotosEdicao(); });
     item.append(img, remover, elemento("small", "", "Nova foto"));
@@ -111,7 +112,10 @@ function abrirModal(produto = null) {
   modal.hidden = false;
   document.getElementById("produtoTitulo").focus();
 }
-function fecharModal() { modal.hidden = true; produtoEmEdicao = null; imagensAtuais = []; imagensNovas = []; }
+function fecharModal() {
+  gradeEdicao.querySelectorAll("img[data-object-url]").forEach(img => URL.revokeObjectURL(img.dataset.objectUrl));
+  modal.hidden = true; produtoEmEdicao = null; imagensAtuais = []; imagensNovas = [];
+}
 
 function abrirZoom(imagens, indice = 0) {
   galeriaZoom = imagens.filter(Boolean);
@@ -213,6 +217,34 @@ async function verificarAdministrador() {
   administrador = !error && data === true;
   if (administrador) { barraAdmin.hidden = false; botaoAdicionar.addEventListener("click", () => abrirModal()); }
 }
+function caminhosDoStorage(urls) {
+  const prefixo = SUPABASE_URL + "/storage/v1/object/public/refugiart-store/";
+  return [...new Set(urls.filter(url => typeof url === "string" && url.startsWith(prefixo))
+    .map(url => {
+      try { return decodeURIComponent(new URL(url).pathname.split("/storage/v1/object/public/refugiart-store/")[1] || ""); }
+      catch { return ""; }
+    }).filter(Boolean))];
+}
+async function limparImagensSemUso(urls) {
+  const caminhos = caminhosDoStorage(urls);
+  if (!caminhos.length) return;
+  const { data, error } = await supabase.from("refugiart_store_products").select("image_url,image_urls");
+  if (error || !data) {
+    console.warn("Limpeza de imagens ignorada: não foi possível conferir referências restantes.", error);
+    return;
+  }
+  const emUso = new Set(data.flatMap(item => [
+    ...(Array.isArray(item.image_urls) ? item.image_urls : []),
+    item.image_url
+  ]).filter(Boolean));
+  const remover = urls.filter(url => !emUso.has(url));
+  const caminhosRemover = caminhosDoStorage(remover);
+  if (caminhosRemover.length) {
+    const { error: storageError } = await supabase.storage.from("refugiart-store").remove(caminhosRemover);
+    if (storageError) console.warn("Não foi possível remover algumas imagens sem uso do Storage.", storageError);
+  }
+}
+
 async function salvarProduto(event) {
   event.preventDefault();
   if (!administrador) return;
@@ -223,6 +255,9 @@ async function salvarProduto(event) {
   if (imagensAtuais.length + imagensNovas.length > 8) { statusForm.textContent = "O limite é de 8 fotografias por produto."; return; }
   const botao = document.getElementById("salvarProduto");
   botao.disabled = true; botao.textContent = "Salvando...";
+  const imagensAnteriores = produtoEmEdicao ? urlsDoProduto(produtoEmEdicao) : [];
+  const arquivosEnviados = [];
+  let gravacaoConcluida = false;
   try {
     const novasUrls = [];
     for (const arquivo of imagensNovas) {
@@ -230,6 +265,7 @@ async function salvarProduto(event) {
       const caminho = categoria + "/" + crypto.randomUUID() + "." + extensao;
       const { error: uploadError } = await supabase.storage.from("refugiart-store").upload(caminho, arquivo, { contentType: arquivo.type, cacheControl: "3600" });
       if (uploadError) throw uploadError;
+      arquivosEnviados.push(caminho);
       novasUrls.push(supabase.storage.from("refugiart-store").getPublicUrl(caminho).data.publicUrl);
     }
     const todasImagens = [...imagensAtuais, ...novasUrls];
@@ -243,15 +279,25 @@ async function salvarProduto(event) {
       ? await supabase.from("refugiart_store_products").update(registro).eq("id", produtoEmEdicao.id)
       : await supabase.from("refugiart_store_products").insert(registro);
     if (resposta.error) throw resposta.error;
+    gravacaoConcluida = true;
+    const imagensMantidas = new Set(todasImagens);
+    const removidas = imagensAnteriores.filter(url => !imagensMantidas.has(url));
     fecharModal(); await carregarProdutos();
+    if (removidas.length) await limparImagensSemUso(removidas);
   } catch (error) {
+    if (!gravacaoConcluida && arquivosEnviados.length) {
+      const { error: rollbackError } = await supabase.storage.from("refugiart-store").remove(arquivosEnviados);
+      if (rollbackError) console.warn("Falha ao desfazer upload que não foi salvo no catálogo.", rollbackError);
+    }
     console.error(error); statusForm.textContent = "Não foi possível salvar: " + (error.message || "verifique sua conexão e tente novamente.");
   } finally { botao.disabled = false; botao.textContent = "Salvar produto"; }
 }
 async function excluirProduto(produto) {
   if (!administrador || !confirm('Excluir "' + produto.title + '" da loja?')) return;
+  const imagensRemovidas = urlsDoProduto(produto);
   const { error } = await supabase.from("refugiart_store_products").delete().eq("id", produto.id);
   if (error) { alert("Não foi possível excluir o produto: " + error.message); return; }
   await carregarProdutos();
+  await limparImagensSemUso(imagensRemovidas);
 }
 if (categoria && grade) { await verificarAdministrador(); await carregarProdutos(); }

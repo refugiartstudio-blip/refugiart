@@ -32,6 +32,39 @@
     .voltar-mercado{display:inline-flex;align-items:center;gap:8px;margin-top:24px;padding:10px 15px;border:1px solid #dce4da;border-radius:30px;color:#243e35;text-decoration:none;font-size:12px;font-weight:700;background:#fff}
     .voltar-mercado:hover{background:#edf2eb}
     @media(max-width:650px){.banner-categoria{align-items:flex-start;flex-direction:column;min-height:0}.selo-categoria{margin-top:5px}.vazio-categoria{align-items:flex-start;padding:18px}.banner-categoria:after{right:-8%;top:30%;font-size:120px}}
+  
+    .grade-produtos-loja{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .produto-loja{overflow:hidden;border:1px solid #e1e7df;border-radius:13px;background:#fff;display:flex;flex-direction:column;min-width:0}
+    .produto-loja-imagem{width:100%;height:210px;object-fit:cover;background:#e9eee7}
+    .produto-loja-info{padding:14px;display:flex;flex-direction:column;gap:7px;flex:1}
+    .produto-loja-info h3{margin:0;color:#243e35;font-size:16px}
+    .produto-loja-info p{margin:0;color:#718075;font-size:12px;line-height:1.55}
+    .produto-loja-preco{color:#243e35;font-size:17px;font-weight:800}
+    .produto-loja-selo{font-size:10px;color:#8a7653;font-weight:800;letter-spacing:.6px;text-transform:uppercase}
+    .produto-loja-admin{display:flex;gap:7px;margin-top:auto;padding-top:7px}
+    .produto-loja-admin button,.admin-loja-abrir{border:0;border-radius:8px;padding:9px 12px;background:#243e35;color:#fff;font-weight:700;cursor:pointer}
+    .produto-loja-admin button.excluir{background:#f4e9e6;color:#914b3b}
+    .admin-loja-barra{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0;padding:13px 15px;border:1px solid #dce5db;border-radius:12px;background:#edf2eb}
+    .admin-loja-barra p{margin:0;color:#405347;font-size:12px}
+    .admin-loja-modal{position:fixed;inset:0;z-index:9999;background:rgba(17,31,23,.62);display:flex;align-items:center;justify-content:center;padding:16px}
+    .admin-loja-modal[hidden]{display:none}
+    .admin-loja-form{width:min(100%,520px);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;padding:22px;box-shadow:0 18px 60px rgba(0,0,0,.22)}
+    .admin-loja-form h2{margin:0 0 15px;color:#243e35;font:26px Georgia,serif}
+    .admin-loja-form label{display:block;margin:12px 0 5px;color:#34483a;font-size:12px;font-weight:750}
+    .admin-loja-form input,.admin-loja-form textarea{width:100%;box-sizing:border-box;border:1px solid #d8e1d7;border-radius:8px;padding:11px;font:inherit;font-size:14px}
+    .admin-loja-form textarea{min-height:85px;resize:vertical}
+    .admin-loja-form .linha-admin{display:flex;gap:10px}
+    .admin-loja-form .linha-admin>div{flex:1;min-width:0}
+    .admin-loja-form .demo-admin{display:flex;align-items:center;gap:8px;font-weight:600}
+    .admin-loja-form .demo-admin input{width:auto}
+    .admin-loja-form .botoes-admin{display:flex;gap:8px;margin-top:18px}
+    .admin-loja-form .botoes-admin button{flex:1;border:0;border-radius:8px;padding:12px;background:#243e35;color:white;font-weight:750}
+    .admin-loja-form .botoes-admin button[type=button]{background:#edf2eb;color:#243e35}
+    .admin-loja-preview{display:block;width:100%;max-height:170px;object-fit:contain;margin-top:10px;border-radius:8px;background:#f4f6f2}
+    .admin-loja-status{margin:10px 0 0;color:#647466;font-size:12px}
+    @media(max-width:760px){.grade-produtos-loja{grid-template-columns:repeat(2,minmax(0,1fr))}.produto-loja-imagem{height:165px}}
+    @media(max-width:520px){.grade-produtos-loja{grid-template-columns:1fr}.produto-loja{display:grid;grid-template-columns:120px minmax(0,1fr)}.produto-loja-imagem{height:100%;min-height:160px}.produto-loja-info{padding:12px}.admin-loja-barra{align-items:flex-start;flex-direction:column}.admin-loja-form .linha-admin{flex-direction:column}}
+
   </style>
 </head>
 <body>
@@ -46,7 +79,7 @@
     <a href="galeria.html">Galeria</a>
     <a id="linkLogin" href="login.html">Login</a>
   </nav>
-  <main class="categoria-loja-main">
+  <main class="categoria-loja-main" data-categoria-loja="acessorios">
     <nav class="trilha-loja" aria-label="Você está em">
       <a href="mercado.html">Mercado</a><span aria-hidden="true">›</span><a href="mercado.html#loja-refugiart">Loja RefugiART</a><span aria-hidden="true">›</span><span>Acessórios</span>
     </nav>
@@ -61,16 +94,13 @@
     <section class="colecao-categoria" aria-labelledby="titulo-colecao">
       <h2 id="titulo-colecao">Nossa coleção</h2>
       <p class="apoio">Esta página é dedicada aos produtos da categoria acessórios. Os itens serão apresentados aqui conforme as coleções forem lançadas.</p>
-      <div class="vazio-categoria">
-        <span class="vazio-categoria-simbolo" aria-hidden="true">✺</span>
-        <div>
-          <h3>Estamos preparando esta coleção</h3>
-          <p>Em breve, você encontrará aqui os produtos, imagens, informações e opções de compra desta categoria.</p>
-        </div>
-      </div>
+      <div id="acoesAdminLoja" class="admin-loja-barra" hidden><p>Área de administração: você pode cadastrar, editar e remover os produtos desta categoria.</p><button id="adicionarProdutoLoja" class="admin-loja-abrir" type="button">+ Adicionar produto</button></div>
+      <div id="gradeProdutosLoja" class="grade-produtos-loja" aria-live="polite"><p>Carregando produtos...</p></div>
     </section>
     <a class="voltar-mercado" href="mercado.html#loja-refugiart"><span aria-hidden="true">←</span> Voltar à Loja RefugiART</a>
   </main>
   <footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
+  <script src="script.js"></script>
+  <script type="module" src="loja-categoria.js"></script>
 </body>
 </html>

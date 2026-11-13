@@ -82,7 +82,7 @@
 .produto-refugiart-visual{height:170px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#e9eee7;color:#243e35}
 .produto-refugiart-visual:before,.produto-refugiart-visual:after{content:"";position:absolute;border:1px solid rgba(36,62,53,.12);border-radius:50%;width:190px;height:190px}
 .produto-refugiart-visual:after{width:130px;height:130px}
-.produto-refugiart-simbolo{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:86px;height:86px;border-radius:50%;background:rgba(255,255,255,.75);font-size:38px;box-shadow:0 5px 18px rgba(36,62,53,.08)}
+.produto-refugiart-simbolo{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:86px;height:86px;border-radius:26px;background:rgba(255,255,255,.78);box-shadow:0 8px 24px rgba(36,62,53,.10);transform:rotate(-4deg);transition:transform .25s,box-shadow .25s}.produto-refugiart-simbolo svg{width:48px;height:48px;stroke-width:1.7}.produto-refugiart-card:hover .produto-refugiart-simbolo{transform:rotate(0) translateY(-3px);box-shadow:0 12px 28px rgba(36,62,53,.16)}
 .produto-refugiart-card:nth-child(2) .produto-refugiart-visual{background:#eee8dc}
 .produto-refugiart-card:nth-child(3) .produto-refugiart-visual{background:#e8e9e1}
 .produto-refugiart-info{padding:13px 14px 15px}
@@ -112,7 +112,7 @@
 </style>
 </head>
 
-<body>
+<body data-loja-conteudo="mercado">
 
   <header class="cabecalho">
     <img src="imagens/logo.png"
@@ -177,7 +177,7 @@
         </div>
         <div class="grade-produtos-refugiart">
           <a class="produto-refugiart-card" href="vestuario.html" aria-label="Conhecer a categoria Vestuário">
-            <div class="produto-refugiart-visual" aria-hidden="true"><span class="produto-refugiart-simbolo">✳</span></div>
+            <div class="produto-refugiart-visual" aria-hidden="true"><span class="produto-refugiart-simbolo"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 7 8 4 8-4 9 5-5 10-5-3v21H17V19l-5 3-5-10z"/><path d="M18 8c0 4 2 6 6 6s6-2 6-6"/></svg></span></div>
             <div class="produto-refugiart-info">
               <small>Vestuário</small>
               <h4>Camisetas RefugiART</h4>
@@ -186,7 +186,7 @@
             </div>
           </a>
           <a class="produto-refugiart-card" href="acessorios.html" aria-label="Conhecer a categoria Acessórios">
-            <div class="produto-refugiart-visual" aria-hidden="true"><span class="produto-refugiart-simbolo">✺</span></div>
+            <div class="produto-refugiart-visual" aria-hidden="true"><span class="produto-refugiart-simbolo"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17h30l-3 25H12z"/><path d="M17 18v-5a7 7 0 0 1 14 0v5"/><path d="M17 27c4 4 10 4 14 0"/></svg></span></div>
             <div class="produto-refugiart-info">
               <small>Acessórios</small>
               <h4>Ecobags e utilitários</h4>
@@ -195,7 +195,7 @@
             </div>
           </a>
           <a class="produto-refugiart-card" href="papelaria.html" aria-label="Conhecer a categoria Papelaria">
-            <div class="produto-refugiart-visual" aria-hidden="true"><span class="produto-refugiart-simbolo">✎</span></div>
+            <div class="produto-refugiart-visual" aria-hidden="true"><span class="produto-refugiart-simbolo"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6h18l7 7v29H12z"/><path d="M30 6v8h7M18 22h13M18 28h13M18 34h7"/><path d="m29 34 8-8 4 4-8 8-5 1z"/></svg></span></div>
             <div class="produto-refugiart-info">
               <small>Papelaria</small>
               <h4>Cadernos e impressos</h4>
@@ -510,46 +510,8 @@
   <!-- Script compartilhado do site -->
   <script src="script.js"></script>
 
-  <!-- Abertura e fechamento do menu lateral -->
-  <script>
-    const abrirMenu = document.getElementById('abrirMenu');
-    const fecharMenu = document.getElementById('fecharMenu');
-    const menuLateral = document.getElementById('menuLateral');
-    const fundoMenu = document.getElementById('fundoMenu');
+  <!-- Menu lateral controlado pelo script.js compartilhado. -->
 
-    function abrirPainel() {
-      menuLateral.inert = false;
-      menuLateral.setAttribute('aria-hidden', 'false');
-      menuLateral.classList.add('menu-aberto');
-      fundoMenu.classList.add('fundo-visivel');
-      document.body.classList.add('menu-bloqueio');
-      abrirMenu.setAttribute('aria-expanded', 'true');
-      fecharMenu.focus();
-    }
-
-    function fecharPainel() {
-      menuLateral.classList.remove('menu-aberto');
-      fundoMenu.classList.remove('fundo-visivel');
-      document.body.classList.remove('menu-bloqueio');
-      abrirMenu.setAttribute('aria-expanded', 'false');
-      menuLateral.setAttribute('aria-hidden', 'true');
-      menuLateral.inert = true;
-      abrirMenu.focus();
-    }
-
-    abrirMenu.addEventListener('click', abrirPainel);
-    fecharMenu.addEventListener('click', fecharPainel);
-    fundoMenu.addEventListener('click', fecharPainel);
-
-    document.addEventListener('keydown', (evento) => {
-      if (
-        evento.key === 'Escape' &&
-        menuLateral.classList.contains('menu-aberto')
-      ) {
-        fecharPainel();
-      }
-    });
-  </script>
 
 </body>
 </html>

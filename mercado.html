@@ -62,6 +62,52 @@
 .pagina-mercado{width:calc(100% - 64px);min-width:0;max-width:1236px;margin:24px 0 54px 64px;padding:0 18px;box-sizing:border-box}
 @media(max-width:700px){.mercado-layout{padding:0 8px}.coluna-mercado{left:8px;width:48px;min-width:48px;max-width:48px;padding:10px 4px}.coluna-mercado.expandida{width:165px;min-width:165px;max-width:165px;padding:12px 8px}.pagina-mercado{width:calc(100% - 56px);margin:15px 0 40px 56px;padding:0 10px}}
 
+
+/* Vitrine institucional — Loja RefugiART */
+.loja-refugiart{margin:4px 0 34px}
+.cabecalho-loja{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:30px 32px;margin-bottom:18px;border-radius:18px;background:linear-gradient(115deg,#243e35 0%,#315746 65%,#496c55 100%);color:#fff}
+.cabecalho-loja:after{content:"✳";position:absolute;right:24px;top:-34px;font-size:190px;line-height:1;color:rgba(255,255,255,.07);pointer-events:none}
+.cabecalho-loja-conteudo{position:relative;z-index:1;max-width:600px}
+.cabecalho-loja .etiqueta-loja{display:inline-block;margin-bottom:9px;color:#e4c58d;font-size:10px;font-weight:800;letter-spacing:1.5px}
+.cabecalho-loja h2{margin:0 0 9px;font-size:clamp(25px,4vw,38px);line-height:1.1;color:#fff}
+.cabecalho-loja p{max-width:540px;margin:0;color:rgba(255,255,255,.82);font-size:13px;line-height:1.65}
+.botao-loja{position:relative;z-index:1;display:inline-flex;align-items:center;gap:9px;flex-shrink:0;padding:11px 16px;border-radius:999px;background:#f4f1e9;color:#243e35;text-decoration:none;font-size:12px;font-weight:750;transition:transform .2s,background .2s}
+.botao-loja:hover{transform:translateY(-2px);background:#fff}
+.titulo-vitrine-propria{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 0 13px}
+.titulo-vitrine-propria h3{margin:0;color:#243e35;font-size:19px}
+.titulo-vitrine-propria p{margin:4px 0 0;color:#718075;font-size:11px}
+.grade-produtos-refugiart{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.produto-refugiart-card{overflow:hidden;border:1px solid #e2e7df;border-radius:14px;background:#fff;min-width:0}
+.produto-refugiart-visual{height:170px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#e9eee7;color:#243e35}
+.produto-refugiart-visual:before,.produto-refugiart-visual:after{content:"";position:absolute;border:1px solid rgba(36,62,53,.12);border-radius:50%;width:190px;height:190px}
+.produto-refugiart-visual:after{width:130px;height:130px}
+.produto-refugiart-simbolo{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:86px;height:86px;border-radius:50%;background:rgba(255,255,255,.75);font-size:38px;box-shadow:0 5px 18px rgba(36,62,53,.08)}
+.produto-refugiart-card:nth-child(2) .produto-refugiart-visual{background:#eee8dc}
+.produto-refugiart-card:nth-child(3) .produto-refugiart-visual{background:#e8e9e1}
+.produto-refugiart-info{padding:13px 14px 15px}
+.produto-refugiart-info small{color:#8a7653;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.produto-refugiart-info h4{margin:5px 0 5px;color:#243e35;font-size:15px}
+.produto-refugiart-info p{margin:0;color:#718075;font-size:11px;line-height:1.5}
+.produto-refugiart-status{display:inline-block;margin-top:11px;padding:5px 9px;border-radius:20px;background:#f4f1e9;color:#687668;font-size:10px;font-weight:700}
+.separador-mercado{display:flex;align-items:center;gap:12px;margin:30px 0 14px}
+.separador-mercado:after{content:"";height:1px;flex:1;background:#e2e7df}
+.separador-mercado span{color:#8a7653;font-size:10px;font-weight:800;letter-spacing:1.2px}
+.cabecalho-obras-mercado{margin:0 0 10px}
+.cabecalho-obras-mercado h2{margin:0;color:#243e35;font-size:21px}
+.cabecalho-obras-mercado p{margin:5px 0 0;color:#718075;font-size:12px;line-height:1.5}
+@media(max-width:760px){
+ .cabecalho-loja{align-items:flex-start;flex-direction:column;padding:24px 21px}
+ .cabecalho-loja:after{right:-25px;top:4px;font-size:130px}
+ .grade-produtos-refugiart{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .produto-refugiart-visual{height:135px}
+}
+@media(max-width:430px){
+ .grade-produtos-refugiart{grid-template-columns:1fr}
+ .produto-refugiart-card{display:grid;grid-template-columns:112px minmax(0,1fr)}
+ .produto-refugiart-visual{height:100%;min-height:132px}
+ .produto-refugiart-info{padding:12px}
+}
+
 </style>
 </head>
 
@@ -110,11 +156,63 @@
     </aside>
   <main class="pagina-mercado">
 
-    <!-- CATEGORIAS -->
+    <!-- LOJA PRÓPRIA REFUGIART -->
+    <section class="loja-refugiart" id="loja-refugiart" aria-labelledby="titulo-loja-refugiart">
+      <div class="cabecalho-loja">
+        <div class="cabecalho-loja-conteudo">
+          <span class="etiqueta-loja">PRODUTOS DA NOSSA MARCA</span>
+          <h2 id="titulo-loja-refugiart">Loja RefugiART</h2>
+          <p>Peças e produtos que levam a identidade do RefugiART para além da tela. Uma coleção que aproxima arte, criação e cotidiano.</p>
+        </div>
+        <a class="botao-loja" href="#colecao-refugiart">Explorar a loja <span aria-hidden="true">↓</span></a>
+      </div>
 
-    <section class="secao-mercado" id="obras">
+      <div id="colecao-refugiart">
+        <div class="titulo-vitrine-propria">
+          <div>
+            <h3>Produtos da marca</h3>
+            <p>Uma vitrine para nossas coleções autorais.</p>
+          </div>
+        </div>
+        <div class="grade-produtos-refugiart">
+          <article class="produto-refugiart-card">
+            <div class="produto-refugiart-visual" aria-hidden="true"><span class="produto-refugiart-simbolo">✳</span></div>
+            <div class="produto-refugiart-info">
+              <small>Vestuário</small>
+              <h4>Camisetas RefugiART</h4>
+              <p>Estampas autorais e coleções com identidade artística.</p>
+              <span class="produto-refugiart-status">Coleção em preparação</span>
+            </div>
+          </article>
+          <article class="produto-refugiart-card">
+            <div class="produto-refugiart-visual" aria-hidden="true"><span class="produto-refugiart-simbolo">✺</span></div>
+            <div class="produto-refugiart-info">
+              <small>Acessórios</small>
+              <h4>Ecobags e utilitários</h4>
+              <p>Objetos cotidianos com grafismos e criações independentes.</p>
+              <span class="produto-refugiart-status">Novidades em breve</span>
+            </div>
+          </article>
+          <article class="produto-refugiart-card">
+            <div class="produto-refugiart-visual" aria-hidden="true"><span class="produto-refugiart-simbolo">✎</span></div>
+            <div class="produto-refugiart-info">
+              <small>Papelaria</small>
+              <h4>Cadernos e impressos</h4>
+              <p>Peças gráficas para levar a arte para o dia a dia.</p>
+              <span class="produto-refugiart-status">Novidades em breve</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-
+    <!-- MARKETPLACE DOS ARTISTAS: mantém a integração atual com Supabase -->
+    <div class="separador-mercado"><span>MARKETPLACE DE ARTISTAS</span></div>
+    <section class="secao-mercado" id="obras" aria-labelledby="titulo-obras-mercado">
+      <div class="cabecalho-obras-mercado">
+        <h2 id="titulo-obras-mercado">Obras de artistas</h2>
+        <p>Descubra criações independentes disponíveis para aquisição e conheça quem está por trás de cada trabalho.</p>
+      </div>
       <div id="lista-obras-mercado" class="grade-obras vitrine-carrossel-mercado" aria-live="polite"><p>Carregando obras...</p></div>
     </section>
 

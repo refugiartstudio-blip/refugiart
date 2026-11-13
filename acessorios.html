@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="icon" type="image/png" href="/imagens/logo.png?v=20261101">
+  <link rel="apple-touch-icon" href="/imagens/logo.png?v=20261101">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#243e35">
+  <meta name="description" content="Ecobags e objetos utilitários que aproximam arte, criação e cotidiano.">
+  <title>Acessórios e utilitários | Loja RefugiART</title>
+  <link rel="stylesheet" href="style.css?v=nav-texto-2">
+  <style>
+    body{background:#f5f6f3;color:#29352e}
+    .categoria-loja-main{max-width:1160px;margin:30px auto 60px;padding:0 20px}
+    .trilha-loja{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 18px;color:#7a887b;font-size:12px}
+    .trilha-loja a{color:#49624f;text-decoration:none}
+    .trilha-loja a:hover{text-decoration:underline}
+    .banner-categoria{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:210px;padding:clamp(25px,5vw,48px);border-radius:16px;background:linear-gradient(115deg,#243e35,#456b52);color:#fff}
+    .banner-categoria:after{content:"✺";position:absolute;right:5%;top:50%;transform:translateY(-55%);font-size:clamp(100px,17vw,190px);line-height:1;color:rgba(255,255,255,.08);pointer-events:none}
+    .banner-categoria-conteudo{position:relative;z-index:1;max-width:690px}
+    .banner-categoria small{color:#e4c58d;font-size:10px;font-weight:800;letter-spacing:1.7px}
+    .banner-categoria h1{margin:9px 0;font-family:Georgia,serif;font-size:clamp(30px,5vw,46px);line-height:1.1;color:#fff}
+    .banner-categoria p{max-width:600px;margin:0;color:rgba(255,255,255,.84);font-size:14px;line-height:1.7}
+    .selo-categoria{position:relative;z-index:1;flex:0 0 auto;border:1px solid rgba(255,255,255,.4);border-radius:30px;padding:10px 14px;color:#fff;font-size:11px;font-weight:700}
+    .colecao-categoria{margin-top:30px}
+    .colecao-categoria h2{margin:0;color:#243e35;font-size:21px}
+    .colecao-categoria .apoio{margin:6px 0 18px;color:#788078;font-size:13px;line-height:1.6}
+    .vazio-categoria{display:flex;align-items:center;gap:18px;padding:24px;border:1px solid #e2e7df;border-radius:12px;background:#fff}
+    .vazio-categoria-simbolo{display:flex;align-items:center;justify-content:center;flex:0 0 58px;width:58px;height:58px;border-radius:50%;background:#edf2eb;color:#243e35;font-size:27px}
+    .vazio-categoria h3{margin:0 0 5px;color:#243e35;font-size:15px}
+    .vazio-categoria p{margin:0;color:#788078;font-size:12px;line-height:1.6}
+    .voltar-mercado{display:inline-flex;align-items:center;gap:8px;margin-top:24px;padding:10px 15px;border:1px solid #dce4da;border-radius:30px;color:#243e35;text-decoration:none;font-size:12px;font-weight:700;background:#fff}
+    .voltar-mercado:hover{background:#edf2eb}
+    @media(max-width:650px){.banner-categoria{align-items:flex-start;flex-direction:column;min-height:0}.selo-categoria{margin-top:5px}.vazio-categoria{align-items:flex-start;padding:18px}.banner-categoria:after{right:-8%;top:30%;font-size:120px}}
+  </style>
+</head>
+<body>
+  <header class="cabecalho">
+    <a href="inicio.html" aria-label="RefugiART — Início"><img src="imagens/logo.png" alt="Símbolo da RefugiART" class="logo"></a>
+    <div class="identidade"><h1>RefugiART</h1><p>A arte nos aproxima.</p></div>
+    <button class="botao-menu" id="abrirMenu" type="button" aria-label="Abrir menu" aria-controls="menuLateral" aria-expanded="false">☰</button>
+  </header>
+  <nav class="navegacao-principal" aria-label="Navegação principal">
+    <a href="inicio.html">Início</a>
+    <a href="mercado.html" aria-current="page">Mercado</a>
+    <a href="comunidades.html">Comunidades</a>
+    <a href="galeria.html">Galeria</a>
+    <a id="linkLogin" href="login.html">Login</a>
+  </nav>
+  <main class="categoria-loja-main">
+    <nav class="trilha-loja" aria-label="Você está em">
+      <a href="mercado.html">Mercado</a><span aria-hidden="true">›</span><a href="mercado.html#loja-refugiart">Loja RefugiART</a><span aria-hidden="true">›</span><span>Acessórios</span>
+    </nav>
+    <section class="banner-categoria">
+      <div class="banner-categoria-conteudo">
+        <small>ACESSÓRIOS E UTILITÁRIOS</small>
+        <h1>Acessórios e utilitários</h1>
+        <p>Ecobags e objetos utilitários que aproximam arte, criação e cotidiano.</p>
+      </div>
+      <span class="selo-categoria">LOJA REFUGIART</span>
+    </section>
+    <section class="colecao-categoria" aria-labelledby="titulo-colecao">
+      <h2 id="titulo-colecao">Nossa coleção</h2>
+      <p class="apoio">Esta página é dedicada aos produtos da categoria acessórios. Os itens serão apresentados aqui conforme as coleções forem lançadas.</p>
+      <div class="vazio-categoria">
+        <span class="vazio-categoria-simbolo" aria-hidden="true">✺</span>
+        <div>
+          <h3>Estamos preparando esta coleção</h3>
+          <p>Em breve, você encontrará aqui os produtos, imagens, informações e opções de compra desta categoria.</p>
+        </div>
+      </div>
+    </section>
+    <a class="voltar-mercado" href="mercado.html#loja-refugiart"><span aria-hidden="true">←</span> Voltar à Loja RefugiART</a>
+  </main>
+  <footer><p>RefugiART © 2026 — Criar é Sentir.</p></footer>
+  <script src="menu.js"></script>
+</body>
+</html>

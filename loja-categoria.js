@@ -228,20 +228,24 @@ function caminhosDoStorage(urls) {
 async function limparImagensSemUso(urls) {
   const caminhos = caminhosDoStorage(urls);
   if (!caminhos.length) return;
-  const { data, error } = await supabase.from("refugiart_store_products").select("image_url,image_urls");
-  if (error || !data) {
-    console.warn("Limpeza de imagens ignorada: não foi possível conferir referências restantes.", error);
-    return;
-  }
-  const emUso = new Set(data.flatMap(item => [
-    ...(Array.isArray(item.image_urls) ? item.image_urls : []),
-    item.image_url
-  ]).filter(Boolean));
-  const remover = urls.filter(url => !emUso.has(url));
-  const caminhosRemover = caminhosDoStorage(remover);
-  if (caminhosRemover.length) {
-    const { error: storageError } = await supabase.storage.from("refugiart-store").remove(caminhosRemover);
-    if (storageError) console.warn("Não foi possível remover algumas imagens sem uso do Storage.", storageError);
+  try {
+    const { data, error } = await supabase.from("refugiart_store_products").select("image_url,image_urls");
+    if (error || !data) {
+      console.warn("Limpeza de imagens ignorada: não foi possível conferir referências restantes.", error);
+      return;
+    }
+    const emUso = new Set(data.flatMap(item => [
+      ...(Array.isArray(item.image_urls) ? item.image_urls : []),
+      item.image_url
+    ]).filter(Boolean));
+    const remover = urls.filter(url => !emUso.has(url));
+    const caminhosRemover = caminhosDoStorage(remover);
+    if (caminhosRemover.length) {
+      const { error: storageError } = await supabase.storage.from("refugiart-store").remove(caminhosRemover);
+      if (storageError) console.warn("Não foi possível remover algumas imagens sem uso do Storage.", storageError);
+    }
+  } catch (error) {
+    console.warn("A operação no catálogo foi concluída, mas a limpeza de imagens ficou pendente.", error);
   }
 }
 

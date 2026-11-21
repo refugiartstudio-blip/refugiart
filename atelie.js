@@ -15,6 +15,7 @@ const form = document.getElementById("form-obra");
 const inputImagem = document.getElementById("imagem-obra");
 const previaImagem = document.getElementById("previa-obra");
 const inputLegenda = document.getElementById("legenda-obra");
+const inputTitulo = document.getElementById("titulo-obra");
 const selectCategoria = document.getElementById("categoria-obra");
 const botaoPublicar = document.getElementById("botao-enviar-obra");
 const statusAtelie = document.getElementById("status-atelie");
@@ -550,6 +551,10 @@ function criarCartaoObra(obra) {
 
   const conteudo = criarElemento("div", "obra-conteudo");
 
+  const tituloObra = obra.title?.trim()
+    ? criarElemento("h3", "obra-titulo", obra.title.trim())
+    : null;
+
   const legendaTexto = obra.caption?.trim()
     || "Uma obra compartilhada com a comunidade RefugiART.";
 
@@ -559,6 +564,7 @@ function criarCartaoObra(obra) {
     legendaTexto
   );
 
+  if (tituloObra) conteudo.append(tituloObra);
   conteudo.append(categoria, legenda);
 
   if (obra.listing_mode === "community" || obra.listing_mode === "auction") {
@@ -666,6 +672,7 @@ function filtrarObras(obras) {
       );
 
     const textoObra = normalizarTexto([
+      obra.title,
       obra.caption,
       obra.category,
       obra.artista?.nome_artistico
@@ -745,7 +752,7 @@ async function carregarObras() {
 
     const { data: obras, error } = await supabase
       .from("atelie_posts")
-      .select("id, user_id, image_url, caption, category, created_at, moderation_status, content_sensitive, publicar_comunidade, publicar_mercado, preco, removida_do_portfolio")
+      .select("id, user_id, image_url, title, caption, category, created_at, moderation_status, content_sensitive, publicar_comunidade, publicar_mercado, preco, removida_do_portfolio")
       .eq("user_id", perfilIdAtelie)
       .eq("removida_do_portfolio", false)
       .order("created_at", { ascending: false })
@@ -843,6 +850,20 @@ form?.addEventListener("submit", async (evento) => {
       return;
     }
 
+    const titulo = (inputTitulo?.value || "").trim();
+
+    if (!titulo) {
+      mostrarStatus("Informe o título da obra.", "erro");
+      inputTitulo?.focus();
+      return;
+    }
+
+    if (titulo.length > 120) {
+      mostrarStatus("O título deve ter no máximo 120 caracteres.", "erro");
+      inputTitulo?.focus();
+      return;
+    }
+
     const categoria = selectCategoria?.value || "Outros";
 
     if (!CATEGORIAS.includes(categoria)) {
@@ -913,6 +934,7 @@ form?.addEventListener("submit", async (evento) => {
       .insert({
         user_id: usuario.id,
         image_url: urlPublica.publicUrl,
+        title: titulo,
         caption: legenda,
         category: categoria,
         publicar_comunidade: publicarComunidade,

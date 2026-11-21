@@ -22,6 +22,11 @@
 .campo-preco-mercado label{display:block;margin-bottom:6px;font-weight:600}
 .campo-preco-mercado input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #cfd8ce;border-radius:8px;font:inherit}
 .destinos-publicacao small{display:block;margin-top:8px;color:#718075}
+.campo-titulo-obra{margin:16px 0}
+.campo-titulo-obra label{display:block;margin-bottom:7px;font-weight:600;color:#46564a}
+.campo-titulo-obra input{width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid #dedbd2;border-radius:12px;background:#fff;font:inherit;color:#243e35}
+.campo-titulo-obra input:focus{outline:2px solid #b7cdb9;outline-offset:1px}
+.campo-titulo-obra small{display:block;margin-top:6px;color:#718075;font-size:.82rem}
 </style>
 </head>
 
@@ -238,6 +243,20 @@
             >
         
             <img id="previa-obra" class="previa-obra" alt="Prévia da obra selecionada" hidden>
+
+            <div class="campo-titulo-obra">
+              <label for="titulo-obra">Título da obra</label>
+              <input
+                id="titulo-obra"
+                name="titulo-obra"
+                type="text"
+                maxlength="120"
+                placeholder="Ex.: Entre rios e memórias"
+                autocomplete="off"
+                required
+              >
+              <small>Escolha um nome para identificar sua criação (até 120 caracteres).</small>
+            </div>
 
             <section id="editor-recorte-obra" class="editor-recorte-obra" hidden aria-label="Ajustar recorte da imagem">
               <h3>Ajustar enquadramento</h3>

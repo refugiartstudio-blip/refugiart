@@ -403,24 +403,32 @@ function criarCartaoObra(obra) {
       topo.append(titulo, fechar);
 
       const opcoes = criarElemento("div", "modal-obra-opcoes");
-      const botaoEditar = criarElemento("button", "modal-obra-opcao", "✏️  Editar legenda");
+      const botaoEditar = criarElemento("button", "modal-obra-opcao", "✏️  Editar obra");
       const botaoExcluir = criarElemento("button", "modal-obra-opcao modal-obra-excluir", "🗑️  Remover do portfólio");
       botaoEditar.type = botaoExcluir.type = "button";
       opcoes.append(botaoEditar, botaoExcluir);
 
       const formulario = criarElemento("div", "modal-obra-formulario");
       formulario.hidden = true;
+      const rotuloTitulo = criarElemento("label", "modal-obra-rotulo", "Título da obra");
+      const campoTitulo = document.createElement("input");
+      campoTitulo.type = "text";
+      campoTitulo.value = obra.title || "";
+      campoTitulo.maxLength = 120;
+      campoTitulo.placeholder = "Título da obra";
+      campoTitulo.setAttribute("aria-label", "Título da obra");
+      const rotuloLegenda = criarElemento("label", "modal-obra-rotulo", "História / legenda");
       const campo = document.createElement("textarea");
       campo.value = obra.caption || "";
       campo.maxLength = 2000;
       campo.rows = 5;
-      campo.setAttribute("aria-label", "Legenda da obra");
+      campo.setAttribute("aria-label", "História ou legenda da obra");
       const acoes = criarElemento("div", "modal-obra-acoes");
       const cancelarEdicao = criarElemento("button", "modal-obra-secundario", "Cancelar");
-      const salvar = criarElemento("button", "modal-obra-salvar", "Salvar legenda");
+      const salvar = criarElemento("button", "modal-obra-salvar", "Salvar alterações");
       cancelarEdicao.type = salvar.type = "button";
       acoes.append(cancelarEdicao, salvar);
-      formulario.append(campo, acoes);
+      formulario.append(rotuloTitulo, campoTitulo, rotuloLegenda, campo, acoes);
 
       const confirmacao = criarElemento("div", "modal-obra-confirmacao");
       confirmacao.hidden = true;
@@ -453,7 +461,7 @@ function criarCartaoObra(obra) {
       botaoEditar.addEventListener("click", () => {
         opcoes.hidden = true;
         formulario.hidden = false;
-        campo.focus();
+        campoTitulo.focus();
       });
       cancelarEdicao.addEventListener("click", () => {
         formulario.hidden = true;
@@ -461,19 +469,32 @@ function criarCartaoObra(obra) {
         mensagem.textContent = "";
       });
       salvar.addEventListener("click", async () => {
+        const novoTitulo = campoTitulo.value.trim();
         const novaLegenda = campo.value.trim();
+        if (!novoTitulo) {
+          mensagem.textContent = "Informe o título da obra.";
+          campoTitulo.focus();
+          return;
+        }
+        if (novoTitulo.length > 120) {
+          mensagem.textContent = "O título deve ter no máximo 120 caracteres.";
+          campoTitulo.focus();
+          return;
+        }
         if (novaLegenda.length > 2000) {
           mensagem.textContent = "A legenda deve ter no máximo 2.000 caracteres.";
+          campo.focus();
           return;
         }
         salvar.disabled = true;
-        mensagem.textContent = "Salvando...";
+        mensagem.textContent = "Salvando alterações...";
         try {
           const { error } = await supabase.from("atelie_posts")
-            .update({ caption: novaLegenda })
+            .update({ title: novoTitulo, caption: novaLegenda })
             .eq("id", obra.id)
             .eq("user_id", usuario.id);
           if (error) throw error;
+          obra.title = novoTitulo;
           obra.caption = novaLegenda;
           fecharModal();
           renderizarObras();

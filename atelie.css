@@ -2381,3 +2381,14 @@ body.pagina-atelie .modal-obra [hidden] { display: none !important; }
 .pagina-atelie .resultado-artista-atelie strong{font-size:13px;font-weight:700}
 .pagina-atelie .resultado-artista-atelie small,.pagina-atelie .busca-atelie-vazio{font-size:11px;color:#788278}
 .pagina-atelie .busca-atelie-vazio{margin:0;padding:12px}
+
+
+/* Título da obra nas publicações do Ateliê */
+.pagina-atelie .obra-titulo{
+  margin:0 0 9px;
+  color:#243e35;
+  font-family:Georgia,serif;
+  font-size:clamp(19px,2.4vw,23px);
+  font-weight:600;
+  line-height:1.3;
+}

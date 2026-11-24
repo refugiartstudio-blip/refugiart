@@ -2277,3 +2277,62 @@ footer {
 .navegacao-principal a[aria-current="page"] {
   color: #8b45c6 !important;
 }
+
+
+/* Apoio à produção artística independente */
+.apoio-artista {
+  width: min(100% - 32px, 980px);
+  margin: 42px auto 48px;
+  padding: clamp(24px, 5vw, 42px);
+  box-sizing: border-box;
+  text-align: center;
+  background: #243e35;
+  color: #f4f1e9;
+  border: 1px solid rgba(214,164,93,.55);
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(36,62,53,.10);
+}
+.apoio-artista-etiqueta {
+  display: inline-block;
+  color: #e4bd7e;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+}
+.apoio-artista h2 {
+  max-width: 650px;
+  margin: 13px auto 12px;
+  color: #fffaf0;
+  font: 600 clamp(25px, 4vw, 36px)/1.2 Georgia, serif;
+}
+.apoio-artista p {
+  max-width: 650px;
+  margin: 0 auto 22px;
+  color: #e4e9e1;
+  font-size: 15px;
+  line-height: 1.75;
+}
+.apoio-artista-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 20px;
+  border-radius: 999px;
+  background: #d6a45d;
+  color: #243e35;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform .2s ease, background .2s ease;
+}
+.apoio-artista-botao:hover { background: #e6ba79; transform: translateY(-2px); }
+.apoio-artista small {
+  display: block;
+  margin-top: 14px;
+  color: #c9d3c9;
+  font-size: 11px;
+}
+@media (max-width: 600px) {
+  .apoio-artista { width: calc(100% - 24px); margin: 30px auto 36px; padding: 25px 18px; }
+  .apoio-artista-botao { width: 100%; box-sizing: border-box; font-size: 14px; }
+}

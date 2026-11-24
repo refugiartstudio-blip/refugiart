@@ -484,5 +484,6 @@
     const depositoSolicitado=Number(new URLSearchParams(location.search).get("deposito"));if(Number.isFinite(depositoSolicitado)&&depositoSolicitado>0){document.getElementById("modalTitulo").textContent="Adicionar saldo";document.getElementById("modalDescricao").textContent="Para registrar seu balão, sua carteira precisa ter pelo menos "+fmt(depositoSolicitado)+". O depósito ainda depende da integração de pagamento.";document.getElementById("valorCarteira").value=depositoSolicitado.toFixed(2);document.getElementById("modalCarteira").classList.add("aberto");}
   </script>
   <script src="script.js"></script>
+  <script src="apoio.js"></script>
 </body>
 </html>

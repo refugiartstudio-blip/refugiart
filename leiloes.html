@@ -69,4 +69,5 @@ setInterval(cronometros,1000);carregar();
 (function(){const coluna=document.getElementById("colunaLeiloes"),botao=document.getElementById("alternarColunaLeiloes"),icone=document.getElementById("iconeSetaLeiloes");if(!coluna||!botao||!icone)return;botao.addEventListener("click",function(){const aberta=coluna.classList.toggle("expandida");botao.setAttribute("aria-expanded",String(aberta));botao.setAttribute("aria-label",aberta?"Recolher menu do Mercado":"Expandir menu do Mercado");icone.textContent=aberta?"⬅":"➜";});})();
 </script>
 <script src="script.js"></script>
+  <script src="apoio.js"></script>
 </body></html>

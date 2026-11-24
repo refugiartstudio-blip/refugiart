@@ -21,7 +21,7 @@
     .banner-categoria small{color:#e4c58d;font-size:10px;font-weight:800;letter-spacing:1.7px}
     .banner-categoria h1{margin:9px 0;font-family:Georgia,serif;font-size:clamp(30px,5vw,46px);line-height:1.1;color:#fff}
     .banner-categoria p{max-width:600px;margin:0;color:rgba(255,255,255,.84);font-size:14px;line-height:1.7}
-    .selo-categoria{position:relative;z-index:1;flex:0 0 auto;border:1px solid rgba(255,255,255,.4);border-radius:30px;padding:10px 14px;color:#fff;font-size:11px;font-weight:700}
+    .botao-loja-categoria{position:relative;z-index:2;display:inline-flex;align-items:center;justify-content:center;gap:12px;flex:0 0 auto;min-height:52px;padding:0 22px;border:1px solid rgba(255,255,255,.38);border-radius:999px;background:linear-gradient(135deg,#f0ca83 0%,#d6a45d 100%);color:#243e35;font-size:11px;font-weight:850;letter-spacing:1px;text-decoration:none;white-space:nowrap;box-shadow:0 8px 22px rgba(10,25,15,.2),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .22s ease,box-shadow .22s ease,filter .22s ease}.botao-loja-categoria:hover{transform:translateY(-3px);filter:saturate(1.08) brightness(1.04);box-shadow:0 13px 28px rgba(10,25,15,.28),inset 0 1px 0 rgba(255,255,255,.45)}.botao-loja-categoria:focus-visible{outline:3px solid #fff;outline-offset:4px}.botao-loja-categoria:active{transform:translateY(-1px)}
     .colecao-categoria{margin-top:30px}
     .colecao-categoria h2{margin:0;color:#243e35;font-size:21px}
     .colecao-categoria .apoio{margin:6px 0 18px;color:#788078;font-size:13px;line-height:1.6}
@@ -31,7 +31,7 @@
     .vazio-categoria p{margin:0;color:#788078;font-size:12px;line-height:1.6}
     .voltar-mercado{display:inline-flex;align-items:center;gap:8px;margin-top:24px;padding:10px 15px;border:1px solid #dce4da;border-radius:30px;color:#243e35;text-decoration:none;font-size:12px;font-weight:700;background:#fff}
     .voltar-mercado:hover{background:#edf2eb}
-    @media(max-width:650px){.banner-categoria{align-items:flex-start;flex-direction:column;min-height:0}.selo-categoria{margin-top:5px}.vazio-categoria{align-items:flex-start;padding:18px}.banner-categoria:after{right:-8%;top:30%;font-size:120px}}
+    @media(max-width:650px){.banner-categoria{align-items:flex-start;flex-direction:column;min-height:0}.botao-loja-categoria{margin-top:5px}.vazio-categoria{align-items:flex-start;padding:18px}.banner-categoria:after{right:-8%;top:30%;font-size:120px}}
   
     .grade-produtos-loja{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
     .produto-loja{overflow:hidden;border:1px solid #e1e7df;border-radius:13px;background:#fff;display:flex;flex-direction:column;min-width:0}
@@ -124,7 +124,7 @@
         <h1>Acessórios e utilitários</h1>
         <p>Ecobags e objetos utilitários que aproximam arte, criação e cotidiano.</p>
       </div>
-      <span class="selo-categoria">LOJA REFUGIART</span>
+      <a class="botao-loja-categoria" href="https://studio.gubo.com.br/loja/kraken-store" target="_blank" rel="noopener noreferrer" aria-label="Acessar a Loja RefugiART na Kraken Store">ACESSAR LOJA ↗</a>
     </section>
     <section class="colecao-categoria" aria-labelledby="titulo-colecao">
       <h2 id="titulo-colecao">Nossa coleção</h2>
